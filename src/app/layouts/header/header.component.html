@@ -10,10 +10,12 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarCollapse">
       <div class="navbar-nav ms-auto py-0">
-        <a routerLink="/" class="nav-item nav-link active">Home</a>
-        <a routerLink="/about" class="nav-item nav-link">About</a>
-        <a routerLink="/services" class="nav-item nav-link">Services</a>
-        <a routerLink="/packages" class="nav-item nav-link">Packages</a>
+        <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
+          class="nav-item nav-link">
+          Home
+        </a> <a routerLink="/about" routerLinkActive="active" class="nav-item nav-link">About</a>
+        <a routerLink="/services" routerLinkActive="active" class="nav-item nav-link">Services</a>
+        <a routerLink="/packages" routerLinkActive="active" class="nav-item nav-link">Packages</a>
         <div class="nav-item dropdown">
           <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
           <div class="dropdown-menu m-0">
@@ -29,7 +31,8 @@
     </div>
 
   </nav>
-  <div class="container-fluid bg-primary py-5 mb-5 hero-header">
+  <!-- Hero Header Section -->
+  <div *ngIf="currentRoute === '/'" class="container-fluid bg-primary py-5 mb-5 hero-header">
     <div class="container py-5">
       <div class="row justify-content-center py-5">
         <div class="col-lg-10 pt-lg-5 mt-lg-5 text-center">
@@ -51,4 +54,22 @@
       </div>
     </div>
   </div>
+
+  <div *ngIf="currentRoute !== '/'" class="container-fluid bg-primary py-5 mb-5 hero-header">
+    <div class="container py-5">
+      <div class="row justify-content-center py-5">
+        <div class="col-lg-10 pt-lg-5 mt-lg-5 text-center">
+          <h1 class="display-3 text-white animated slideInDown">{{ pageTitle }}</h1>
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb justify-content-center">
+              <li class="breadcrumb-item"><a routerLink="/">Home</a></li>
+              <li class="breadcrumb-item"><a href="#">Pages</a></li>
+              <li class="breadcrumb-item text-white active" aria-current="page">{{ pageTitle }}</li>
+            </ol>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>

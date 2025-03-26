@@ -31,6 +31,7 @@
             ],
             "styles": [
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "node_modules/font-awesome/css/font-awesome.min.css",
               "src/assets/css/style.css",
               "src/assets/css/bootstrap.min.css",
               "src/styles.scss"
@@ -101,10 +102,13 @@
             "styles": [
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "node_modules/font-awesome/css/font-awesome.min.css",
+              "node_modules/jquery/dist/jquery.min.js",
+              "node_modules/owl.carousel/dist/owl.carousel.min.js",
+              "node_modules/wow.js/dist/wow.min.js",
               "src/assets/css/style.css",
               "src/assets/css/bootstrap.min.css",
               "src/styles.scss"
-              
+
             ],
             "scripts": [
               "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js",
