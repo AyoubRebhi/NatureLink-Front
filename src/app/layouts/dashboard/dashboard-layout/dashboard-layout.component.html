@@ -1,0 +1,48 @@
+<div class="dashboard-container">
+    <app-header-dash></app-header-dash>
+    <app-sidebar-dash></app-sidebar-dash>
+    
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <div class="content-container">
+        <router-outlet></router-outlet>
+      </div>
+    </main>
+  
+    <!-- Control Sidebar (Right Sidebar) -->
+    <aside class="control-sidebar">
+      <div class="control-sidebar-content">
+        <h5>Quick Settings</h5>
+        <div class="control-item">
+          <i class="fas fa-sun"></i>
+          <span>Dark Mode</span>
+          <label class="switch">
+            <input type="checkbox">
+            <span class="slider round"></span>
+          </label>
+        </div>
+        <div class="control-item">
+          <i class="fas fa-bell"></i>
+          <span>Notifications</span>
+          <label class="switch">
+            <input type="checkbox" checked>
+            <span class="slider round"></span>
+          </label>
+        </div>
+      </div>
+    </aside>
+  
+    <!-- Footer -->
+    <footer class="dashboard-footer">
+      <div class="footer-content">
+        <div class="footer-left">
+          <strong>NatureLink &copy; 2023</strong> All rights reserved.
+        </div>
+        <div class="footer-right">
+          <span class="version">v1.0.0</span>
+          <a href="#" class="footer-link">Privacy Policy</a>
+          <a href="#" class="footer-link">Terms</a>
+        </div>
+      </div>
+    </footer>
+  </div>
