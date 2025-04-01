@@ -28,6 +28,10 @@ import { GuidesComponent } from './layouts/main-layout/guides/guides.component';
     TestimonialComponent,
     ServiceComponent,
     GuidesComponent,
+    HomeComponent,
+    TestimonialComponent,
+    ServiceComponent,
+    NotFoundComponent
   ],
   imports: [
     BrowserModule,
