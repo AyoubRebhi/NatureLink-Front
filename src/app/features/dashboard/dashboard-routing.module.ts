@@ -8,7 +8,12 @@ const routes: Routes = [
     path: '',
     component: DashboardLayoutComponent,
     children: [
-      { path: 'dashboard', component: DashboardComponent }
+      { path: 'dashboard', component: DashboardComponent },
+      {
+        path: 'transport',
+        loadChildren: () =>
+          import('../transport/transport.module').then(m => m.TransportModule)
+      }
     ]
   }
 ];
