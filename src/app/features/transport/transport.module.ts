@@ -5,12 +5,14 @@ import { ListTransportComponent } from './components/list-transport/list-transpo
 import { AddTransportComponent } from './components/add-transport/add-transport.component';
 import { EditTransportComponent } from './components/edit-transport/edit-transport.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { DetailsTransportComponent } from './components/details-transport/details-transport.component';
 
 @NgModule({
   declarations: [
     ListTransportComponent,
     AddTransportComponent,
     EditTransportComponent,
+    DetailsTransportComponent,
   ],
   imports: [
     CommonModule,

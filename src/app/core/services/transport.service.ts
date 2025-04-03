@@ -30,4 +30,12 @@ export class TransportService {
   deleteTransport(id: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
+  addTransportWithImage(formData: FormData): Observable<any> {
+    return this.http.post(`${this.baseUrl}/add-image`, formData);
+  }
+  
+  updateTransportWithImage(id: number, formData: FormData): Observable<any> {
+    return this.http.put(`${this.baseUrl}/update-image/${id}`, formData);
+  }
+  
 }

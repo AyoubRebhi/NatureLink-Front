@@ -4,5 +4,6 @@ export interface Transport {
     capacity: number;
     pricePerKm: number;
     available: boolean;
+    imgUrl: string;
 }
   

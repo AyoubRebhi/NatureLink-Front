@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { TransportService } from '../../../../core/services/transport.service';
 import { Transport } from '../../../../core/models/transport.model';
-
-
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-list-transport',
@@ -14,8 +13,17 @@ export class ListTransportComponent implements OnInit {
   filteredTransports: Transport[] = [];
   term: string = '';
 
-  constructor(private transportService: TransportService) {}
-
+  constructor(private transportService: TransportService, private router: Router) {}
+  
+  goToEditTransport(id: number): void {
+    if (!id && id !== 0) {
+      console.error('Invalid transport ID');
+      return;
+    }
+    this.router.navigate(['/admin/transport/edit', id]);
+  }
+  
+  
   ngOnInit(): void {
     this.getTransports();
   }
