@@ -1,0 +1,112 @@
+.event-management-container {
+    text-align: center;
+    padding: 40px;
+    font-family: 'Arial', sans-serif;
+  }
+  
+  // Title and Subtitle
+  .title {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  
+  .subtitle {
+    color: #666;
+    font-size: 16px;
+    margin-bottom: 30px;
+  }
+  
+  // Tabs Section
+  .event-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  
+    .tab {
+      background: #f0f0f0;
+      padding: 15px 20px;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s ease;
+      
+      span {
+        display: block;
+        font-size: 14px;
+        color: #555;
+      }
+  
+      &.active {
+        background: linear-gradient(45deg, #3c8dbc, #666);
+        color: white;
+      }
+      
+      &:hover {
+        background: #ddd;
+      }
+    }
+  }
+  
+  // Event Card
+  .event-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(135deg, #e3e3e3, #ffffff);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    width: 80%;
+    margin: auto;
+    max-width: 900px;
+  
+    .event-card-left {
+      display: flex;
+      align-items: center;
+    }
+  
+    .event-image {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      margin-right: 15px;
+    }
+  
+    .event-info {
+      text-align: left;
+  
+      .event-title {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+  
+      .event-meta, .event-time, .event-location {
+        font-size: 14px;
+        color: #555;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        margin: 3px 0;
+      }
+    }
+  
+    .book-now {
+      background: linear-gradient(45deg, #3c8dbc, #666);
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      font-weight: bold;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s ease;
+      
+      &:hover {
+        opacity: 0.8;
+      }
+    }
+  }
