@@ -31,7 +31,7 @@ import { GuidesComponent } from './layouts/main-layout/guides/guides.component';
     HomeComponent,
     TestimonialComponent,
     ServiceComponent,
-    NotFoundComponent
+    NotFoundComponent,
     
   ],
   imports: [

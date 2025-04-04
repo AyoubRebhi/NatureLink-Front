@@ -2,13 +2,14 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { DashboardLayoutComponent } from '../../layouts/dashboard/dashboard-layout/dashboard-layout.component';
 import { DashboardComponent } from '../../pages/dashboard/dashboard.component';
-
+import { EventMComponent } from '../events/events/components/event-m/event-m.component';
 const routes: Routes = [
   {
     path: '',
     component: DashboardLayoutComponent,
     children: [
-      { path: 'dashboard', component: DashboardComponent }
+      { path: 'dashboard', component: DashboardComponent },
+      
     ]
   }
 ];

@@ -1,18 +1,25 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
+import { FormsModule,ReactiveFormsModule } from '@angular/forms';
 import { EventsRoutingModule } from './events-routing.module';
 import { EventDComponent } from './events/components/event-d/event-d.component';
 import { EventMComponent } from './events/components/event-m/event-m.component';
-
+import { EventAddComponent } from './events/components/event-add/event-add.component';
+import { EevntformComponent } from './events/components/eevntform/eevntform.component';
+import { EventUserlistComponent } from './events/components/event-userlist/event-userlist.component';
 
 @NgModule({
   declarations: [
     EventDComponent,
-    EventMComponent
+    EventMComponent,
+    EventAddComponent,
+    EevntformComponent,
+    EventUserlistComponent
   ],
   imports: [
     CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
     EventsRoutingModule
   ]
 })

@@ -1,0 +1,31 @@
+<p>event-userlist works!</p>
+<div class="grid grid-cols-4 gap-4 my-6">
+    <div *ngFor="let stat of stats" class="bg-white p-4 rounded-lg shadow">
+        <p class="text-gray-500">{{ stat.label }}</p>
+        <h3 class="text-2xl font-bold" [ngClass]="stat.color">{{ stat.value }}</h3>
+    </div>
+</div>
+
+<!-- TABLEAU DES INVITÉS -->
+<div class="bg-white p-6 rounded-lg shadow">
+    <div class="flex justify-between mb-4">
+        <input type="text" placeholder="Rechercher..." class="border p-2 rounded w-1/3">
+        <button class="bg-blue-600 text-white p-2 rounded">Exporter</button>
+    </div>
+    <table class="w-full text-left border-collapse">
+        <thead>
+            <tr class="border-b">
+                <th class="p-2">Prénom</th>
+                <th class="p-2">Nom</th>
+                <th class="p-2">Statut</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let attendee of attendees" class="border-b">
+                <td class="p-2">{{ attendee.firstName }}</td>
+                <td class="p-2">{{ attendee.lastName }}</td>
+                <td class="p-2 text-green-500">{{ attendee.status }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
