@@ -13,6 +13,11 @@ const routes: Routes = [
         path: 'transport',
         loadChildren: () =>
           import('../transport/transport.module').then(m => m.TransportModule)
+      },
+      {
+        path: 'activity',
+        loadChildren: () =>
+          import('../activity/activity.module').then(m => m.ActivityModule)
       }
     ]
   }

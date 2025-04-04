@@ -11,7 +11,7 @@
               </div>
             </div>
             <div class="col-xxl-auto col-sm-6">
-              <button class="btn btn-primary" routerLink="/admin/transport/add">
+              <button class="btn btn-success" routerLink="/admin/transport/add">
                 <i class="bi bi-plus-circle me-1"></i> Add Transport
               </button>
             </div>
@@ -50,19 +50,17 @@
                     </span>
                   </td>
                   <td>
-                    <button class="btn btn-sm btn-info me-2" [routerLink]="['/admin/transport/details', transport.id]">
+                    <button class="btn btn-sm btn-info me-2" [ngStyle]="{ 'background-color': '#101011', 'color': 'white' }" [routerLink]="['/admin/transport/details', transport.id]">
                       <i class="bi bi-eye">View</i>
                     </button>
                     <!-- ✅ Correct routerLink -->
-                    <button class="btn btn-sm btn-warning me-2" (click)="goToEditTransport(transport.id!)">
+                    <button class="btn btn-sm btn-warning me-2" [ngStyle]="{ 'background-color': '#4a87c5', 'color': 'white' }" (click)="goToEditTransport(transport.id!)">
                         <i class="bi bi-pencil"></i> Edit
                       </button>
-                      
 
-
-                    <!-- <button class="btn btn-sm btn-danger" (click)="deleteTransport(transport.id)">
-                        <i class="bi bi-trash"></i>
-                      </button> -->
+                    <button class="btn btn-sm btn-danger" [ngStyle]="{ 'background-color': '#c92010', 'color': 'white' }" (click)="deleteTransport(transport.id!)">
+                        <i class="bi bi-trash"></i> Delete
+                      </button> 
                   </td>
                 </tr>
               </tbody>

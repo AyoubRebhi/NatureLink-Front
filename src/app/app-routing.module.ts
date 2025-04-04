@@ -23,6 +23,7 @@ const routes: Routes = [
         (m) => m.DashboardModule
       )
   },
+  { path: 'activity', loadChildren: () => import('./features/activity/activity.module').then(m => m.ActivityModule) },
   { path: '**', component: NotFoundComponent }
 ];
 
