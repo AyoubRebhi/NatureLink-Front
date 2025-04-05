@@ -1,0 +1,18 @@
+
+
+/* Section Title - Reused from services */
+.section-title {
+    display: inline-block;
+    position: relative;
+    
+    &::after {
+        content: '';
+        position: absolute;
+        width: 50px;
+        height: 2px;
+        background: #3498db;
+        bottom: -5px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+}

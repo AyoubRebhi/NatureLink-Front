@@ -1,0 +1,198 @@
+.dashboard-sidebar {
+    width: 250px;
+    background-color: #34495e;
+    color: white;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 60px; // Match header height
+    transition: all 0.3s ease;
+    z-index: 900;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  
+    .sidebar-brand {
+      padding: 15px 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  
+      .brand-link {
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+        color: white;
+  
+        .brand-logo {
+          width: 36px;
+          height: 36px;
+          background-color: #3498db;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-right: 10px;
+          font-weight: bold;
+        }
+  
+        .brand-text {
+          font-size: 1.2rem;
+          font-weight: 300;
+        }
+      }
+    }
+  
+    .user-panel {
+      padding: 15px 20px;
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  
+      .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        overflow: hidden;
+        margin-right: 10px;
+  
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+      }
+  
+      .user-info {
+        .user-name {
+          font-size: 0.9rem;
+          margin-bottom: 2px;
+        }
+  
+        .user-status {
+          font-size: 0.75rem;
+          color: rgba(255, 255, 255, 0.7);
+  
+          .online {
+            color: #2ecc71;
+            font-size: 0.6rem;
+          }
+        }
+      }
+    }
+  
+    .sidebar-menu {
+      padding: 10px 0;
+      overflow-y: auto;
+      height: calc(100vh - 160px);
+  
+      .menu-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+  
+        .menu-section {
+          padding: 10px 25px;
+          font-size: 0.75rem;
+          text-transform: uppercase;
+          color: rgba(255, 255, 255, 0.5);
+          letter-spacing: 1px;
+          margin-top: 15px;
+        }
+  
+        .menu-item {
+          &.has-submenu {
+            .submenu-toggle {
+              cursor: pointer;
+              display: flex;
+              align-items: center;
+              padding: 12px 20px;
+              color: white;
+              transition: all 0.2s ease;
+  
+              &:hover {
+                background-color: rgba(255, 255, 255, 0.1);
+              }
+  
+              .submenu-indicator {
+                margin-left: auto;
+                transition: transform 0.3s ease;
+  
+                &.rotate {
+                  transform: rotate(180deg);
+                }
+              }
+            }
+  
+            .submenu-list {
+              background-color: rgba(0, 0, 0, 0.1);
+              max-height: 0;
+              overflow: hidden;
+              transition: max-height 0.3s ease;
+  
+              &.open {
+                max-height: 200px;
+              }
+  
+              .submenu-item {
+                .submenu-link {
+                  display: flex;
+                  align-items: center;
+                  padding: 10px 20px 10px 40px;
+                  color: rgba(255, 255, 255, 0.8);
+                  text-decoration: none;
+                  font-size: 0.9rem;
+                  transition: all 0.2s ease;
+  
+                  &:hover {
+                    background-color: rgba(255, 255, 255, 0.1);
+                    color: white;
+                  }
+  
+                  &.active {
+                    color: #3498db;
+                  }
+  
+                  .submenu-icon {
+                    margin-right: 8px;
+                    font-size: 0.6rem;
+                  }
+                }
+              }
+            }
+          }
+  
+          .menu-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.2s ease;
+  
+            &:hover {
+              background-color: rgba(255, 255, 255, 0.1);
+              color: white;
+            }
+  
+            &.active {
+              background-color: rgba(52, 152, 219, 0.2);
+              color: #3498db;
+              border-left: 3px solid #3498db;
+            }
+  
+            .menu-icon {
+              margin-right: 10px;
+              width: 20px;
+              text-align: center;
+            }
+          }
+        }
+      }
+    }
+  
+    @media (max-width: 768px) {
+      transform: translateX(-100%);
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+  
+      &.open {
+        transform: translateX(0);
+      }
+    }
+  }
