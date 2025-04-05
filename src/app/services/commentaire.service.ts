@@ -19,7 +19,7 @@ export class CommentaireService {
 
   constructor(private http: HttpClient) {}
 
-  addComment(content: string, postId: number, userId: number): Observable<Comment> {
+    addComment(content: string, postId: number, userId: number): Observable<Comment> {
     const comment: Partial<Comment> = { content };
     return this.http.post<Comment>(`${this.apiUrl}?postId=${postId}&userId=${userId}`, comment);
   }
