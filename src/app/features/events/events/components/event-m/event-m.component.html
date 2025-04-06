@@ -13,12 +13,20 @@
       <div class="tab">Day 5 <br> <span>Nov 08, 2023</span></div>
     </div>
   
+
+                    <tr *ngfor="let event of events">
+                      <td>{{event.title}}</td>
+                    </tr>
+
+        <!-- Event Card -->
+
     <!-- Event Card -->
+<div *ngFor="let event of events">
     <div class="event-card">
       <div class="event-card-left">
         <img src="assets/img/destination-1.jpg" alt="Event Image" class="event-image">
         <div class="event-info">
-          <h3 class="event-title">Dealing with Difficult People</h3>
+          <h3 class="event-title"> {{event.title}}</h3>
           <p class="event-meta">
             <i class="fa fa-user"></i> John Smith /
             <i class="fa fa-envelope"></i> john@colorlib.com
@@ -44,6 +52,7 @@
           <span class="notification-badge">10</span>
         </div>
   </div>
+</div>
 
 
  

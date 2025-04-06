@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-
+import {HttpClientModule}from'@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './layouts/main-layout/header/header.component';
@@ -14,6 +14,7 @@ import { HomeComponent } from './pages/home/home.component';
 import { TestimonialComponent } from './layouts/main-layout/testimonial/testimonial.component';
 import { ServiceComponent } from './layouts/main-layout/service/service.component';
 import { GuidesComponent } from './layouts/main-layout/guides/guides.component';
+import { CommonModule } from '@angular/common';
 
 @NgModule({
   declarations: [
@@ -37,7 +38,9 @@ import { GuidesComponent } from './layouts/main-layout/guides/guides.component';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    NgbModule
+    NgbModule,
+    HttpClientModule,
+    CommonModule
   ],
   providers: [],
   bootstrap: [AppComponent]
