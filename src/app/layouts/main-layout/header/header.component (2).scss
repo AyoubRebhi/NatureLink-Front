@@ -1,0 +1,45 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.container-fluid.position-relative.p-0 {
+    margin: 0;
+    padding: 0;
+}
+
+.navbar {
+    position: absolute;
+    width: 100%;
+    background: transparent !important;
+    z-index: 1000;
+}
+
+.hero-header {
+    height: 60vh; /* Make sure the hero section takes full viewport height */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+// Custom dialog backdrop
+.mat-mdc-dialog-container .mdc-dialog__surface {
+    border-radius: 16px !important;
+  }
+  
+  .mat-mdc-dialog-container {
+    --mdc-dialog-container-color: transparent !important;
+    --mdc-dialog-with-divider-divider-color: transparent !important;
+  }
+  
+  // Animation
+  @keyframes slideIn {
+    from { transform: translateY(-20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  
+  .custom-dialog-container {
+    animation: slideIn 0.3s ease-out;
+  }

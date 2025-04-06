@@ -1,0 +1,61 @@
+<div class="auth-container">
+    <div class="auth-card">
+      <h2 class="text-center mb-4">Create Account</h2>
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label class="form-label">Username</label>
+          <input 
+            type="text" 
+            class="form-control"
+            formControlName="username"
+            placeholder="Enter your username">
+        <!-- Updated username validation message -->
+<div *ngIf="username?.invalid && username?.touched" class="text-danger small mt-1">
+  <div *ngIf="username?.errors?.['required']">Username is required</div>
+  <div *ngIf="username?.errors?.['minlength']">Minimum 3 characters</div>
+  <div *ngIf="username?.errors?.['pattern']">Only letters, numbers and underscores allowed</div>
+</div>
+        </div>
+  
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input 
+            type="email" 
+            class="form-control"
+            formControlName="email"
+            placeholder="Enter your email">
+          <div *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched" 
+               class="text-danger small mt-1">
+            Valid email is required
+          </div>
+        </div>
+  
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input 
+            type="password" 
+            class="form-control"
+            formControlName="password"
+            placeholder="Enter your password">
+          <div *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched" 
+               class="text-danger small mt-1">
+            Password must be at least 6 characters
+          </div>
+        </div>
+  
+        <button 
+          type="submit" 
+          class="btn btn-primary w-100 mb-3"
+          [disabled]="registerForm.invalid">
+          Create Account
+        </button>
+        <div *ngIf="errorMessage" class="error-message">
+          ⚠️ {{ errorMessage }}
+        </div>
+        <div class="text-center link-text">
+          Already have an account? 
+          <a routerLink="/auth/login" class="text-primary">Sign In</a>
+        </div>
+      </form>
+    </div>
+  </div>

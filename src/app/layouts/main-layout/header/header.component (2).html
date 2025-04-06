@@ -1,0 +1,48 @@
+<div class="container-fluid position-relative p-0">
+  <nav class="navbar navbar-expand-lg navbar-light px-4 px-lg-5 py-3 py-lg-0">
+    <a routerLink="/" class="navbar-brand p-0">
+      <span *ngIf="isAuthenticated" class="welcome-text">
+        Welcome, {{ currentUser?.username }}
+      </span>
+      <h1 class="text-primary m-0">NatureLink</h1>
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+      <span class="fa fa-bars"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+      <div class="navbar-nav ms-auto py-0">
+        <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" 
+           class="nav-item nav-link">Home</a>
+        <a routerLink="/about" routerLinkActive="active" class="nav-item nav-link">About</a>
+        <a routerLink="/services" routerLinkActive="active" class="nav-item nav-link">Services</a>
+        <a routerLink="/packages" routerLinkActive="active" class="nav-item nav-link">Packages</a>
+        <a routerLink="/contact" class="nav-item nav-link">Contact</a>
+        <a *ngIf="isAuthenticated"
+           routerLink="/profile" 
+           routerLinkActive="active" 
+           class="nav-item nav-link">
+          Profile
+        </a>
+      </div>
+      
+      <div class="d-flex align-items-center ms-lg-4">
+        <div *ngIf="!isAuthenticated" class="auth-buttons">
+          <a routerLink="/auth/login" class="btn btn-outline-primary me-2">Login</a>
+          <a routerLink="/auth/register" class="btn btn-primary">Register</a>
+        </div>
+        <div *ngIf="isAuthenticated" class="logged-in-section">
+          <button (click)="logout()" class="btn btn-danger">Logout</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Header Section (keep existing content) -->
+  <div *ngIf="currentRoute === '/'" class="container-fluid hero-header">
+    <!-- ... existing hero content ... -->
+  </div>
+
+  <div *ngIf="currentRoute !== '/'" class="container-fluid hero-header">
+    <!-- ... existing breadcrumb content ... -->
+  </div>
+</div>

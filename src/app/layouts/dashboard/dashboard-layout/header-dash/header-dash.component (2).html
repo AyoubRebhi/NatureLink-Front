@@ -1,0 +1,56 @@
+<header class="dashboard-header">
+    <div class="header-container">
+      <!-- Logo -->
+      <div class="logo-container">
+        <a routerLink="/dashboard" class="logo">
+          <span class="logo-icon">NL</span>
+          <span class="logo-text">NatureLink</span>
+        </a>
+      </div>
+  
+      <!-- Mobile menu toggle -->
+      <button class="menu-toggle" (click)="toggleMenu()">
+        <i class="fas fa-bars"></i>
+      </button>
+  
+      <!-- Navigation -->
+      <nav class="header-nav">
+        <ul class="nav-list">
+          <!-- Messages Dropdown -->
+         
+  
+          <!-- Notifications Dropdown -->
+
+            
+          <!-- User Profile -->
+          <li class="nav-item dropdown">
+            <a class="user-profile" (click)="toggleDropdown('profile')">
+            
+              <span class="profile-name">Admin </span>
+            </a>
+            <div class="dropdown-menu profile-menu" [class.show]="showProfileDropdown">
+              <div class="profile-header">
+                <img src="assets/dist/img/user2-160x160.jpg" alt="User" class="profile-avatar">
+                <div class="profile-info">
+                  <h4>Admin </h4>
+                  <small>Administrator</small>
+                </div>
+              </div>
+              <div class="profile-links">
+                <a href="#" class="profile-link">
+                  <i class="fas fa-user"></i> My Profile
+                </a>
+                <a href="#" class="profile-link">
+                  <i class="fas fa-cog"></i> Settings
+                </a>
+               <!-- Modify the sign out link -->
+<a href="#" class="profile-link" (click)="logout(); $event.preventDefault()">
+  <i class="fas fa-sign-out-alt"></i> Sign Out
+</a>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
