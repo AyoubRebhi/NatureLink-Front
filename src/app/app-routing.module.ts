@@ -22,6 +22,11 @@ const routes: Routes = [
         loadChildren: () =>
           import('./features/events/events.module').then(m => m.EventsModule),
       },
+      {
+        path: 'boutiques', 
+        loadChildren: () =>
+          import('./features/boutiques/boutiques.module').then(m => m.BoutiquesModule),
+      },
       
       
     ],

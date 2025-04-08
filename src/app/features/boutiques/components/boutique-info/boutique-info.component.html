@@ -1,0 +1,51 @@
+<div class="container">
+<div class="boutique-info">
+    <h4 class="subtitle"> Na3im shop</h4>
+    <h2 class="title"><span>Latest</span>Products</h2>
+  
+    <div class="product-grid">
+      <div class="product-card" *ngFor="let item of products">
+        <div class="discount-badge">-{{ item.discount }}%</div>
+        <div class="offre">{{ item.offre }}</div>
+        <img [src]="item.image" alt="Product Image" class="product-image" />
+        <div class="cart-item"> 
+            <ul>
+                <li>
+                    <i class="fas fa-shopping-cart"></i>
+                  
+                  <li> 
+                    <i class="fas fa-heart"></i>
+                  </li>
+                  <li> 
+                    <i class="fas fa-search"></i>
+                  </li>
+            </ul>
+    </div>
+        <h3 class="product-name">{{ item.name }}</h3>
+        <p class="price">
+          <span class="current">${{ item.price }}</span>
+          <span class="original">${{ item.originalPrice }}</span>
+        </p>
+      </div>
+      
+    </div>
+  </div>
+  <div class="news-feed">
+    <div class="news-grid">
+      <div class="news-card" *ngFor="let article of articles">
+        <div class="news-img">
+          <img [src]="article.image" alt="News Image" />
+          <div class="news-date">
+            <span class="day">{{ article.day }}</span>
+            <span class="month">{{ article.month }}</span>
+          </div>
+        </div>
+        <div class="news-content">
+          <h3>{{ article.title }}</h3>
+          <p>{{ article.description }}</p>
+          <a href="#" class="read-more">READ MORE ▸</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
