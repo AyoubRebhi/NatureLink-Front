@@ -1,10 +1,11 @@
 // auth.service.ts
-import { Injectable } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { throwError, Observable, BehaviorSubject, of } from 'rxjs';
+import { mergeMap, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { User, Role } from '../models/user.model';
-
+import { PaymentService } from './payment.service';
 @Injectable({
   providedIn: 'root'
 })
@@ -12,13 +13,16 @@ export class AuthService {
   private apiUrl = 'http://localhost:9000';
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
-  
+  private hasPendingPayments = new BehaviorSubject<boolean>(false);
+  public hasPendingPayments$ = this.hasPendingPayments.asObservable();
+
   public get currentUserValue(): User | null {
     return this.currentUserSubject.value;
   }
   constructor(
     private http: HttpClient,
-    private router: Router
+    private router: Router,
+    private injector: Injector
   ) {
     this.initializeAuthState();
   }
@@ -67,15 +71,22 @@ export class AuthService {
 
   signIn(credentials: { email: string; password: string }): Observable<{ token: string }> {
     return this.http.post<{ token: string }>(`${this.apiUrl}/auth/signin`, credentials).pipe(
+      mergeMap((response) => {
+        const user = this.decodeJwt(response.token);
+        console.log('Decoded user:', user);
+        if (user.blocked) {
+          return throwError(() => new Error('Account blocked. Please contact administrator.'));
+        }
+  
+        this.setSession(response.token, user);
+        this.redirectAfterLogin(user.role);
+  
+        // ✅ Retourner la réponse initiale pour respecter Observable<{ token: string }>
+        return of(response);
+      }),
       tap({
-        next: (response) => {
-          const user = this.decodeJwt(response.token);
-          this.setSession(response.token, user);
-          this.redirectAfterLogin(user.role);
-        },
         error: (error) => {
           console.error('Login error:', error);
-          throw error;
         }
       })
     );
@@ -90,7 +101,8 @@ export class AuthService {
       id: Number(payload.id),  // Get from dedicated id claim
       username: payload.username,
       email: payload.email,  // Email from subject
-      role: this.mapRole(payload.roles?.[0])
+      role: this.mapRole(payload.roles?.[0]),
+      blocked: payload.blocked
     };
   } catch (e) {
     console.error('JWT Decoding Error:', e, 'Token:', token);
@@ -186,4 +198,10 @@ export class AuthService {
   getCurrentUserId(): number | null {
     return this.currentUserValue?.id || null;
   }
+  getAuthToken(): string {
+    return localStorage.getItem('auth_token') || '';
+  }
+  
+ // auth.service.ts
+
 }

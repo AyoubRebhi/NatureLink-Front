@@ -23,6 +23,15 @@
            class="nav-item nav-link">
           Profile
         </a>
+        <a *ngIf="isAuthenticated" 
+   routerLink="/payments" 
+   class="btn btn-icon me-3"
+   title="View Payments">
+   <i class="fas fa-shopping-cart"></i>
+   <span *ngIf="paymentService.hasPendingPayments$ | async" class="badge bg-danger">
+     !
+   </span>
+</a>
       </div>
       
       <div class="d-flex align-items-center ms-lg-4">

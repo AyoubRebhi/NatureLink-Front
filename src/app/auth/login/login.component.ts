@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { AuthService } from '../../core/services/auth.service';
 import { Router } from '@angular/router';
+import { PaymentService } from 'src/app/core/services/payment.service';
 
 @Component({
   selector: 'app-login',
@@ -20,7 +21,8 @@ export class LoginComponent {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private paymentService: PaymentService
   ) {}
 
  // login.component.ts
@@ -34,12 +36,16 @@ onSubmit() {
 
   this.authService.signIn(credentials).subscribe({
     next: () => {
+      this.paymentService.checkPendingPayments();
       this.isLoading = false;
       // Add explicit navigation
     },
     error: (err) => {
       this.errorMessage = this.parseErrorMessage(err);
       this.isLoading = false;
+      if (err.message.includes('blocked')) {
+        this.errorMessage = 'Account blocked. Please contact administrator.';
+      }
       console.error('Login error:', err);  // Add detailed logging
     }
   });

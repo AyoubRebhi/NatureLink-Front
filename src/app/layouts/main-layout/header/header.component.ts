@@ -3,7 +3,7 @@ import { Router, NavigationEnd } from '@angular/router';
 import { filter, Subscription } from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
 import { User } from '../../../core/models/user.model';
-
+import { PaymentService } from '../../../core/services/payment.service';
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
@@ -26,7 +26,8 @@ export class HeaderComponent implements OnDestroy {
 
   constructor(
     public router: Router,
-    private authService: AuthService
+    public authService: AuthService ,
+    public paymentService: PaymentService
   ) {
     this.router.events
       .pipe(

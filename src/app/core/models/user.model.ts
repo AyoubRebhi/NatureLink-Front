@@ -3,6 +3,7 @@ export interface User {
     username: string;
     email: string;
     role: Role;
+    blocked: boolean;
   }
   
   export enum Role {

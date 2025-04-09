@@ -43,3 +43,25 @@ html, body {
   .custom-dialog-container {
     animation: slideIn 0.3s ease-out;
   }
+  /* header.component.scss */
+.btn-icon {
+  position: relative;
+  color: var(--primary);
+  font-size: 1.5rem;
+  
+  .badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    font-size: 0.7rem;
+    padding: 0.25em 0.4em;
+  }
+}
+
+.fa-shopping-cart {
+  transition: transform 0.3s ease;
+  
+  &:hover {
+    transform: scale(1.1);
+  }
+}

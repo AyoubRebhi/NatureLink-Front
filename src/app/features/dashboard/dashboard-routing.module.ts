@@ -9,15 +9,11 @@ const routes: Routes = [
   {
     path: '',
     component: DashboardLayoutComponent,
-    children: [
-      { path: 'dashboard', component: DashboardComponent }
-    ]
-  },
-    {
-    path: '',
-    component: AdminDashboardComponent,
     canActivate: [AuthGuard],
-    data: { roles: [Role.ADMIN] }
+    data: { roles: [Role.ADMIN] },
+    children: [
+      { path: '', component: AdminDashboardComponent }  // <- this handles '/admin'
+    ]
   }
 ];
 

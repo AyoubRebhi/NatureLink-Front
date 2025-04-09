@@ -1,30 +1,54 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 import { User } from '../models/user.model';
 import { AuthService } from './auth.service';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class UserService {
-  private apiUrl = 'http://localhost:9000';
+  private apiUrl = 'http://localhost:9000/api/users';
 
   constructor(
     private http: HttpClient,
     private authService: AuthService
   ) {}
 
-  
   getAllUsers(): Observable<User[]> {
-    return this.http.get<User[]>(this.apiUrl, {
-      headers: this.authService.getAuthHeaders()
+    return this.http.get<User[]>(
+      `${this.apiUrl}/admin/all`,
+      { headers: this.getAuthHeaders() }
+    ).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  private getAuthHeaders(): HttpHeaders {
+    const token = this.authService.getAuthToken();
+    return new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
     });
   }
 
-  deleteUser(userId: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/users/${userId}`, {
-      headers: this.authService.getAuthHeaders()
-    });
+  private handleError(error: HttpErrorResponse): Observable<never> {
+    const errorMessage = error.error.message || 'Failed to load users';
+    return throwError(() => new Error(errorMessage));
   }
+  // user.service.ts
+blockUser(userId: number): Observable<User> {
+  return this.http.put<User>(
+    `${this.apiUrl}/${userId}/block`,
+    {},
+    { headers: this.getAuthHeaders() }
+  );
+}
+
+unblockUser(userId: number): Observable<User> {
+  return this.http.put<User>(
+    `${this.apiUrl}/${userId}/unblock`,
+    {},
+    { headers: this.getAuthHeaders() }
+  );
+}
 }
