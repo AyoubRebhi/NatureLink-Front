@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 export interface Comment {
+dateCreated: Date;
   id?: number;
   content: string;
   createdAt?: Date;

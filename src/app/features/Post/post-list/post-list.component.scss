@@ -1,3 +1,4 @@
+
 /* Facebook Container */
 .facebook-container {
   max-width: 500px;
@@ -340,4 +341,253 @@
   padding: 0 4px;
   cursor: pointer;
   font-size: 16px;
+}
+/* Base Styles */
+body {
+  font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
+  background-color: #f1f2f6;
+  margin: 0;
+  padding: 0;
+  color: #050505;
+}
+
+/* Layout */
+.facebook-wrapper {
+  display: flex;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px 10px;
+  gap: 20px;
+}
+
+.facebook-container {
+  flex: 1;
+  max-width: 680px;
+  min-width: 500px;
+}
+
+.fb-left-column {
+  width: 280px;
+  position: sticky;
+  top: 20px;
+  height: fit-content;
+}
+
+.fb-right-column {
+  width: 280px;
+  position: sticky;
+  top: 20px;
+  height: fit-content;
+}
+
+/* Left Menu */
+.fb-left-menu {
+  background: white;
+  border-radius: 8px;
+  padding: 12px 0;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.fb-menu-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin: 4px 8px;
+  transition: all 0.2s;
+}
+
+.fb-menu-item.active {
+  background-color: #e7f3ff;
+  color: #1877f2;
+  font-weight: 600;
+}
+
+.fb-menu-item.active i {
+  color: #1877f2;
+}
+
+.fb-menu-item i {
+  width: 24px;
+  margin-right: 12px;
+  font-size: 18px;
+  color: #65676b;
+}
+
+.fb-menu-item:hover {
+  background-color: #f0f2f5;
+}
+
+/* Right Column */
+.fb-sponsorized, .fb-contacts {
+  background: white;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.fb-sponsorized h4, .fb-contacts h4 {
+  color: #65676b;
+  font-size: 16px;
+  margin: 0 0 12px 0;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #ddd;
+}
+
+.fb-sponsor-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.fb-sponsor-item:last-child {
+  border-bottom: none;
+}
+
+.fb-sponsor-item img {
+  width: 100px;
+  height: 70px;
+  border-radius: 4px;
+  object-fit: cover;
+  margin-right: 10px;
+}
+
+.fb-sponsor-item p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.fb-contact-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 0;
+  cursor: pointer;
+}
+
+.fb-contact-item img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.fb-contact-item span {
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.fb-contact-item:hover {
+  background-color: #f0f2f5;
+  border-radius: 6px;
+}
+
+/* Post Styles (existing styles with green accents) */
+.fb-post {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  margin-bottom: 15px;
+}
+
+.fb-post-actions .fb-action-btn:hover {
+  background-color: #e4f8e8; /* Light green hover */
+}
+
+.fb-comment-send {
+  color: #42b72a; /* Facebook green */
+}
+
+.fb-comment-edit-save {
+  background-color: #42b72a; /* Facebook green */
+}
+
+.fb-comment-text {
+  background-color: #f0f2f5;
+  border-radius: 18px;
+}
+
+.fb-comment-text:hover {
+  background-color: #e4f8e8; /* Light green hover */
+}
+
+/* Loading Spinner */
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+}
+
+.fb-spinner {
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #42b72a; /* Green spinner */
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Rest of your existing CSS remains the same */
+/* [Include all your existing CSS styles from previous implementation here] */
+.fb-post-dropdown {
+  position: relative;
+  display: inline-block;
+  
+  .fa-ellipsis-h {
+    padding: 8px;
+    cursor: pointer;
+    border-radius: 50%;
+    
+    &:hover {
+      background-color: #f0f2f5;
+    }
+  }
+}
+
+.fb-dropdown-menu {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  z-index: 100;
+  width: 200px;
+  overflow: hidden;
+  
+  button {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 8px 16px;
+    border: none;
+    background: none;
+    text-align: left;
+    cursor: pointer;
+    
+    i {
+      margin-right: 8px;
+      width: 20px;
+      text-align: center;
+    }
+    
+    &:hover {
+      background-color: #f0f2f5;
+    }
+    
+    &.delete-item {
+      color: #f44336;
+      
+      &:hover {
+        background-color: #ffebee;
+      }
+    }
+  }
 }

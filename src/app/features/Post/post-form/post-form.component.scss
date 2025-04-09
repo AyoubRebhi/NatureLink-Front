@@ -1,0 +1,369 @@
+/* Facebook Post Form Container */
+.fb-post-form-container {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  margin-bottom: 16px;
+  padding: 12px 16px;
+}
+
+/* Header Section */
+.fb-post-form-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.fb-post-user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.fb-post-user-info h5 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+}
+.fb-emoji-picker-container {
+  position: absolute;
+  bottom: 60px;
+  left: 0;
+  z-index: 1000;
+  width: 100%;
+  
+  .fb-emoji-picker {
+    width: 100%;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+  }
+}
+
+.fb-add-to-post-options .fb-add-option:nth-child(3) {
+  color: #FFCA28; /* Couleur jaune pour le bouton émoji */
+  
+  &:hover {
+    color: darken(#FFCA28, 10%);
+  }
+}
+
+.fb-post-content-area {
+  position: relative;
+}
+
+.fb-image-preview {
+  position: relative;
+  
+  .fb-preview-image {
+    max-height: 300px;
+    width: auto;
+    max-width: 100%;.fb-emoji-picker-container {
+      position: absolute;
+      bottom: 60px;
+      left: 0;
+      z-index: 1000;
+      width: 100%;
+      max-width: 350px;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      background: white; /* Fond blanc opaque */
+    
+      ::ng-deep {
+        .emoji-mart {
+          width: 100% !important;
+          border: none !important;
+          background: white !important; /* Fond opaque */
+          font-family: 'Segoe UI', Helvetica, sans-serif !important;
+    
+          /* Barre de recherche */
+          .emoji-mart-search {
+            padding: 12px !important;
+            background: white !important;
+            border-bottom: 1px solid #f0f2f5 !important;
+            
+            input {
+              border: 1px solid #dddfe2 !important;
+              border-radius: 6px !important;
+              padding: 8px 12px !important;
+              background: #f0f2f5 !important;
+            }
+          }
+    
+          /* Catégories */
+          .emoji-mart-category {
+            padding: 0 8px !important;
+            
+            &-label {
+              position: sticky;
+              top: 0;
+              background: white !important;
+              z-index: 2;
+              padding: 8px 0 !important;
+              
+              span {
+                color: #65676b !important;
+                font-weight: 600 !important;
+                font-size: 14px !important;
+                background: transparent !important;
+              }
+            }
+          }
+    
+          /* Émojis */
+          .emoji-mart-emoji {
+            padding: 8px !important;
+            transition: transform 0.1s;
+            
+            &:hover {
+              transform: scale(1.2);
+              background: transparent !important;
+            }
+          }
+    
+          /* Barre inférieure */
+          .emoji-mart-bar {
+            border-top: 1px solid #f0f2f5 !important;
+            background: white !important;
+            padding: 8px !important;
+            
+            .emoji-mart-anchors {
+              padding: 0 !important;
+            }
+          }
+        }
+      }
+    }
+    border-radius: 8px;
+  }
+  
+  .fb-remove-image-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(0,0,0,0.5);
+    color: white;
+    border: none;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    
+    &:hover {
+      background: rgba(0,0,0,0.7);
+    }
+  }
+}
+.fb-post-privacy {
+  display: flex;
+  align-items: center;
+  background: #e4e6eb;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  margin-top: 2px;
+}
+
+.fb-post-privacy i {
+  margin-right: 4px;
+  font-size: 12px;
+}
+
+.fb-post-privacy span {
+  margin-right: 4px;
+}
+
+/* Content Area */
+.fb-post-content-area {
+  margin-bottom: 12px;
+}
+
+.fb-post-textarea {
+  width: 100%;
+  border: none;
+  resize: none;
+  font-size: 15px;
+  min-height: 80px;
+  padding: 8px 0;
+}
+
+.fb-post-textarea:focus {
+  outline: none;
+}
+
+/* Image Preview */
+.fb-image-preview {
+  position: relative;
+  margin-top: 12px;
+}
+
+.fb-preview-image {
+  width: 100%;
+  border-radius: 8px;
+  max-height: 300px;
+  object-fit: contain;
+}
+
+.fb-remove-image-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* Add to Post Section */
+.fb-add-to-post {
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  padding: 10px 0;
+  margin-bottom: 12px;
+}
+
+.fb-add-to-post-label {
+  font-size: 13px;
+  color: #65676b;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.fb-add-to-post-options {
+  display: flex;
+}
+
+.fb-add-option {
+  background: none;
+  border: none;
+  color: #65676b;
+  font-size: 16px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-right: 4px;
+}
+
+.fb-add-option:hover {
+  background: #f0f2f5;
+}
+
+.fb-add-option:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Post Button */
+.fb-post-button-container {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.fb-post-button {
+  background: #1877f2;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  min-width: 100px;
+}
+
+.fb-post-button:disabled {
+  background: #e4e6eb;
+  color: #bcc0c4;
+  cursor: not-allowed;
+}
+
+.fb-post-button i.fa-spinner {
+  font-size: 14px;
+}
+.fb-emoji-picker-container {
+  position: absolute;
+  bottom: 50px;
+  left: 0;
+  z-index: 1000;
+  width: 300px; /* Largeur réduite */
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+  background: white;
+
+  ::ng-deep {
+    .emoji-mart {
+      width: 100% !important;
+      height: 320px !important; /* Hauteur fixe */
+      border: none !important;
+      background: white !important;
+      display: flex !important;
+      flex-direction: column !important;
+
+      /* Cache la barre supérieure */
+      .emoji-mart-bar:first-child {
+        display: none !important;
+      }
+
+      /* Contenu principal (émojis) */
+      .emoji-mart-scroll {
+        order: 1; /* Met les émojis en premier */
+        flex-grow: 1;
+        overflow-y: auto;
+      }
+
+      /* Barre de catégories en bas */
+      .emoji-mart-bar:last-child {
+        order: 2; /* Met la barre en dernier */
+        border-top: 1px solid #f0f2f5 !important;
+        padding: 8px !important;
+        background: white !important;
+      }
+
+      /* Style des catégories */
+      .emoji-mart-anchor {
+        padding: 5px !important;
+      }
+
+      /* Émojis */
+      .emoji-mart-emoji {
+        padding: 6px !important;
+      }
+
+      /* Cache la recherche */
+      .emoji-mart-search {
+        display: none !important;
+      }
+    }
+  }
+}
+::ng-deep .emoji-mart {
+  .emoji-mart-emoji {
+    transform: none !important;
+    transition: none !important;
+    
+    &:hover {
+      transform: none !important;
+      background: transparent !important;
+    }
+    
+    &::after, &::before {
+      display: none !important;
+    }
+  }
+}

@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
+export class YourModule { }
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './layouts/main-layout/header/header.component';
@@ -14,14 +15,24 @@ import { HomeComponent } from './pages/home/home.component';
 import { TestimonialComponent } from './layouts/main-layout/testimonial/testimonial.component';
 import { ServiceComponent } from './layouts/main-layout/service/service.component';
 import { GuidesComponent } from './layouts/main-layout/guides/guides.component';
-import { PostFormComponent } from './post-form/post-form.component';
+import { PostFormComponent } from './features/Post/post-form/post-form.component';
 import { FormsModule } from '@angular/forms';
-
+import { ReactiveFormsModule } from '@angular/forms'; // Add this import
+import { ListFoodComponent } from './features/Food/list-food/list-food.component';
 import { HttpClientModule } from '@angular/common/http';
-import { PostListComponent } from './post-list/post-list.component';
-import { AddFoodComponent } from './add-food/add-food.component';
-import { AddClothingComponent } from './add-clothing/add-clothing.component';
-import { AddDestinationComponent } from './add-destination/add-destination.component'; 
+import { PostListComponent } from './features/Post/post-list/post-list.component';
+import { AddFoodComponent } from './features/Food/add-food/add-food.component';
+import { AddClothingComponent } from './features/Clothing/add-clothing/add-clothing.component';
+import { AddDestinationComponent } from './features/Destination/add-destination/add-destination.component';
+import { ClothingListComponent } from './features/Clothing/clothing-list/clothing-list.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ToastrModule } from 'ngx-toastr';
+
+import { UpdateFoodComponent } from './features/Food/update-food/update-food.component';
+import { ListFoodClothingfrontComponent } from './features/Food/list-food-clothingfront/list-food-clothingfront.component';
+import { UpdateClothingComponent } from './features/Clothing/update-clothing/update-clothing.component';
+import { PickerModule } from '@ctrl/ngx-emoji-mart';
+import { PostUserComponent } from './features/Post/post-user/post-user.component';
 
 @NgModule({
   declarations: [
@@ -45,13 +56,27 @@ import { AddDestinationComponent } from './add-destination/add-destination.compo
     AddFoodComponent,
     AddClothingComponent,
     AddDestinationComponent,
+    ClothingListComponent,
+    ListFoodComponent,
+    UpdateFoodComponent,
+    ListFoodClothingfrontComponent,
+    UpdateClothingComponent,
+    PostUserComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     NgbModule,
+    PickerModule,
     FormsModule,
-    HttpClientModule // Import HttpClientModule here²  
+    HttpClientModule,
+    ReactiveFormsModule ,
+    BrowserAnimationsModule,
+    ToastrModule.forRoot({
+      timeOut: 3000,
+      positionClass: 'toast-top-right',
+      preventDuplicates: true,
+    })// Import HttpClientModule here²  
   ],
   providers: [],
   bootstrap: [AppComponent]

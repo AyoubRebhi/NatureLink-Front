@@ -7,7 +7,7 @@ import { Food } from '../model/Food.model';
   providedIn: 'root'
 })
 export class FoodService {
-  private apiUrl = 'http://localhost:8080/api/foods';
+  private apiUrl = 'http://localhost:9000/api/foods';
 
   constructor(private http: HttpClient) { }
 
@@ -45,4 +45,26 @@ export class FoodService {
   deleteFood(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
+
+
+  updateFoodWithImage(
+    id: number,
+    name: string,
+    description: string,
+    season: string,
+    destinationId: number,
+    image: File | null
+  ): Observable<Food> {
+    const formData = new FormData();
+    formData.append('nom', name); // Notez 'nom' au lieu de 'name'
+    formData.append('description', description);
+    formData.append('season', season);
+    formData.append('destinationId', destinationId.toString());
+    if (image) {
+      formData.append('file', image); // Notez 'file' au lieu de 'image'
+    }
+  
+    return this.http.put<Food>(`${this.apiUrl}/${id}`, formData);
+  }
+
 }

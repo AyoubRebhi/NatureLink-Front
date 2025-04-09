@@ -1,0 +1,177 @@
+// Variables
+$primary-green: #4CAF50;
+$light-green: #E8F5E9;
+$dark-green: #388E3C;
+$error-color: #f44336;
+$success-color: #4CAF50;
+$border-color: #ddd;
+$shadow-color: rgba(0, 0, 0, 0.1);
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Arial', sans-serif;
+  
+  h2 {
+    color: $dark-green;
+    margin-bottom: 25px;
+    text-align: center;
+    font-size: 28px;
+    border-bottom: 2px solid $primary-green;
+    padding-bottom: 10px;
+  }
+}
+
+.food-form {
+  background-color: white;
+  padding: 25px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px $shadow-color;
+  
+  .alert {
+    padding: 12px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    font-weight: 500;
+    
+    &.error {
+      background-color: #FFEBEE;
+      color: $error-color;
+      border-left: 4px solid $error-color;
+    }
+    
+    &.success {
+      background-color: $light-green;
+      color: $dark-green;
+      border-left: 4px solid $primary-green;
+    }
+  }
+  
+  .form-group {
+    margin-bottom: 20px;
+    
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #333;
+    }
+    
+    input[type="text"],
+    textarea,
+    select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid $border-color;
+      border-radius: 4px;
+      font-size: 16px;
+      transition: border 0.3s, box-shadow 0.3s;
+      
+      &:focus {
+        outline: none;
+        border-color: $primary-green;
+        box-shadow: 0 0 0 3px rgba($primary-green, 0.2);
+      }
+      
+      &.invalid {
+        border-color: $error-color;
+        background-color: rgba($error-color, 0.05);
+      }
+    }
+    
+    textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+    
+    input[type="file"] {
+      padding: 10px 0;
+      
+      &::-webkit-file-upload-button {
+        background-color: $primary-green;
+        color: white;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        
+        &:hover {
+          background-color: $dark-green;
+        }
+      }
+    }
+    
+    .error-message {
+      color: $error-color;
+      font-size: 14px;
+      margin-top: 5px;
+      font-weight: 500;
+    }
+  }
+  
+  .form-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+    
+    button {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      
+      &.submit-btn {
+        background-color: $primary-green;
+        color: white;
+        
+        &:hover:not([disabled]) {
+          background-color: $dark-green;
+          transform: translateY(-2px);
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        &:disabled {
+          background-color: #cccccc;
+          cursor: not-allowed;
+          opacity: 0.7;
+        }
+      }
+      
+      &.cancel-btn {
+        background-color: white;
+        color: #666;
+        border: 1px solid $border-color;
+        
+        &:hover {
+          background-color: #f5f5f5;
+          color: #333;
+        }
+      }
+    }
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .container {
+    padding: 15px;
+  }
+  
+  .food-form {
+    padding: 20px 15px;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+    gap: 10px;
+    
+    button {
+      width: 100%;
+    }
+  }
+}

@@ -6,11 +6,11 @@ import { map } from 'rxjs/operators';
 export interface Post {
   id: number;
   content: string;
-  imageUrl: string | null | undefined;  // Allow null as well as undefined
-  createdAt: Date;
+  imageUrl: string | null | undefined;
+  dateCreated: Date;
   user: {
     id: number;
-    name: string;
+    username: string;
     avatarUrl?: string;
   };
   likesCount: number;
@@ -22,12 +22,13 @@ export interface Post {
   providedIn: 'root'
 })
 export class PostService {
-  private apiUrl = 'http://localhost:9000/api/posts'; // API sur le port 9000
-  private imageBaseUrl = 'http://localhost:9000'; // URL des images
+  private apiUrl = 'http://localhost:9000/api/posts';
+  private imageBaseUrl = 'http://localhost:9000';
 
   constructor(private http: HttpClient) { }
 
-  createPost(content: string, image: File | null, userId: number): Observable<any> {
+  // Créer un nouveau post
+  createPost(content: string, image: File | null, userId: number): Observable<Post> {
     const formData = new FormData();
     formData.append('content', content);
     formData.append('userId', userId.toString());
@@ -36,15 +37,28 @@ export class PostService {
       formData.append('image', image, image.name);
     }
 
-    return this.http.post(this.apiUrl, formData);
+    return this.http.post<Post>(this.apiUrl, formData).pipe(
+      map(post => this.processPostImage(post))
+    );
   }
 
+  // Récupérer tous les posts
   getAllPosts(): Observable<Post[]> {
     return this.http.get<Post[]>(this.apiUrl).pipe(
-      map(posts => posts.map(post => ({
-        ...post,
-        imageUrl: post.imageUrl ? this.imageBaseUrl + post.imageUrl : null
-      })))
+      map(posts => posts.map(post => this.processPostImage(post)))
     );
+  }
+
+  // Supprimer un post
+  deletePost(postId: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${postId}`);
+  }
+
+  // Méthode privée pour traiter les URLs d'images
+  private processPostImage(post: Post): Post {
+    return {
+      ...post,
+      imageUrl: post.imageUrl ? `${this.imageBaseUrl}${post.imageUrl}` : null
+    };
   }
 }

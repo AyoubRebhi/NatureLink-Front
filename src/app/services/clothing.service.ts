@@ -7,7 +7,7 @@ import { Clothing } from '../model/Clothing.model';
   providedIn: 'root'
 })
 export class ClothingService {
-  private apiUrl = 'http://localhost:8080/api/clothing';
+  private apiUrl = 'http://localhost:9000/api/clothing';
 
   constructor(private http: HttpClient) { }
 
@@ -17,6 +17,13 @@ export class ClothingService {
 
   getClothingByDestination(destinationId: number): Observable<Clothing[]> {
     return this.http.get<Clothing[]>(`${this.apiUrl}/destination/${destinationId}`);
+  }
+  getClothingById(id: number): Observable<Clothing> {
+    return this.http.get<Clothing>(`${this.apiUrl}/${id}`);
+  }
+  
+  updateClothing(id: number, formData: FormData): Observable<Clothing> {
+    return this.http.put<Clothing>(`${this.apiUrl}/${id}`, formData);
   }
 
   addClothingWithImage(
@@ -41,4 +48,8 @@ export class ClothingService {
   addClothing(clothing: Clothing): Observable<Clothing> {
     return this.http.post<Clothing>(`${this.apiUrl}/json`, clothing);
   }
+  // Add this method to your ClothingService
+deleteClothing(id: number): Observable<any> {
+  return this.http.delete(`${this.apiUrl}/${id}`);
+}
 }

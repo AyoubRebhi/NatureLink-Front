@@ -1,6 +1,6 @@
 export interface Destination {
     id?: number;
-    name: string;
+    nom: string;
     description: string;
     // Add other properties as needed
   }

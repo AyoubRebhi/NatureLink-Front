@@ -1,0 +1,87 @@
+<div class="container">
+    <h2>Ajouter un nouveau vêtement</h2>
+    
+    <form [formGroup]="clothingForm" (ngSubmit)="onSubmit()" enctype="multipart/form-data" *ngIf="!isLoading; else loading">
+      <!-- Nom -->
+      <div class="form-group">
+        <label for="name">Nom *</label>
+        <input type="text" id="name" formControlName="name" class="form-control" 
+               [ngClass]="{ 'is-invalid': submitted && nameControl?.errors }">
+        <div *ngIf="submitted && nameControl?.errors" class="invalid-feedback">
+          <div *ngIf="hasError(nameControl, 'required')">Le nom est obligatoire</div>
+          <div *ngIf="hasError(nameControl, 'maxlength')">Le nom ne peut pas dépasser 100 caractères</div>
+        </div>
+      </div>
+  
+      <!-- Description -->
+      <div class="form-group">
+        <label for="description">Description</label>
+        <textarea id="description" formControlName="description" class="form-control" rows="3"
+                  [ngClass]="{ 'is-invalid': submitted && descriptionControl?.errors }"></textarea>
+        <div *ngIf="submitted && descriptionControl?.errors" class="invalid-feedback">
+          <div *ngIf="hasError(descriptionControl, 'maxlength')">La description ne peut pas dépasser 500 caractères</div>
+        </div>
+      </div>
+  
+      <!-- Saison -->
+      <div class="form-group">
+        <label for="season">Saison *</label>
+        <select id="season" formControlName="season" class="form-control"
+                [ngClass]="{ 'is-invalid': submitted && seasonControl?.errors }">
+          <option value="">Sélectionner une saison</option>
+          <option *ngFor="let season of seasons" [value]="season">{{season}}</option>
+        </select>
+        <div *ngIf="submitted && seasonControl?.errors" class="invalid-feedback">
+          <div *ngIf="hasError(seasonControl, 'required')">La saison est obligatoire</div>
+        </div>
+      </div>
+  
+      <!-- Destination -->
+      <div class="form-group">
+        <label for="destination">Destination *</label>
+        <select id="destination" formControlName="destination" class="form-control"
+                [ngClass]="{ 'is-invalid': submitted && destinationControl?.errors }">
+          <option value="">Sélectionner une destination</option>
+          <option *ngFor="let dest of destinations" [ngValue]="dest">
+            {{ dest.nom }}
+          </option>
+        </select>
+        <div *ngIf="submitted && destinationControl?.errors" class="invalid-feedback">
+          <div *ngIf="hasError(destinationControl, 'required')">La destination est obligatoire</div>
+        </div>
+      </div>
+  
+      <!-- Image -->
+      <div class="form-group">
+        <label for="image">Image *</label>
+        <input type="file" id="image" (change)="onFileSelected($event)" class="form-control-file"
+               accept="image/*" [ngClass]="{ 'is-invalid': submitted && imageControl?.errors }">
+        <div *ngIf="submitted && imageControl?.errors" class="invalid-feedback">
+          <div *ngIf="hasError(imageControl, 'required')">L'image est obligatoire</div>
+          <div *ngIf="hasError(imageControl, 'invalidType')">Seuls les fichiers image sont acceptés</div>
+          <div *ngIf="hasError(imageControl, 'maxSize')">L'image ne peut pas dépasser 5MB</div>
+        </div>
+        <small class="form-text text-muted">Formats acceptés: JPEG, PNG. Taille max: 5MB</small>
+      </div>
+  
+      <!-- Boutons -->
+      <div class="form-group buttons">
+        <button type="submit" class="btn btn-primary" [disabled]="isLoading">
+          <span *ngIf="!isLoading">Ajouter</span>
+          <span *ngIf="isLoading">Enregistrement...</span>
+        </button>
+        <!-- <button type="button" class="btn btn-outline-secondary" (click)="router.navigate(['/admin/clothing-list'])">
+          Annuler
+        </button> -->
+      </div>
+    </form>
+  
+    <ng-template #loading>
+      <div class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+          <span class="sr-only">Chargement...</span>
+        </div>
+        <p class="mt-2">Chargement des données...</p>
+      </div>
+    </ng-template>
+  </div>

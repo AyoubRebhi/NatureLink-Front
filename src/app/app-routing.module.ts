@@ -5,9 +5,10 @@ import { ServicesComponent } from './pages/services/services.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { MainLayoutComponent } from './layouts/main-layout/main-layout.component';
 import { HomeComponent } from './pages/home/home.component';
-import { PostFormComponent } from './post-form/post-form.component';
-import { PostListComponent } from './post-list/post-list.component';
-
+import { PostFormComponent } from './features/Post/post-form/post-form.component';
+import { PostListComponent } from './features/Post/post-list/post-list.component';
+import { AddClothingComponent } from './features/Clothing/add-clothing/add-clothing.component';
+import { ListFoodClothingfrontComponent } from './features/Food/list-food-clothingfront/list-food-clothingfront.component';
 const routes: Routes = [
   {
     path: '',
@@ -17,7 +18,8 @@ const routes: Routes = [
       { path: 'about', component: AboutComponent },
       { path: 'post', component: ServicesComponent },
       { path: 'postadd', component: PostFormComponent },
-      { path: 'postlist', component: PostListComponent }
+      { path: 'postlist', component: PostListComponent },
+      { path: 'listD', component: ListFoodClothingfrontComponent },
 
 
     ]
@@ -29,7 +31,8 @@ const routes: Routes = [
         (m) => m.DashboardModule
       )
   },
-  { path: '**', component: NotFoundComponent }
+  { path: 'addclothing', component: AddClothingComponent }
+
 ];
 
 @NgModule({

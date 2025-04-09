@@ -1,0 +1,61 @@
+<div class="clothing-container">
+  <div class="header-with-actions">
+    <h2>Vêtements</h2>
+    
+    <div class="actions">
+      <div class="season-filter">
+        <select [(ngModel)]="selectedSeason" (change)="filterBySeason()">
+          <option value="all">Toutes les saisons</option>
+          <option value="Été">Été</option>
+          <option value="Hiver">Hiver</option>
+          <option value="Printemps">Printemps</option>
+          <option value="Automne">Automne</option>
+        </select>
+      </div>
+      
+      <button class="btn btn-add" routerLink="/admin/addclothing">
+        <i class="fas fa-plus"></i> Ajouter
+      </button>
+    </div>
+  </div>
+  
+  <div *ngIf="isLoading" class="loading-spinner">
+    <div class="spinner"></div>
+    <p>Chargement des vêtements...</p>
+  </div>
+
+  <div *ngIf="!isLoading && filteredItems.length === 0" class="no-items">
+    <p>Aucun vêtement trouvé pour la saison sélectionnée.</p>
+  </div>
+
+  <div class="card-container" *ngIf="!isLoading && filteredItems.length > 0">
+    <div class="clothing-card" *ngFor="let item of filteredItems">
+      <div class="card-header">
+        <h3 class="card-title">{{ item.name }}</h3>
+        <p class="card-season">Saison: {{ item.season }}</p>
+      </div>
+      
+      <div class="card-image-container">
+        <img 
+          [src]="'http://localhost:9000'+item.imageUrl || 'assets/images/default-clothing.jpg'" 
+          alt="{{ item.name }}"
+          class="card-image"
+          onerror="this.src='assets/images/default-clothing.jpg'"
+        >
+      </div>
+      
+      <div class="card-content">
+        <p class="card-description">{{ item.description }}</p>
+      </div>
+      
+      <div class="card-actions">
+        <button class="btn btn-edit" (click)="navigateToUpdate(item.id!)">
+          <i class="fas fa-edit"></i> Modifier
+        </button>
+        <button class="btn btn-delete" (click)="deleteClothing(item.id!)">
+          <i class="fas fa-trash"></i> Supprimer
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

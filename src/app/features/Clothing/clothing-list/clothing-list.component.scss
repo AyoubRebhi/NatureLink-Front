@@ -1,0 +1,264 @@
+/* Main container */
+.clothing-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 15px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+  /* Title */
+  h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #2c3e50;
+    font-size: 1.8rem; // Augmenté
+  }
+}
+
+/* Header with actions */
+.header-with-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px; // Augmenté
+  flex-wrap: wrap;
+  gap: 20px; // Augmenté
+
+  .actions {
+    display: flex;
+    align-items: center;
+    gap: 20px; // Augmenté
+
+    .season-filter select {
+      padding: 10px 15px; // Augmenté
+      border: 1px solid #ddd;
+      border-radius: 6px; // Augmenté
+      background-color: white;
+      cursor: pointer;
+      font-size: 1rem; // Augmenté
+    }
+
+    .btn-add {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 20px; // Augmenté
+      border-radius: 6px; // Augmenté
+      cursor: pointer;
+      transition: background-color 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 8px; // Augmenté
+      font-size: 1rem; // Augmenté
+
+      &:hover {
+        background-color: #45a049;
+      }
+
+      i {
+        font-size: 1rem; // Augmenté
+      }
+    }
+  }
+}
+
+/* Loading state */
+.loading-spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 200px; // Augmenté
+
+  .spinner {
+    width: 40px; // Augmenté
+    height: 40px; // Augmenté
+    border: 4px solid #f3f3f3; // Augmenté
+    border-top: 4px solid #3498db; // Augmenté
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 15px; // Augmenté
+  }
+
+  p {
+    color: #7f8c8d;
+    font-size: 1.1rem; // Augmenté
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* No items message */
+.no-items {
+  text-align: center;
+  font-size: 1.1rem; // Augmenté
+  color: #7f8c8d;
+  padding: 30px 0; // Augmenté
+}
+
+/* Card container */
+.card-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); // Cartes plus larges
+  gap: 25px; // Augmenté
+  padding: 20px 0; // Augmenté
+}
+
+/* Individual card */
+.clothing-card {
+  background: white;
+  border-radius: 12px; // Augmenté
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); // Ombre plus prononcée
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  &:hover {
+    transform: translateY(-5px); // Effet plus marqué
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); // Ombre plus prononcée au survol
+  }
+}
+
+/* Card header */
+.card-header {
+  padding: 15px 20px; // Augmenté
+  background: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+
+  .card-title {
+    margin: 0;
+    color: #2c3e50;
+    font-size: 1.2rem; // Augmenté
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .card-season {
+    margin: 8px 0 0; // Augmenté
+    color: #3498db;
+    font-size: 0.95rem; // Augmenté
+  }
+}
+
+/* Card image */
+.card-image-container {
+  height: 200px; // Augmenté
+  overflow: hidden;
+
+  .card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease; // Animation plus douce
+
+    &:hover {
+      transform: scale(1.05); // Zoom légèrement augmenté
+    }
+  }
+}
+
+/* Card content */
+.card-content {
+  padding: 15px 20px; // Augmenté
+  flex-grow: 1;
+
+  .card-description {
+    margin: 0;
+    color: #495057;
+    font-size: 0.95rem; // Augmenté
+    line-height: 1.5; // Augmenté
+    display: -webkit-box;
+    -webkit-line-clamp: 3; // Plus de lignes visibles
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+/* Card actions */
+.card-actions {
+  display: flex;
+  justify-content: flex-end; // Alignés à droite
+  gap: 12px; // Augmenté
+  padding: 15px 20px; // Augmenté
+  border-top: 1px solid #e9ecef;
+
+  .btn {
+    padding: 8px 16px; // Augmenté
+    border: none;
+    border-radius: 6px; // Augmenté
+    font-size: 0.9rem; // Augmenté
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px; // Augmenté
+
+    i {
+      font-size: 1rem; // Augmenté
+    }
+  }
+
+  .btn-edit {
+    background-color: #3498db; // Changé pour bleu
+    color: white;
+
+    &:hover {
+      background-color: #2980b9;
+    }
+  }
+
+  .btn-delete {
+    background-color: #e74c3c;
+    color: white;
+
+    &:hover {
+      background-color: #c0392b;
+    }
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+  .card-container {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .header-with-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 15px;
+  }
+
+  .actions {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .card-container {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  }
+
+  .card-image-container {
+    height: 180px;
+  }
+}
+
+@media (max-width: 480px) {
+  .card-container {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .card-image-container {
+    height: 160px;
+  }
+}

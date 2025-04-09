@@ -15,7 +15,8 @@
 
     <!-- Content -->
     <div class="fb-post-content-area">
-      <textarea [(ngModel)]="newPostContent" 
+      <textarea #postTextarea
+                [(ngModel)]="newPostContent" 
                 class="fb-post-textarea"
                 placeholder="Quoi de neuf ?"
                 [disabled]="isSubmitting"></textarea>
@@ -27,7 +28,29 @@
           <i class="fas fa-times"></i>
         </button>
       </div>
-    </div>
+
+      <div class="fb-emoji-picker-container" *ngIf="showEmojiPicker">
+        <emoji-mart
+          set="facebook"
+          [perLine]="8"
+          [emojiSize]="24"
+          (emojiClick)="addEmoji($event)"
+          i18n="{
+            search: 'Rechercher...',
+            categories: {
+              recent: 'Récents',
+              people: 'Visages',
+              nature: 'Nature',
+              foods: 'Nourriture',
+              activity: 'Activités',
+              places: 'Voyage',
+              objects: 'Objets',
+              symbols: 'Symboles',
+              flags: 'Drapeaux'
+            }
+          }">
+        </emoji-mart>
+      </div>
 
     <!-- Add to your post -->
     <div class="fb-add-to-post">
@@ -39,7 +62,7 @@
         <button class="fb-add-option" [disabled]="isSubmitting">
           <i class="fas fa-user-tag"></i>
         </button>
-        <button class="fb-add-option" [disabled]="isSubmitting">
+        <button class="fb-add-option" (click)="toggleEmojiPicker()" [disabled]="isSubmitting">
           <i class="fas fa-smile"></i>
         </button>
         <button class="fb-add-option" [disabled]="isSubmitting">
@@ -67,6 +90,6 @@
           Publication...
         </span>
       </button>
-    </div>
-  </div>
+
+    </div>  </div>
 </div>
