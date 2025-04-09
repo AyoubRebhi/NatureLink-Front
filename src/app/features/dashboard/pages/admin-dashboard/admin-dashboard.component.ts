@@ -89,4 +89,8 @@ private updateUserInList(updatedUser: User) {
     this.usersDataSource.data = newData;
   }
 }
+viewUserPayments(user: User): void {
+  this.router.navigate([`/admin/users/${user.id}/payments`]);
+}
+
 }

@@ -1,0 +1,37 @@
+.user-payments-container {
+    padding: 2rem;
+  
+    .status-badge {
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      
+      &.pending {
+        background-color: #fff3cd;
+        color: #856404;
+      }
+      
+      &.completed {
+        background-color: #d4edda;
+        color: #155724;
+      }
+      
+      &.cancelled {
+        background-color: #f8d7da;
+        color: #721c24;
+      }
+    }
+  
+    .no-data-message {
+      text-align: center;
+      margin-top: 2rem;
+      color: #6c757d;
+  
+      mat-icon {
+        font-size: 3rem;
+        height: 3rem;
+        width: 3rem;
+      }
+    }
+  }

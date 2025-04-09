@@ -30,19 +30,14 @@
             </a>
             <div class="dropdown-menu profile-menu" [class.show]="showProfileDropdown">
               <div class="profile-header">
-                <img src="assets/dist/img/user2-160x160.jpg" alt="User" class="profile-avatar">
+                
                 <div class="profile-info">
                   <h4>Admin </h4>
                   <small>Administrator</small>
                 </div>
               </div>
               <div class="profile-links">
-                <a href="#" class="profile-link">
-                  <i class="fas fa-user"></i> My Profile
-                </a>
-                <a href="#" class="profile-link">
-                  <i class="fas fa-cog"></i> Settings
-                </a>
+                
                <!-- Modify the sign out link -->
 <a href="#" class="profile-link" (click)="logout(); $event.preventDefault()">
   <i class="fas fa-sign-out-alt"></i> Sign Out

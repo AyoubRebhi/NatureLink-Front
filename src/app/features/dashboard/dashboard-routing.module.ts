@@ -5,6 +5,8 @@ import { DashboardComponent } from '../../pages/dashboard/dashboard.component';
 import { AdminDashboardComponent } from './pages/admin-dashboard/admin-dashboard.component';
 import { AuthGuard } from '../../core/guards/auth.guard';
 import { Role } from '../../core/models/user.model';
+import { PaymentsComponent } from '../../pages/payments/payments/payments.component';
+import { UserPaymentsComponent } from './pages/user-payments/user-payments.component';
 const routes: Routes = [
   {
     path: '',
@@ -12,7 +14,8 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     data: { roles: [Role.ADMIN] },
     children: [
-      { path: '', component: AdminDashboardComponent }  // <- this handles '/admin'
+      { path: '', component: AdminDashboardComponent } ,  // <- this handles '/admin'
+      { path: 'users/:userId/payments', component: UserPaymentsComponent }
     ]
   }
 ];

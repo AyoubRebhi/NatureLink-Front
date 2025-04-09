@@ -105,4 +105,15 @@ export class PaymentService {
       error: (err) => console.error('Error checking payments:', err)
     });
   }
+  // Add this method to the PaymentService
+getPaymentsByUserId(userId: number): Observable<Payment[]> {
+  return this.http.get<Payment[]>(`${this.apiUrl}/user/${userId}`, { 
+    headers: this.headers 
+  }).pipe(
+    catchError((error) => {
+      console.error('Error fetching user payments:', error);
+      return throwError(() => new Error('Failed to fetch user payments'));
+    })
+  );
+}
 }

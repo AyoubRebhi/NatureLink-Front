@@ -11,6 +11,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { UserPaymentsComponent } from './pages/user-payments/user-payments.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     DashboardComponent,
     DashboardLayoutComponent,
     SidebarDashComponent,
-    HeaderDashComponent
+    HeaderDashComponent,
+    UserPaymentsComponent
   ],
   imports: [
     MatIconModule,

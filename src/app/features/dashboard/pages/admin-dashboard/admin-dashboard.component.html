@@ -47,24 +47,41 @@
 
       <!-- Actions Column -->
       <!-- In the actions column -->
-<ng-container matColumnDef="actions">
-  <th mat-header-cell *matHeaderCellDef>Actions</th>
-  <td mat-cell *matCellDef="let user">
-    <button mat-icon-button 
-            *ngIf="!user.blocked"
-            (click)="blockUser(user)"
-            matTooltip="Block user">
-      <mat-icon color="warn">block</mat-icon>
-    </button>
-    
-    <button mat-icon-button 
-            *ngIf="user.blocked"
-            (click)="unblockUser(user)"
-            matTooltip="Unblock user">
-      <mat-icon color="primary">lock_open</mat-icon>
-    </button>
-  </td>
-</ng-container>
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Actions</th>
+        <td mat-cell *matCellDef="let user">
+          <div class="action-buttons">
+            <!-- Block Button -->
+            <button mat-raised-button 
+                    *ngIf="!user.blocked"
+                    (click)="blockUser(user)"
+                    color="warn"
+                    class="action-button"
+                    matTooltip="Block user">
+          
+              <span>Block</span>
+            </button>
+            
+            <!-- Unblock Button -->
+            <button mat-raised-button 
+                    *ngIf="user.blocked"
+                    (click)="unblockUser(user)"
+                    color="primary"
+                    class="action-button"
+                    matTooltip="Unblock user">
+              
+              <span>Unblock</span>
+            </button>
+            <button mat-raised-button
+               color="accent"
+               class="action-button"
+                (click)="viewUserPayments(user)">
+               
+                <span>Payments</span>
+            </button>
+          </div>
+        </td>
+      </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
