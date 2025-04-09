@@ -16,7 +16,7 @@ export class DetailsActivityComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private activityService: ActivityService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     const param = this.route.snapshot.paramMap.get('id');
@@ -41,6 +41,10 @@ export class DetailsActivityComponent implements OnInit {
         this.router.navigate(['/admin/activity']);
       }
     });
+  }
+  formatTags(tags: string[] | undefined): string {
+    if (!tags || tags.length === 0) return '—';
+    return tags.map(t => `#${t}`).join(', ');
   }
 
   deleteActivity(): void {

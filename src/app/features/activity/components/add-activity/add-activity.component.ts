@@ -19,10 +19,15 @@ export class AddActivityComponent {
     maxParticipants: 0,
     difficultyLevel: '',
     requiredEquipment: [],
-    imageUrls: []
+    imageUrls: [],
+    type: '',
+    mood: [],
+    tags: []
   };
 
   equipmentInput: string = '';
+  moodInput: string = '';
+  tagInput: string = '';
   selectedImages: File[] = [];
 
   constructor(
@@ -38,9 +43,17 @@ export class AddActivityComponent {
   }
 
   onSubmit(): void {
-    // Transform equipment string into an array
+    // Transform comma-separated strings into arrays
     if (this.equipmentInput.trim()) {
       this.activity.requiredEquipment = this.equipmentInput.split(',').map(item => item.trim());
+    }
+
+    if (this.moodInput.trim()) {
+      this.activity.mood = this.moodInput.split(',').map(item => item.trim());
+    }
+
+    if (this.tagInput.trim()) {
+      this.activity.tags = this.tagInput.split(',').map(item => item.trim());
     }
 
     if (!this.selectedImages.length) {
@@ -50,12 +63,12 @@ export class AddActivityComponent {
 
     const formData = new FormData();
 
-    // Append each image
+    // Append images
     this.selectedImages.forEach(image => {
       formData.append('images', image);
     });
 
-    // Append activity data as JSON blob
+    // Append activity as JSON blob
     const activityBlob = new Blob([JSON.stringify(this.activity)], { type: 'application/json' });
     formData.append('activity', activityBlob);
 

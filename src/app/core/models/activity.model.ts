@@ -10,5 +10,8 @@ export interface Activity {
     difficultyLevel: string;
     requiredEquipment: string[]; // list of equipment
     imageUrls?: string[]; // Cloudinary image URLs
+    // 🧠 AI Matching Fields
+    type: string; // e.g., "Adventure", "Relaxation", "Cultural"
+    mood: string[]; // e.g., ["exciting", "thrilling"]
+    tags: string[]; // e.g., ["nature", "family-friendly"]
 }
-  

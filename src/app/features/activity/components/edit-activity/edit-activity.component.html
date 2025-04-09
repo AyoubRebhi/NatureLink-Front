@@ -54,6 +54,31 @@
               <input type="text" class="form-control" id="requiredEquipment" [(ngModel)]="equipmentInput"
                 name="requiredEquipment" placeholder="e.g. Helmet, Gloves, Water Bottle" />
             </div>
+            <!-- Activity Type -->
+            <div class="col-lg-6 mb-3">
+              <label for="type" class="form-label">Activity Type</label>
+              <select class="form-select" id="type" name="type" [(ngModel)]="activity.type">
+                <option value="">Select Type</option>
+                <option value="Adventure">Adventure</option>
+                <option value="Relaxation">Relaxation</option>
+                <option value="Cultural">Cultural</option>
+                <option value="Educational">Educational</option>
+              </select>
+            </div>
+
+            <!-- Mood -->
+            <div class="col-lg-6 mb-3">
+              <label class="form-label">Mood (comma separated)</label>
+              <input type="text" class="form-control" [(ngModel)]="moodInput" name="moodInput"
+                placeholder="e.g. calm, energizing, exciting">
+            </div>
+
+            <!-- Tags -->
+            <div class="col-lg-12 mb-3">
+              <label class="form-label">Tags (comma separated)</label>
+              <input type="text" class="form-control" [(ngModel)]="tagsInput" name="tagsInput"
+                placeholder="e.g. outdoor, nature, solo">
+            </div>
 
             <!-- Description -->
             <div class="col-lg-12 mb-3">

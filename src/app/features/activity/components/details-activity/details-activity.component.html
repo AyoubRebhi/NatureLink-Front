@@ -1,109 +1,123 @@
 <div class="row">
-    <!-- Image slider column -->
-    <div class="col-xxl-4">
-      <div class="card p-3 sticky-side-div">
-        <div class="product-img-slider text-center">
-          <div *ngIf="activity.imageUrls && activity.imageUrls.length > 0">
-            <div *ngFor="let image of activity.imageUrls" class="mb-2">
-              <img [src]="image" alt="Activity Image" class="img-fluid rounded" style="max-height: 200px;" />
-            </div>
-          </div>
-          <div *ngIf="!activity.imageUrls || activity.imageUrls.length === 0">
-            <p class="text-muted">No images available.</p>
+  <!-- Image slider column -->
+  <div class="col-xxl-4">
+    <div class="card p-3 sticky-side-div">
+      <div class="product-img-slider text-center">
+        <div *ngIf="activity.imageUrls && activity.imageUrls.length > 0">
+          <div *ngFor="let image of activity.imageUrls" class="mb-2">
+            <img [src]="image" alt="Activity Image" class="img-fluid rounded" style="max-height: 200px;" />
           </div>
         </div>
-      </div>
-    </div>
-  
-    <!-- Activity details column -->
-    <div class="col-xxl-8">
-      <div class="row g-0">
-        <div class="col-xxl-8">
-          <div class="card rounded-end-0">
-            <div class="card-body p-4">
-              <h4 class="mb-3">Activity: <strong>{{ activity.name }}</strong></h4>
-  
-              <ul class="list-unstyled">
-                <li><strong>Location:</strong> {{ activity.location }}</li>
-                <li><strong>Duration:</strong> {{ activity.duration }} min</li>
-                <li><strong>Price:</strong> {{ activity.price }} TND</li>
-                <li><strong>Participants:</strong> {{ activity.maxParticipants }}</li>
-                <li>
-                  <strong>Difficulty:</strong>
-                  <span class="badge"
-                        [ngStyle]="{
-                          'background-color': activity.difficultyLevel === 'Hard' ? '#750000' :
-                                              activity.difficultyLevel === 'Moderate' ? '#DA8541' :
-                                              activity.difficultyLevel === 'Easy' ? '#4B974B' : '#6c757d',
-                          color: '#fff'
-                        }">
-                    {{ activity.difficultyLevel }}
-                  </span>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-  
-        <!-- Edit/Delete Column -->
-        <div class="col-xxl-4">
-          <div class="card border-start rounded-start-0">
-            <div class="card-body p-4 d-flex flex-column justify-content-between">
-              <div>
-                <h5 class="fs-lg">Summary</h5>
-                <p class="text-muted">{{ activity.description || 'No description provided.' }}</p>
-              </div>
-              <div class="mt-4 d-flex gap-2">
-                <button type="button" class="btn btn-success w-100" [routerLink]="['/admin/activity/edit', activity.id]">
-                  <i class="bi bi-pencil me-1"></i> Edit
-                </button>
-                <button type="button" class="btn btn-danger w-100" (click)="deleteActivity()">
-                  <i class="bi bi-trash me-1"></i> Delete
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-  
-      <!-- Details Overview Table -->
-      <div class="card mt-4">
-        <div class="card-body">
-          <h5 class="fs-md mb-3">Activity Details</h5>
-          <table class="table table-sm table-borderless">
-            <tbody>
-              <tr>
-                <th>Name</th>
-                <td>{{ activity.name }}</td>
-              </tr>
-              <tr>
-                <th>Location</th>
-                <td>{{ activity.location }}</td>
-              </tr>
-              <tr>
-                <th>Price</th>
-                <td>{{ activity.price }} TND</td>
-              </tr>
-              <tr>
-                <th>Duration</th>
-                <td>{{ activity.duration }} min</td>
-              </tr>
-              <tr>
-                <th>Difficulty</th>
-                <td>{{ activity.difficultyLevel }}</td>
-              </tr>
-              <tr *ngIf="activity.requiredEquipment?.length">
-                <th>Required Equipment</th>
-                <td>{{ activity.requiredEquipment.join(', ') }}</td>
-              </tr>
-              <tr>
-                <th>Description</th>
-                <td>{{ activity.description }}</td>
-              </tr>
-            </tbody>
-          </table>
+        <div *ngIf="!activity.imageUrls || activity.imageUrls.length === 0">
+          <p class="text-muted">No images available.</p>
         </div>
       </div>
     </div>
   </div>
-  
+
+  <!-- Activity details column -->
+  <div class="col-xxl-8">
+    <div class="row g-0">
+      <div class="col-xxl-8">
+        <div class="card rounded-end-0">
+          <div class="card-body p-4">
+            <h4 class="mb-3">Activity: <strong>{{ activity.name }}</strong></h4>
+
+            <ul class="list-unstyled">
+              <li><strong>Location:</strong> {{ activity.location }}</li>
+              <li><strong>Duration:</strong> {{ activity.duration }} min</li>
+              <li><strong>Price:</strong> {{ activity.price }} TND</li>
+              <li><strong>Participants:</strong> {{ activity.maxParticipants }}</li>
+              <li><strong>Type:</strong> {{ activity.type }}</li>
+              <li><strong>Mood:</strong> <span *ngFor="let mood of activity.mood; let isLast = last">{{ mood }}<span *ngIf="!isLast">, </span></span></li>
+              <li><strong>Tags:</strong> <span *ngFor="let tag of activity.tags; let isLast = last">#{{ tag }}<span *ngIf="!isLast">, </span></span></li>
+              <li>
+                <strong>Difficulty:</strong>
+                <span class="badge"
+                      [ngStyle]="{
+                        'background-color': activity.difficultyLevel === 'Hard' ? '#750000' :
+                                            activity.difficultyLevel === 'Moderate' ? '#DA8541' :
+                                            activity.difficultyLevel === 'Easy' ? '#4B974B' : '#6c757d',
+                        color: '#fff'
+                      }">
+                  {{ activity.difficultyLevel }}
+                </span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Edit/Delete Column -->
+      <div class="col-xxl-4">
+        <div class="card border-start rounded-start-0">
+          <div class="card-body p-4 d-flex flex-column justify-content-between">
+            <div>
+              <h5 class="fs-lg">Summary</h5>
+              <p class="text-muted">{{ activity.description || 'No description provided.' }}</p>
+            </div>
+            <div class="mt-4 d-flex gap-2">
+              <button type="button" class="btn btn-success w-100" [routerLink]="['/admin/activity/edit', activity.id]">
+                <i class="bi bi-pencil me-1"></i> Edit
+              </button>
+              <button type="button" class="btn btn-danger w-100" (click)="deleteActivity()">
+                <i class="bi bi-trash me-1"></i> Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Details Overview Table -->
+    <div class="card mt-4">
+      <div class="card-body">
+        <h5 class="fs-md mb-3">Activity Details</h5>
+        <table class="table table-sm table-borderless">
+          <tbody>
+            <tr>
+              <th>Name</th>
+              <td>{{ activity.name }}</td>
+            </tr>
+            <tr>
+              <th>Location</th>
+              <td>{{ activity.location }}</td>
+            </tr>
+            <tr>
+              <th>Price</th>
+              <td>{{ activity.price }} TND</td>
+            </tr>
+            <tr>
+              <th>Duration</th>
+              <td>{{ activity.duration }} min</td>
+            </tr>
+            <tr>
+              <th>Difficulty</th>
+              <td>{{ activity.difficultyLevel }}</td>
+            </tr>
+            <tr *ngIf="activity.requiredEquipment?.length">
+              <th>Required Equipment</th>
+              <td>{{ activity.requiredEquipment.join(', ') }}</td>
+            </tr>
+            <tr>
+              <th>Type</th>
+              <td>{{ activity.type }}</td>
+            </tr>
+            <tr *ngIf="activity.mood?.length">
+              <th>Mood</th>
+              <td>{{ activity.mood.join(', ') }}</td>
+            </tr>
+            <tr *ngIf="activity.tags?.length">
+              <th>Tags</th>
+              <td>{{ formatTags(activity.tags) }}</td>
+            </tr>
+            <tr>
+              <th>Description</th>
+              <td>{{ activity.description }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
