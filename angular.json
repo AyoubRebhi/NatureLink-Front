@@ -30,6 +30,7 @@
               "src/assets"
             ],
             "styles": [
+              "node_modules/@coreui/coreui/dist/css/coreui.min.css",
               "src/assets/dist/css/adminlte.min.css",
               "node_modules/admin-lte/dist/css/adminlte.min.css",
               "src/assets/dist/css/skins/skin-blue.min.css",
@@ -40,6 +41,7 @@
               "src/styles.scss"
             ],
             "scripts": [
+              "node_modules/@coreui/coreui/dist/js/coreui.bundle.min.js",
               "src/assets/dist/js/demo.js",
               "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js",
               "node_modules/jquery/dist/jquery.min.js",
@@ -106,6 +108,7 @@
               "src/assets"
             ],
             "styles": [
+              "node_modules/@coreui/coreui/dist/css/coreui.min.css",
               "src/assets/dist/css/adminlte.min.css",
               "src/assets/dist/css/skins/skin-blue.min.css",
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
@@ -120,6 +123,7 @@
             ],
             "scripts": [
               "src/assets/dist/js",
+              "node_modules/@coreui/coreui/dist/js/coreui.bundle.min.js",
               "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js",
               "node_modules/jquery/dist/jquery.min.js"
             ]

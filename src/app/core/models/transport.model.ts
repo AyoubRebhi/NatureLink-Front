@@ -5,5 +5,6 @@ export interface Transport {
     pricePerKm: number;
     available: boolean;
     imgUrl: string;
+    description?: string; // ✅ new field
 }
   

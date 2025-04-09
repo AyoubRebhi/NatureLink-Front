@@ -14,7 +14,8 @@ export class EditTransportComponent implements OnInit {
     capacity: 0,
     pricePerKm: 0,
     available: true,
-    imgUrl: ''
+    imgUrl: '',
+    description: '' // ✅ add this line
   };
   selectedImageFile!: File;
   id!: number;

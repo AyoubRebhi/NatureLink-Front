@@ -24,6 +24,18 @@
                 <option [ngValue]="false">No</option>
               </select>
             </div>
+            <div class="col-lg-12 mb-3">
+              <label for="description" class="form-label">Description <span class="text-danger">*</span></label>
+              <textarea
+                class="form-control"
+                id="description"
+                name="description"
+                rows="4"
+                required
+                [(ngModel)]="transport.description"
+              ></textarea>
+            </div>
+            
             <div class="col-lg-6 mb-3">
               <label class="form-label">Image <span class="text-danger">*</span></label>
               <input type="file" class="form-control" (change)="onImageSelected($event)" required>

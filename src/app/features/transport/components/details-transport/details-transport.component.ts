@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TransportService } from '../../../../core/services/transport.service';
 import { Transport } from '../../../../core/models/transport.model';
+import { TransportRating } from '../../../../core/models/transport-rating.model';
+import { TransportRatingService } from '../../../../core/services/transport-rating.service';
 
 @Component({
   selector: 'app-details-transport',
@@ -11,12 +13,15 @@ import { Transport } from '../../../../core/models/transport.model';
 export class DetailsTransportComponent implements OnInit {
   transport!: Transport;
   id!: number;
+  averageRating: number = 0;
+  ratings: TransportRating[] = [];
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private transportService: TransportService
-  ) {}
+    private transportService: TransportService,
+    private ratingService: TransportRatingService
+  ) { }
 
   ngOnInit(): void {
     const param = this.route.snapshot.paramMap.get('id');
@@ -29,6 +34,7 @@ export class DetailsTransportComponent implements OnInit {
 
     this.id = parsedId;
     this.fetchTransport();
+    this.fetchRatings();
   }
 
   fetchTransport(): void {
@@ -41,6 +47,18 @@ export class DetailsTransportComponent implements OnInit {
         this.router.navigate(['/admin/transport']); // Fallback if not found
       }
     });
+  }
+  fetchRatings(): void {
+    this.ratingService.getAverageRating(this.id).subscribe({
+      next: (avg) => (this.averageRating = avg),
+    });
+
+    this.ratingService.getRatingsByTransportId(this.id).subscribe({
+      next: (data) => (this.ratings = data),
+    });
+  }
+  getStarArray(): number[] {
+    return Array(5).fill(0).map((_, i) => i + 1);
   }
   deleteTransport(): void {
     if (confirm('Are you sure you want to delete this transport?')) {

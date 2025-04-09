@@ -15,6 +15,8 @@ import { TestimonialComponent } from './layouts/main-layout/testimonial/testimon
 import { ServiceComponent } from './layouts/main-layout/service/service.component';
 import { GuidesComponent } from './layouts/main-layout/guides/guides.component';
 import { HttpClientModule } from '@angular/common/http';
+import { TransportComponent } from './layouts/main-layout/transport/transport.component';
+import { FormsModule } from '@angular/forms';
 
 
 @NgModule({
@@ -33,13 +35,16 @@ import { HttpClientModule } from '@angular/common/http';
     HomeComponent,
     TestimonialComponent,
     ServiceComponent,
-    NotFoundComponent
+    NotFoundComponent,
+    TransportComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     NgbModule,
-    HttpClientModule
+    HttpClientModule,
+    FormsModule,      // ✅ this enables ngModel
+
   ],
   providers: [],
   bootstrap: [AppComponent]

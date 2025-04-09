@@ -17,7 +17,8 @@ throw new Error('Method not implemented.');
     capacity: 0,
     pricePerKm: 0,
     available: true,
-    imgUrl: ''
+    imgUrl: '',
+    description: '' // ✅ added this field
   };
 
   selectedImageFile!: File;
