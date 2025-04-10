@@ -1,60 +1,48 @@
 <button class="book-now" [routerLink]="['/admin/events/Add']">➕ Add Event </button>
 
 <div class="event-management-container">
+
+  
     <h2 class="title">Upcoming Events</h2>
     <p class="subtitle">Browse various ongoing events</p>
-    
+    <div class="search-container">
+      <input type="search" [(ngModel)]="searchQuery" id="form1" placeholder="Search Events" />
+    </div>
     <!-- Tabs Section -->
     <div class="event-tabs">
-      <div class="tab active">Day 1 <br> <span>Nov 04, 2023</span></div>
-      <div class="tab">Day 2 <br> <span>Nov 05, 2023</span></div>
-      <div class="tab">Day 3 <br> <span>Nov 06, 2023</span></div>
-      <div class="tab">Day 4 <br> <span>Nov 07, 2023</span></div>
-      <div class="tab">Day 5 <br> <span>Nov 08, 2023</span></div>
+      <div
+        *ngFor="let tab of tabs"
+        (click)="selectedTab = tab"
+        [class.active]="selectedTab.date === tab.date"
+        class="tab">
+        {{ tab.label }} <br /> <span></span>
+      </div>
     </div>
   
 
-                    <tr *ngfor="let event of events">
-                      <td>{{event.title}}</td>
-                    </tr>
-
-        <!-- Event Card -->
+                  
 
     <!-- Event Card -->
-<div *ngFor="let event of events">
-    <div class="event-card">
-      <div class="event-card-left">
-        <img src="assets/img/destination-1.jpg" alt="Event Image" class="event-image">
-        <div class="event-info">
-          <h3 class="event-title"> {{event.title}}</h3>
-          <p class="event-meta">
-            <i class="fa fa-user"></i> John Smith /
-            <i class="fa fa-envelope"></i> john@colorlib.com
-          </p>
-          <p class="event-time">
-            <i class="fa fa-clock"></i> 08:00 AM - 10:00 AM
-          </p>
-          <p class="event-location">
-            <i class="fa fa-map-marker"></i> 59 Breanne Canyon Suite, USA
-          </p>
+    <div *ngFor="let event of events | filterByTitle:searchQuery | filterByDate:selectedTab" class="event-card-wrapper">
+      <div class="event-card">
+        <img src="{{event.image}}" alt="Event Image" class="event-image" />
+        
+        <div class="event-content">
+          <h3 class="event-title">{{ event.title }}</h3>
+          <div class="event-meta">
+            <p><i class="fa fa-user"></i> {{ event.founder }} </p>
+            <p><i class="fa fa-clock"></i> {{event.date}}</p>
+            <p><i class="fa fa-map-marker"></i> {{ event.location }}</p>
+          </div>
+    
+          <div class="event-actions" *ngIf="isAdminView">
+            <button class="event-btn update" [routerLink]="['/admin/events/update', event.id]">Update</button>
+            <button class="event-btn delete" (click)="deleteEvent(event.id)">Delete</button>
+            
+          </div>
         </div>
-        <div *ngIf="!isAdminView" class="event-tags">
-          <button class="book-now"routerLink="/events/detail">Book Now</button>
-        </div>
-        <div *ngIf="isAdminView" class="event-tags">
-          <button class="book-now"[routerLink]="['/admin/events/Add']">Update</button>
-        </div>
-        <div *ngIf="isAdminView" class="event-tags">
-          <button class="book-now"routerLink="/events/detail">Delete</button>
-        </div>
-        <div class="profile-container" [routerLink]="['/admin/events/userjoin']">
-          <i class="fas fa-user profile-icon"></i>
-          <span class="notification-badge">10</span>
-        </div>
-  </div>
-</div>
-
-
- 
-      
-  
+      </div>
+    </div>
+    
+    
+    

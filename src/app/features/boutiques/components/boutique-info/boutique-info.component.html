@@ -1,12 +1,20 @@
+
 <div class="container">
 <div class="boutique-info">
-    <h4 class="subtitle"> Na3im shop</h4>
-    <h2 class="title"><span>Latest</span>Products</h2>
+  <div class="top-left-button" *ngIf="isAdminView">
+    <button class="book-now" [routerLink]="['/admin/boutiques/product-add', boutiqueDetails.id]">
+      ➕ Add Product
+    </button>
+  </div>
   
+    <h4 class="subtitle"> {{boutiqueDetails.nom}}</h4>
+    <h2 class="title"><span>Latest</span>Products</h2>
+
     <div class="product-grid">
       <div class="product-card" *ngFor="let item of products">
-        <div class="discount-badge">-{{ item.discount }}%</div>
-        <div class="offre">{{ item.offre }}</div>
+        
+        <div class="discount-badge">-{{ item.offre }}%</div>
+        
         <img [src]="item.image" alt="Product Image" class="product-image" />
         <div class="cart-item"> 
             <ul>
@@ -21,31 +29,15 @@
                   </li>
             </ul>
     </div>
-        <h3 class="product-name">{{ item.name }}</h3>
+        <h3 class="product-name">{{ item.id }}</h3>
         <p class="price">
-          <span class="current">${{ item.price }}</span>
-          <span class="original">${{ item.originalPrice }}</span>
+          <span class="current">${{ item.cost }}</span>
         </p>
+        <div class="offre" ><i class="fas fa-times"(click)="item.id ? deleteProduit(item.id) : null">
+        </i></div>
       </div>
-      
+     
     </div>
   </div>
-  <div class="news-feed">
-    <div class="news-grid">
-      <div class="news-card" *ngFor="let article of articles">
-        <div class="news-img">
-          <img [src]="article.image" alt="News Image" />
-          <div class="news-date">
-            <span class="day">{{ article.day }}</span>
-            <span class="month">{{ article.month }}</span>
-          </div>
-        </div>
-        <div class="news-content">
-          <h3>{{ article.title }}</h3>
-          <p>{{ article.description }}</p>
-          <a href="#" class="read-more">READ MORE ▸</a>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+  
+ 

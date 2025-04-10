@@ -6,10 +6,6 @@ import { Produit } from '../core/models/produit.module';
 
 
 
-
-
-
-
 @Injectable({
   providedIn: 'root'
 })
@@ -28,7 +24,9 @@ export class BoutiqueService {
   getProduitsByBoutiqueId(id: number): Observable<Produit[]> {
     return this.http.get<Produit[]>(`${this.apiUrl}/${id}/produits`);
   }
-
+  createProduitById(id: number, produit: Produit): Observable<Produit> {
+    return this.http.post<Produit>(`${this.apiUrl}/${id}/produits`, produit);
+  }
   // ➕ CREATE
   createBoutique(boutique: Boutique): Observable<Boutique> {
     return this.http.post<Boutique>(this.apiUrl, boutique);
@@ -36,13 +34,16 @@ export class BoutiqueService {
 
   // ✏️ UPDATE
   updateBoutique(id: number, boutique: Boutique): Observable<Boutique> {
-    return this.http.put<Boutique>(`${this.apiUrl}/${id}`, boutique);
+    return this.http.put<Boutique>(`${this.apiUrl}/update/${id}`, boutique);
   }
 
   // 🗑 DELETE
   deleteBoutique(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    return this.http.delete<void>(`${this.apiUrl}/delete/${id}`);
   }
 
+  deleteProduitByBoutiqueId(boutiqueId: number, productId: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${boutiqueId}/produits/${productId}`);
+  }
 
 }

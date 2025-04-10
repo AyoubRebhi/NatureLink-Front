@@ -23,7 +23,8 @@ const routes: Routes = [
           import('./features/events/events.module').then(m => m.EventsModule),
       },
       {
-        path: 'boutiques', 
+        path: 'boutiques',
+        data: { adminView: false} , 
         loadChildren: () =>
           import('./features/boutiques/boutiques.module').then(m => m.BoutiquesModule),
       },
@@ -51,6 +52,12 @@ const routes: Routes = [
         loadChildren: () =>
           import('./features/events/events.module').then(m => m.EventsModule),
       },
+      {
+        path: 'boutiques', 
+        data: { adminView: true },
+        loadChildren: () =>
+          import('./features/boutiques/boutiques.module').then(m => m.BoutiquesModule),
+      }
       
      
     ],

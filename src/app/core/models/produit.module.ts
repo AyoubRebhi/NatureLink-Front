@@ -3,4 +3,5 @@ export interface Produit {
     nom: string;
     cost: number;
     offre:number;
+    image:string;
   }

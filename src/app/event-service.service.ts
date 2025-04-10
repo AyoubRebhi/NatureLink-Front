@@ -19,4 +19,17 @@ export class EventServiceService {
   getAllEvents():Observable<any>{
     return this.http.get(BASIC_URl+"/event/All")
   }
+
+
+  updateEvent(id: number, event: Event): Observable<Event> {
+    return this.http.put<Event>(`${BASIC_URl}/event/All/${id}`, event);
+  }
+
+  getEventById(id: number): Observable<Event> {
+    return this.http.get<Event>(`${BASIC_URl}/All/${id}`);
+  }
+  deleteEvent(id: number): Observable<any> {
+    return this.http.delete(`${BASIC_URl}/event/All/delete/${id}`);
+  }
+  
 }

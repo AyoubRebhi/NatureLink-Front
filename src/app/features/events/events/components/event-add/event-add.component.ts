@@ -10,7 +10,8 @@ import { Event } from 'src/app/core/models/event.module';
 export class EventAddComponent implements OnInit {
   
   eventForm!: FormGroup;
-  
+  selectedImage: File | null = null;
+  base64Image: string = '';
   newEvent: Event = {
     nbrplace: '0',
     date: '',
@@ -18,8 +19,11 @@ export class EventAddComponent implements OnInit {
     location: '',
     founder:'',
     title: '',
+    image:''
   };
-  constructor(private fb:FormBuilder,private eventservice:EventServiceService ){}
+  constructor(private fb:FormBuilder,private eventservice:EventServiceService ){
+    
+  }
 
   ngOnInit(): void {
     this.initializeForm();
@@ -47,6 +51,7 @@ onSubmit(): void {
     this.newEvent.founder=this.eventForm.value.founder;
     this.newEvent.nbrplace=this.eventForm.value.participants;
     this.newEvent.description=this.eventForm.value.description;
+    this.newEvent.image = this.base64Image;
     console.log('Form submitted:', this.eventForm.value);
     console.log('Event object:', this.newEvent);
 
@@ -59,4 +64,22 @@ onSubmit(): void {
     this.eventForm.markAllAsTouched();
   }
 }
+handleUpload(event: any) {
+  const file = event.target.files[0];
+  this.selectedImage = file;
+
+  if (file) {
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      this.base64Image = reader.result as string; // Store the base64 string
+      console.log("Base64 Image:", this.base64Image);
+    };
+
+    reader.readAsDataURL(file); // Convert file to base64
+  }
+}
+
+
+
 }

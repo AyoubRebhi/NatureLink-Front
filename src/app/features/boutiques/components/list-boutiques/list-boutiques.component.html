@@ -1,24 +1,36 @@
-<p>boutiques works!</p>
-<div *ngFor="let boutique of boutiques">
-    <div class="event-card">
-      <div class="event-card-left">
-        <img src="assets/img/destination-1.jpg" alt="Event Image" class="event-image">
-        <div class="event-info">
-          <h3 class="event-title"> {{boutique.name}}</h3>
-          <p class="event-meta">
-            <i class="fa fa-user"></i> John Smith /
-            <i class="fa fa-envelope"></i> john@colorlib.com
-          </p>
-          <p class="event-time">
-            <i class="fa fa-clock"></i> 08:00 AM - 10:00 AM
-          </p>
-          <p class="event-location">
-            <i class="fa fa-map-marker"></i> 59 Breanne Canyon Suite, USA
-          </p>
-        </div>
-        <div class="event-tags">
-          <button class="book-now"routerLink="/events/detail">Book Now</button>
-        </div>
-        
+<button class="book-now" [routerLink]="['/admin/boutiques/boutique-add']">➕ Add Shop </button>
+
+<div class="search-container">
+  <input type="search" [(ngModel)]="search" placeholder="Search boutiques" />
+</div>
+<div *ngFor="let boutique of boutiques | filterb:search">
+  <div class="event-card">
+    <div class="event-card-left">
+      <img src="{{boutique.image}}" alt="Event Image" class="event-image">
+      <div class="event-info">
+        <h3 class="event-title">{{boutique.nom}}</h3>
+
+        <p class="event-meta">
+          <i class="fa fa-envelope"></i> {{boutique.email}}
+        </p>
+        <p class="event-time">
+          <i class="fa fa-phone"></i> {{boutique.telephone}}
+        </p>
+        <p class="event-location">
+          <i class="fa fa-map-marker"></i> {{boutique.adresse}}
+        </p>
+      </div>
+    </div>
+
+    <!-- ✅ RIGHT SIDE ACTIONS -->
+    <div class="event-card-right">
+      <button class="event-btn show" [routerLink]="['/boutiques/boutique-info', boutique.id, 'products']"*ngIf="!isAdminView">Show</button>
+
+      <div class="event-actions" *ngIf="isAdminView">
+        <button class="event-btn show" [routerLink]="['/admin/boutiques/boutique-info', boutique.id, 'products']">Show</button>
+        <button class="event-btn update"[routerLink]="['/admin/boutiques/boutique-update', boutique.id]" >Update</button>
+        <button class="event-btn delete"(click)="deleteProduit(boutique.id)">Delete</button>
+      </div>
+    </div>
   </div>
 </div>

@@ -1,0 +1,61 @@
+
+<div class="event-form-container">
+    <h1>Add a Shop</h1>
+  
+    <form [formGroup]= "BoutiqueForm" (ngSubmit)="onSubmit()" class="event-form">
+      <input type="file" (change)="handleUpload($event)" accept="image/*">
+      <img *ngIf="this.base64Image " [src]="this.base64Image " alt="Uploaded Image" />
+  
+      <div class="form-group">
+        <label for="nom">shop Title</label>
+        <input 
+          type="text" 
+          id="title" 
+          formControlName="nom" 
+          placeholder="Enter shop title">
+        <div *ngIf="BoutiqueForm.get('nom')?.invalid && BoutiqueForm.get('nom')?.touched" 
+             class="error-message">
+          name is required
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="addresse">Shop address</label>
+        <input 
+          type="text" 
+          id="addresse" 
+          formControlName="addresse" 
+          placeholder="Enter shop addresse">
+        <div *ngIf="BoutiqueForm.get('addresse')?.invalid && BoutiqueForm.get('addresse')?.touched" 
+             class="error-message">
+          address is required
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input 
+          type="text" 
+          id="email" 
+          formControlName="email" 
+          placeholder="Enter shop email">
+        <div *ngIf="BoutiqueForm.get('email')?.invalid && BoutiqueForm.get('email')?.touched" 
+             class="error-message">
+          email is required
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="telephone">Shop Telephone</label>
+        <input 
+          type="text" 
+          id="Telephone" 
+          formControlName="Telephone" 
+          placeholder="Enter shop telehone">
+        <div *ngIf="BoutiqueForm.get('Telephone')?.invalid && BoutiqueForm.get('Telephone')?.touched" 
+             class="error-message">
+          Telephone is required
+        </div>
+      </div>  
+      <button type="submit" class="submit-btn" [disabled]="BoutiqueForm.invalid">
+        Submit
+      </button>
+    </form>
+  </div>

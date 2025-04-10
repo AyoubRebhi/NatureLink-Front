@@ -6,4 +6,5 @@ export interface Event {
     founder:string;
     location: string;
     title:string;
+    image:string;
   }

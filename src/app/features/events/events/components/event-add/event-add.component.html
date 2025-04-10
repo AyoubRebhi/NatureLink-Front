@@ -3,6 +3,10 @@
   <p class="subtitle">Discover the beauty</p>
 
   <form [formGroup]="eventForm" (ngSubmit)="onSubmit()" class="event-form">
+    <input type="file" (change)="handleUpload($event)" accept="image/*">
+    <img *ngIf="this.base64Image " [src]="this.base64Image " alt="Uploaded Image" />
+
+
     <div class="form-group">
       <label for="title">Event Title</label>
       <input 
@@ -107,7 +111,7 @@
     </div>
 
     <button type="submit" class="submit-btn" [disabled]="eventForm.invalid">
-      Search Packages
+      Submit
     </button>
   </form>
 </div>

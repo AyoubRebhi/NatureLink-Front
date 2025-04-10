@@ -7,6 +7,9 @@ import { EventMComponent } from './events/components/event-m/event-m.component';
 import { EventAddComponent } from './events/components/event-add/event-add.component';
 import { EevntformComponent } from './events/components/eevntform/eevntform.component';
 import { EventUserlistComponent } from './events/components/event-userlist/event-userlist.component';
+import { EventUpdateComponent } from './events/components/event-update/event-update.component';
+import { FilterByTitlePipe } from 'src/app/shared/pipes/filter-by-title.pipe';
+import { FilterByDatePipe } from 'src/app/shared/pipes/filter-by-date.pipe';
 
 @NgModule({
   declarations: [
@@ -14,7 +17,11 @@ import { EventUserlistComponent } from './events/components/event-userlist/event
     EventMComponent,
     EventAddComponent,
     EevntformComponent,
-    EventUserlistComponent
+    EventUserlistComponent,
+    EventUpdateComponent,
+    FilterByTitlePipe,
+    FilterByDatePipe
+    
   ],
   imports: [
     CommonModule,

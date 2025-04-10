@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import {HttpClientModule}from'@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -15,6 +14,9 @@ import { TestimonialComponent } from './layouts/main-layout/testimonial/testimon
 import { ServiceComponent } from './layouts/main-layout/service/service.component';
 import { GuidesComponent } from './layouts/main-layout/guides/guides.component';
 import { CommonModule } from '@angular/common';
+import { FilterPipe } from './filter.pipe';
+import { FilterByTitlePipe } from './shared/pipes/filter-by-title.pipe';
+import { FilterByDatePipe } from './shared/pipes/filter-by-date.pipe';
 
 @NgModule({
   declarations: [
@@ -33,12 +35,14 @@ import { CommonModule } from '@angular/common';
     TestimonialComponent,
     ServiceComponent,
     NotFoundComponent,
+    FilterPipe,
+    
+    
     
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    NgbModule,
     HttpClientModule,
     CommonModule
   ],

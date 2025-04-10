@@ -1,66 +1,79 @@
-import { Component } from '@angular/core';
-
+import { Component, OnInit } from '@angular/core';
+import { BoutiqueService } from 'src/app/services/boutique.service';
+import { Produit } from 'src/app/core/models/produit.module';
+import { ActivatedRoute } from '@angular/router';
+// If you want to show a message after deletion
 @Component({
   selector: 'app-boutique-info',
   templateUrl: './boutique-info.component.html',
   styleUrls: ['./boutique-info.component.scss']
 })
-export class BoutiqueInfoComponent {
-  products = [
-    {
-      name: 'Incidid Tongue Bar',
-      price: 81.0,
-      originalPrice: 89.0,
-      discount: 9,
-      offre:'limited',
-      image: 'assets/img/package-1.jpg'
+export class BoutiqueInfoComponent implements OnInit {
+  
+  
+  
+  
+  currentIndex: number = 0;
+  visibleItems: number = 2;
+  boutiqueId!: number;
+  products: Produit[] = [];
+  boutiqueDetails: any;
+  isLoading = true;
+  isAdminView = false;
+
+
+constructor(private boutiqueservice:BoutiqueService,private route:ActivatedRoute){}
+
+ngOnInit(): void {
+  this.route.params.subscribe(params => {
+    this.boutiqueId = +params['id'];
+    this.loadBoutiqueDetails();
+    this.loadProduits();
+    
+  });
+  this.route.data.subscribe((data) => {
+    this.isAdminView = data['adminView'] || false;
+  });
+}
+
+loadBoutiqueDetails(): void {
+  this.boutiqueservice.getBoutiqueById(this.boutiqueId).subscribe({
+    next: (boutique) => {
+      this.boutiqueDetails = boutique;
+      console.log(this.boutiqueDetails);
     },
-    {
-      name: 'Incidid Tongue Bar',
-      price: 81.0,
-      originalPrice: 90.0,
-      discount: 10,
-      offre:'Available',
-      image: 'assets/img/package-1.jpg'
-    },
-    {
-      name: 'Incidid Tongue Bar',
-      price: 81.0,
-      originalPrice: 89.0,
-      discount: 9,
-      offre:'limited',
-      image: 'assets/img/package-1.jpg'
-    },
-    {
-      name: 'Incidid Tongue Bar',
-      price: 81.0,
-      originalPrice: 85.0,
-      discount: 5,
-      offre:'limited',
-      image: 'assets/img/package-1.jpg'
+    error: (err) => {
+      console.error('Error loading boutique details:', err);
     }
-  ];
-  articles = [
-    {
-      image: 'assets/img/package-2.jpg',
-      day: '25',
-      month: 'Jun',
-      title: 'There Are Many Variations Of Passages Of Lorem Ipsum Available',
-      description: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry’s standard dummy text ever since the 1500s,...'
+  });
+}
+loadProduits(): void {
+  this.boutiqueservice.getProduitsByBoutiqueId(this.boutiqueId).subscribe({
+    next: (produits) => {
+      this.products = produits;
+      this.isLoading = false;
     },
-    {
-      image: 'assets/img/package-2.jpg',
-      day: '25',
-      month: 'Jun',
-      title: 'Product 3',
-      description: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry’s standard dummy text ever since the 1500s,...'
-    },
-    {
-      image: 'assets/img/package-2.jpg',
-      day: '25',
-      month: 'Jun',
-      title: 'Product 4',
-      description: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry’s standard dummy text ever since the 1500s,...'
+    error: (err) => {
+      console.error('Error loading products:', err);
+      this.isLoading = false;
     }
-  ];
+  });
+}
+
+  
+
+deleteProduit(productId: number): void {
+  if (confirm('Are you sure you want to delete this product?')) {
+    this.boutiqueservice.deleteProduitByBoutiqueId(this.boutiqueId,productId).subscribe(() => {
+      this.products = this.products.filter(event => event.id !== productId);  // Remove deleted event from the list
+      alert('Product deleted successfully!');
+    }, error => {
+      console.error('Delete failed:', error);
+      alert('Failed to delete the product.');
+    });
+  }
+}
+
+  
+  
 }
