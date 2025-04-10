@@ -1,0 +1,18 @@
+<div class="logement-list">
+  <div *ngFor="let logement of logements" class="logement-card">
+    <!-- Display image for each logement -->
+    <img [src]="logement.imageUrl || 'assets/img/default-image.jpg'" alt="Logement Image" class="logement-image" />
+    
+    <div class="logement-info">
+      <!-- Display title -->
+      <h3>{{ logement.titre }}</h3>
+      
+      <!-- Display other logement details -->
+      <p><strong>Location:</strong> {{ logement.location }}</p>
+      <p><strong>Price:</strong> {{ logement.price }} DT</p>
+      
+      <!-- View More button to navigate to the detail page -->
+      <button class="btn btn-primary" (click)="viewMore(logement.id)">View More</button>
+    </div>
+  </div>
+</div>

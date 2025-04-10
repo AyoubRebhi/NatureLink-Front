@@ -1,0 +1,25 @@
+<div class="equipement-list-container">
+    <h2>Equipements</h2>
+    <div class="mb-3">
+      <a class="btn btn-primary" [routerLink]="['/admin/equipement/add']">Add Equipement</a>  
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Name</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let eq of equipements; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td>{{ eq.nom }}</td>
+          <td>
+            <a class="btn btn-warning btn-sm" [routerLink]="['/admin/equipements/edit', eq.id]">Edit</a>
+            <button class="btn btn-danger btn-sm" (click)="deleteEquipement(eq.id!)">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  

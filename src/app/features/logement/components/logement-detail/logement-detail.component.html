@@ -1,0 +1,51 @@
+<div *ngIf="logement; else noDetails">
+    <div class="logement-detail-container">
+      <div class="logement-detail">
+        <div class="logement-image-container">
+          <img [src]="logement?.image || 'default-image.jpg'" alt="logement image" class="logement-image">
+        </div>
+        
+        <div class="logement-info">
+          <h2 class="logement-title">{{ logement?.titre }}</h2>
+          
+          <div class="logement-detail-item">
+            <strong>Description:</strong>
+            <p class="logement-description">{{ logement?.description || 'No description available' }}</p>
+          </div>
+          
+          <div class="logement-detail-item">
+            <strong>Location:</strong>
+            <p class="logement-location">{{ logement?.location || 'No location available' }}</p>
+          </div>
+          
+          <div class="logement-detail-item">
+            <strong>Price:</strong>
+            <p class="logement-price">{{ logement?.price ? logement?.price + ' DT' : 'No price available' }}</p>
+          </div>
+          
+          <div class="logement-detail-item">
+            <strong>Phone:</strong>
+            <p class="logement-phone">{{ logement?.phone || 'No phone number available' }}</p>
+          </div>
+          
+          <div class="logement-detail-item">
+            <strong>Email:</strong>
+            <p class="logement-email">{{ logement?.email || 'No email available' }}</p>
+          </div>
+          
+          <div class="logement-detail-item">
+            <strong>Social Media:</strong>
+            <a *ngIf="logement?.socialMedia" [href]="logement?.socialMedia" target="_blank" class="social-link">View Social</a>
+            <p *ngIf="!logement?.socialMedia">No social media link available</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <ng-template #noDetails>
+    <div class="no-details-message">
+      <p>No details available for this logement.</p>
+    </div>
+  </ng-template>
+  

@@ -1,0 +1,59 @@
+<div *ngIf="logements.length > 0; else noData">
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Titre</th>
+        <th>Description</th>
+        <th>Location</th>
+        <th>Price (DT)</th>
+        <th>Phone</th>
+        <th>Email</th>
+        <th>Équipements</th>
+        <th>Disponibilités</th>
+        <th>Actions</th> <!-- Add Actions Column -->
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let logement of logements">
+        <td>{{ logement.titre }}</td>
+        <td>{{ logement.description }}</td>
+        <td>{{ logement.location }}</td>
+        <td>{{ logement.price }} DT</td>
+        <td>{{ logement.phone }}</td>
+        <td>{{ logement.email }}</td>
+        <td>
+          <ul>
+            <li *ngFor="let eq of logement.equipements">{{ eq.nom }}</li>
+          </ul>
+        </td>
+        <td>
+          <ul>
+            <li *ngFor="let disp of logement.disponibilities">
+              Du {{ disp.startDate }} au {{ disp.endDate }}
+            </li>
+          </ul>
+        </td>
+        <td>
+          <!-- Link to add a new disponibility for the selected logement -->
+          <a [routerLink]="['/admin/disponibility/add', logement.id]" class="btn btn-primary btn-sm">
+            Add Disponibility
+          </a>
+
+          <!-- Link to show units for the selected logement -->
+          <a [routerLink]="['/admin/unit/show', logement.id]" class="btn btn-info btn-sm">
+            Show Units
+          </a>
+
+          <!-- Link to add a new unit for the selected logement -->
+          <a [routerLink]="['/admin/unit/add', logement.id]" class="btn btn-success btn-sm">
+            Add Unit
+          </a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<ng-template #noData>
+  <p>No logements available</p>
+</ng-template>

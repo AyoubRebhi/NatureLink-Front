@@ -1,0 +1,47 @@
+<div class="logement-form">
+    <h2>Add New Logement</h2>
+    <form (ngSubmit)="onSubmit()" #logementForm="ngForm">
+      <div class="form-group">
+        <label for="titre">Title</label>
+        <input type="text" id="titre" class="form-control" [(ngModel)]="logement.titre" name="titre" required>
+      </div>
+  
+      <div class="form-group">
+        <label for="description">Description</label>
+        <textarea id="description" class="form-control" [(ngModel)]="logement.description" name="description" required></textarea>
+      </div>
+  
+      <div class="form-group">
+        <label for="location">Location</label>
+        <input type="text" id="location" class="form-control" [(ngModel)]="logement.location" name="location" required>
+      </div>
+  
+      <div class="form-group">
+        <label for="price">Price (DT)</label>
+        <input type="number" id="price" class="form-control" [(ngModel)]="logement.price" name="price" required>
+      </div>
+  
+      <div class="form-group">
+        <label for="image">Image URL</label>
+        <input type="text" id="image" class="form-control" [(ngModel)]="logement.image" name="image">
+      </div>
+  
+      <div class="form-group">
+        <label for="phone">Phone</label>
+        <input type="text" id="phone" class="form-control" [(ngModel)]="logement.phone" name="phone">
+      </div>
+  
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" class="form-control" [(ngModel)]="logement.email" name="email" required>
+      </div>
+  
+      <div class="form-group">
+        <label for="socialMedia">Social Media Link</label>
+        <input type="text" id="socialMedia" class="form-control" [(ngModel)]="logement.socialMedia" name="socialMedia">
+      </div>
+  
+      <button type="submit" class="btn btn-primary" [disabled]="!logementForm.form.valid">Add Logement</button>
+    </form>
+  </div>
+  

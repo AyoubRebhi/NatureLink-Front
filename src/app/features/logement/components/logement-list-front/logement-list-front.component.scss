@@ -1,0 +1,67 @@
+.logement-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
+.logement-card {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease-in-out;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.logement-card:hover {
+  transform: translateY(-5px);
+}
+
+.logement-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.logement-info {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex-grow: 1;
+}
+
+.logement-info h3 {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+  color: #333;
+  font-weight: bold;
+}
+
+.logement-info p {
+  font-size: 1rem;
+  margin: 5px 0;
+  color: #666;
+}
+
+.logement-info p strong {
+  color: #333;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  align-self: flex-start;
+  margin-top: 10px;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+}
