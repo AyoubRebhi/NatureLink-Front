@@ -1,4 +1,4 @@
-import { Clothing } from './../../model/Clothing.model';
+import { Clothing } from '../../core/models/Clothing.model';
 import { ClothingListComponent } from '../Clothing/clothing-list/clothing-list.component';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
@@ -9,6 +9,7 @@ import { AddFoodComponent } from '../Food/add-food/add-food.component';
 import { ListFoodComponent } from '../Food/list-food/list-food.component';
 import { UpdateFoodComponent } from '../Food/update-food/update-food.component';
 import { UpdateClothingComponent } from '../Clothing/update-clothing/update-clothing.component';
+import { CarbonCalculatorComponent } from '../CarbonCalculator/carbon-calculator/carbon-calculator.component';
 
 const routes: Routes = [
   {
@@ -22,7 +23,8 @@ const routes: Routes = [
       { path: 'FoodList', component: ListFoodComponent },
       {path: 'FoodUpdate/:id', component: UpdateFoodComponent},
       {path: 'ClothingUpdate/:id', component: UpdateClothingComponent},
-      
+      {path: 'carbonPrint', component: CarbonCalculatorComponent},
+
 
 
 

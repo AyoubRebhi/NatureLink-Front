@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Clothing } from '../../../model/Clothing.model';
-import { ClothingService } from '../../../services/clothing.service';
+import { Clothing } from '../../../core/models/Clothing.model';
+import { ClothingService } from '../../../core/services/clothing.service';
 import { Router } from '@angular/router'; // Importez Router
 
 @Component({

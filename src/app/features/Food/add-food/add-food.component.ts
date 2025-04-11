@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
-import { FoodService } from '../../../services/food.service';
-import { DestinationService } from '../../../services/destination.service';
+import { FoodService } from '../../../core/services/food.service';
+import { DestinationService } from '../../../core/services/destination.service';
 import { Router } from '@angular/router';
-import { Destination } from '../../../model/Destination.model';
+import { Destination } from '../../../core/models/Destination.model';
 
 @Component({
   selector: 'app-add-food',

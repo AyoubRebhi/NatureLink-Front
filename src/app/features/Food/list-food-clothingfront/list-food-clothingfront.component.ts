@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { Destination } from '../../../model/Destination.model';
-import { Clothing } from '../../../model/Clothing.model';
-import { Food } from '../../../model/Food.model';
-import { DestinationService } from '../../../services/destination.service';
-import { ClothingService } from '../../../services/clothing.service';
-import { FoodService } from '../../../services/food.service';
+import { Destination } from '../../../core/models/Destination.model';
+import { Clothing } from '../../../core/models/Clothing.model';
+import { Food } from '../../../core/models/Food.model';
+import { DestinationService } from '../../../core/services/destination.service';
+import { ClothingService } from '../../../core/services/clothing.service';
+import { FoodService } from '../../../core/services/food.service';
 import { CommonModule } from '@angular/common';
 
 @Component({

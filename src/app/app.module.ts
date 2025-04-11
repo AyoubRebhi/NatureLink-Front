@@ -33,6 +33,7 @@ import { ListFoodClothingfrontComponent } from './features/Food/list-food-clothi
 import { UpdateClothingComponent } from './features/Clothing/update-clothing/update-clothing.component';
 import { PickerModule } from '@ctrl/ngx-emoji-mart';
 import { PostUserComponent } from './features/Post/post-user/post-user.component';
+import { CarbonCalculatorComponent } from './features/CarbonCalculator/carbon-calculator/carbon-calculator.component';
 
 @NgModule({
   declarations: [
@@ -61,7 +62,8 @@ import { PostUserComponent } from './features/Post/post-user/post-user.component
     UpdateFoodComponent,
     ListFoodClothingfrontComponent,
     UpdateClothingComponent,
-    PostUserComponent
+    PostUserComponent,
+    CarbonCalculatorComponent
   ],
   imports: [
     BrowserModule,

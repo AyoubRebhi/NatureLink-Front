@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Output, ViewChild, ElementRef } from '@angular/core';
-import { PostService } from '../../../services/post.service';
+import { PostService } from '../../../core/services/post.service';
 import { finalize } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
 import { EmojiCategory, EmojiEvent } from '@ctrl/ngx-emoji-mart/ngx-emoji';

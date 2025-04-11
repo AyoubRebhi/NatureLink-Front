@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
-import { ClothingService } from '../../../services/clothing.service';
-import { DestinationService } from '../../../services/destination.service';
+import { ClothingService } from '../../../core/services/clothing.service';
+import { DestinationService } from '../../../core/services/destination.service';
 import { Router } from '@angular/router';
-import { Destination } from '../../../model/Destination.model';
+import { Destination } from '../../../core/models/Destination.model';
 
 @Component({
   selector: 'app-add-clothing',

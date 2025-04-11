@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { Clothing } from '../../../model/Clothing.model';
-import { Destination } from '../../../model/Destination.model';
-import { ClothingService } from '../../../services/clothing.service';
-import { DestinationService } from '../../../services/destination.service';
+import { Clothing } from '../../../core/models/Clothing.model';
+import { Destination } from '../../../core/models/Destination.model';
+import { ClothingService } from '../../../core/services/clothing.service';
+import { DestinationService } from '../../../core/services/destination.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 

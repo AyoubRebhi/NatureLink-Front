@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { Food } from '../../../model/Food.model';
-import { Destination } from '../../../model/Destination.model';
-import { FoodService } from '../../../services/food.service';
-import { DestinationService } from '../../../services/destination.service';
+import { Food } from '../../../core/models/Food.model';
+import { Destination } from '../../../core/models/Destination.model';
+import { FoodService } from '../../../core/services/food.service';
+import { DestinationService } from '../../../core/services/destination.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 

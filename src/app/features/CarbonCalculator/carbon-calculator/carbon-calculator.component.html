@@ -1,0 +1,64 @@
+<div class="carbon-calculator-container">
+    <h2 class="calculator-title">Calculateur d'Empreinte Carbone</h2>
+  
+    <div class="input-section">
+      <div class="form-group">
+        <label for="depart" class="input-label">📍 Point de départ</label>
+        <input type="text" id="depart" [(ngModel)]="depart" (change)="onAddressChange('depart')" 
+               class="form-control input-field" placeholder="Ex: Gare de Lyon, Paris" />
+      </div>
+  
+      <div class="form-group">
+        <label for="arrivee" class="input-label">🏁 Point d'arrivée</label>
+        <input type="text" id="arrivee" [(ngModel)]="arrivee" (change)="onAddressChange('arrivee')" 
+               class="form-control input-field" placeholder="Ex: Tour Eiffel, Paris" />
+      </div>
+    </div>
+  
+    <div class="map-container">
+      <div id="map"></div>
+      <div *ngIf="isLoading" class="map-loading-overlay">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Chargement...</span>
+    </div>
+      <button (click)="clearMarkers()" class="clear-button">
+        <i class="fas fa-trash-alt"></i> Effacer la carte
+      </button>
+    </div>
+  
+    <div class="transport-section">
+      <label class="transport-label">🚗 Mode de transport</label>
+      <select [(ngModel)]="transportType" (change)="updateDistanceAndCarbon()" class="transport-select">
+        <option value="bus">🚌 Bus</option>
+        <option value="car">🚗 Voiture</option>
+        <option value="bike">🚲 Vélo</option>
+        <option value="walk">🚶 Marche</option>
+      </select>
+    </div>
+  
+    <div class="results-section">
+      <div class="result-card">
+        <div class="result-icon">📏</div>
+        <div>
+          <div class="result-label">Distance</div>
+          <div class="result-value">{{ distance | number: '1.2-2' }} km</div>
+        </div>
+      </div>
+  
+      <div class="result-card highlight">
+        <div class="result-icon">🌱</div>
+        <div>
+          <div class="result-label">Empreinte carbone</div>
+          <div class="result-value">{{ carbonFootprint | number:'1.1-2' }} kg CO₂</div>
+        </div>
+      </div>
+    </div>
+  
+    <div *ngIf="errorMessage" class="error-message">
+      ⚠️ {{ errorMessage }}
+    </div>
+  
+    <button (click)="saveFootprint()" class="save-button" [disabled]="!distance">
+      💾 Sauvegarder ce trajet
+    </button>
+  </div>
