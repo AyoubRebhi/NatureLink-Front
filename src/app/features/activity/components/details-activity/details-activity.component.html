@@ -2,7 +2,7 @@
   <!-- Image slider column -->
   <div class="col-xxl-4">
     <div class="card p-3 sticky-side-div">
-      <div class="product-img-slider text-center">
+      <div *ngIf="activity" class="product-img-slider text-center">
         <div *ngIf="activity.imageUrls && activity.imageUrls.length > 0">
           <div *ngFor="let image of activity.imageUrls" class="mb-2">
             <img [src]="image" alt="Activity Image" class="img-fluid rounded" style="max-height: 200px;" />

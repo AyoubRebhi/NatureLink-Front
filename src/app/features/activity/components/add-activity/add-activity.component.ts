@@ -87,4 +87,41 @@ export class AddActivityComponent {
   cancel(): void {
     this.router.navigate(['/admin/activity']);
   }
+
+  generateActivity(): void {
+    const promptParams = {
+      location: this.activity.location || '',
+      type: this.activity.type || '',
+      difficulty: this.activity.difficultyLevel || '',
+      mood: this.moodInput || '',
+      tags: this.tagInput || ''
+    };
+  
+    this.activityService.generateActivityFromAI(promptParams).subscribe({
+      next: (response) => {
+        try {
+          const generated = JSON.parse(response.choices[0].message.content);
+  
+          this.activity.name = generated.name;
+          this.activity.description = generated.description;
+          this.activity.location = generated.location;
+          this.activity.duration = generated.duration;
+          this.activity.price = generated.price;
+          this.activity.maxParticipants = generated.maxParticipants;
+          this.activity.difficultyLevel = generated.difficultyLevel;
+          this.activity.requiredEquipment = generated.requiredEquipment;
+          this.activity.type = generated.type;
+          this.moodInput = generated.mood.join(', ');
+          this.tagInput = generated.tags.join(', ');
+        } catch (e) {
+          alert("⚠️ Failed to parse generated activity. Please try again.");
+        }
+      },
+      error: (err) => {
+        console.error("Error generating activity:", err);
+        alert("⚠️ Failed to generate activity.");
+      }
+    });
+  }
+  
 }

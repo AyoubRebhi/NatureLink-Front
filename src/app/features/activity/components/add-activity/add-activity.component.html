@@ -80,6 +80,9 @@
                 placeholder="e.g. historical, group, family-friendly">
             </div>
 
+            <div class="col-lg-12 mb-3 text-end">
+              <button type="button" class="btn btn-info" (click)="generateActivity()">Generate Activity</button>
+            </div>            
 
             <div class="col-lg-12 mb-3">
               <label class="form-label">Upload Images <span class="text-danger">*</span></label>
@@ -89,7 +92,7 @@
           </div>
 
           <div class="text-end">
-            <button type="submit" class="btn btn-success">Update Activity</button>
+            <button type="submit" class="btn btn-success">Save Activity</button>
             <button type="button" class="btn btn-danger ms-2" (click)="cancel()">Cancel</button>
           </div>
         </form>

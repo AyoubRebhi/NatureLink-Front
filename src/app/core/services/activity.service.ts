@@ -10,7 +10,7 @@ export class ActivityService {
 
   private baseUrl = 'http://localhost:9000/activities';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   getAllActivities(): Observable<Activity[]> {
     return this.http.get<Activity[]>(this.baseUrl);
@@ -38,6 +38,19 @@ export class ActivityService {
   updateActivityWithImages(id: number, formData: FormData): Observable<Activity> {
     return this.http.put<Activity>(`${this.baseUrl}/update-images/${id}`, formData);
   }
+  generateActivityFromPrompt(params: {
+    location?: string;
+    type?: string;
+    difficulty?: string;
+    mood?: string;
+    tags?: string;
+  }): Observable<string> {
+    return this.http.post(`${this.baseUrl}/generate`, params, { responseType: 'text' });
+  }
+  generateActivityFromAI(params: any): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/generate`, params);
+  }
   
-  
+
+
 }
