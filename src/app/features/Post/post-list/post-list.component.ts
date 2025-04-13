@@ -1,6 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { PostService, Post } from '../../../core/services/post.service';
 import { CommentaireService, Comment } from '../../../core/services/commentaire.service';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { ToastrService } from 'ngx-toastr';
+import { catchError, switchMap, finalize } from 'rxjs/operators';
+import { Observable, of, throwError } from 'rxjs';
 
 @Component({
   selector: 'app-post-list',
@@ -8,6 +12,13 @@ import { CommentaireService, Comment } from '../../../core/services/commentaire.
   styleUrls: ['./post-list.component.scss']
 })
 export class PostListComponent implements OnInit {
+  private readonly SIGHTENGINE_CONFIG = {
+    API_USER: '1700834085',
+    API_SECRET: 'VTZQVtFnApBD3R6atXbr4AoYqb6dPczf',
+    TEXT_API_URL: 'https://api.sightengine.com/1.0/text/check.json',
+    MODELS: 'nudity-2.0,wad,offensive'
+  };
+
   posts: any[] = [];
   isLoading = true;
   commentInputs: { [postId: number]: string } = {};
@@ -16,15 +27,14 @@ export class PostListComponent implements OnInit {
   comments: { [postId: number]: Comment[] } = {};
   showComments: { [postId: number]: boolean } = {};
   isLoadingComments: { [postId: number]: boolean } = {};
-  showDropdown: { [postId: number]: boolean } = {}; // Gestion des menus déroulants
-
-  
-  // Simulated logged-in user ID
+  showDropdown: { [postId: number]: boolean } = {};
   loggedInUserId = 1;
 
   constructor(
-    private postService: PostService, 
-    private commentService: CommentaireService
+    private postService: PostService,
+    private commentService: CommentaireService,
+    private http: HttpClient,
+    private toastr: ToastrService
   ) {}
 
   ngOnInit(): void {
@@ -79,12 +89,25 @@ export class PostListComponent implements OnInit {
 
     if (!content) return;
 
-    this.commentService.addComment(content, postId, userId).subscribe({
-      next: (newComment) => {
+    this.validateText(content).pipe(
+      switchMap(textResult => {
+        if (this.isTextInappropriate(textResult)) {
+          this.toastr.error('Contenu inapproprié détecté');
+          return throwError(() => new Error('Contenu inapproprié'));
+        }
+        return this.commentService.addComment(content, postId, userId);
+      }),
+      finalize(() => {
         this.commentInputs[postId] = '';
-        this.loadComments(postId); // Recharger les commentaires
-      },
-      error: (err) => console.error(err)
+      })
+    ).subscribe({
+      next: () => this.loadComments(postId),
+      error: (err) => {
+        if (err.message !== 'Contenu inapproprié') {
+          console.error(err);
+          this.toastr.error('Échec de l\'ajout du commentaire');
+        }
+      }
     });
   }
 
@@ -101,12 +124,24 @@ export class PostListComponent implements OnInit {
   }
 
   updateComment(postId: number, commentId: number): void {
-    this.commentService.updateComment(commentId, { content: this.editedCommentContent }).subscribe({
+    this.validateText(this.editedCommentContent).pipe(
+      switchMap(textResult => {
+        if (this.isTextInappropriate(textResult)) {
+          this.toastr.error('Contenu inapproprié détecté');
+          return throwError(() => new Error('Contenu inapproprié'));
+        }
+        return this.commentService.updateComment(commentId, { content: this.editedCommentContent });
+      })
+    ).subscribe({
       next: () => {
         this.cancelEdit();
         this.loadComments(postId);
       },
-      error: (err) => console.error(err)
+      error: (err) => {
+        if (err.message !== 'Contenu inapproprié') {
+          console.error(err);
+        }
+      }
     });
   }
 
@@ -124,36 +159,93 @@ export class PostListComponent implements OnInit {
   formatDate(date: Date): string {
     return new Date(date).toLocaleString();
   }
-  // Méthode pour vérifier si l'utilisateur peut supprimer le post
-canDeletePost(post: Post): boolean {
-  return post.user?.id === this.loggedInUserId;
-}
 
-// Méthode pour supprimer un post
-deletePost(postId: number): void {
-  if (confirm('Êtes-vous sûr de vouloir supprimer ce post ?')) {
-    this.postService.deletePost(postId).subscribe({
-      next: () => {
-        // Retirer le post supprimé du tableau
-        this.posts = this.posts.filter(post => post.id !== postId);
-        // Supprimer aussi les commentaires associés si nécessaire
-        delete this.comments[postId];
-      },
-      error: (err) => console.error('Erreur lors de la suppression:', err)
+  canDeletePost(post: Post): boolean {
+    return post.user?.id === this.loggedInUserId;
+  }
+
+  deletePost(postId: number): void {
+    if (confirm('Êtes-vous sûr de vouloir supprimer ce post ?')) {
+      this.postService.deletePost(postId).subscribe({
+        next: () => {
+          this.posts = this.posts.filter(post => post.id !== postId);
+          delete this.comments[postId];
+        },
+        error: (err) => console.error('Erreur lors de la suppression:', err)
+      });
+    }
+  }
+
+  toggleDropdown(postId: number): void {
+    this.showDropdown[postId] = !this.showDropdown[postId];
+    
+    Object.keys(this.showDropdown).forEach((id: string) => {
+      if (+id !== postId) {
+        this.showDropdown[id as unknown as keyof typeof this.showDropdown] = false;
+      }
     });
   }
-}
 
-
-
-
-toggleDropdown(postId: number): void {
-  this.showDropdown[postId] = !this.showDropdown[postId];
-  
-  // Fermer les autres menus déroulants ouverts
-  Object.keys(this.showDropdown).forEach((id: string) => {
-    if (+id !== postId) {
-      this.showDropdown[id as unknown as keyof typeof this.showDropdown] = false;
+  private validateText(text: string): Observable<any> {
+    if (!text?.trim()) {
+      return of({ status: 'success' });
     }
-  });}
+
+    const params = new HttpParams()
+      .set('api_user', this.SIGHTENGINE_CONFIG.API_USER)
+      .set('api_secret', this.SIGHTENGINE_CONFIG.API_SECRET)
+      .set('text', encodeURIComponent(text))
+      .set('mode', 'standard')
+      .set('lang', 'en')
+      .set('models','general');
+
+    return this.http.get(this.SIGHTENGINE_CONFIG.TEXT_API_URL, { params }).pipe(
+      catchError(err => {
+        console.error('API Error:', err);
+        this.analyzeSightengineError(err);
+        return of({ status: 'failure', error: err });
+      })
+    );
+  }
+
+  private isTextInappropriate(result: any): boolean {
+    if (!result || result.status !== 'success') {
+      return false;
+    }
+
+    if (result.profanity?.matches?.length > 0) {
+      return true;
+    }
+
+    const thresholds = {
+      profanity: 0.5,
+      sexual: 0.5,
+      drugs: 0.5,
+      insult: 0.7,
+      discrimination: 0.7,
+      violent: 0.2
+    };
+
+    return (
+      (result.profanity?.score > thresholds.profanity) ||
+      (result.sexual?.score > thresholds.sexual) ||
+      (result.drugs?.score > thresholds.drugs) ||
+      (result.insult?.score > thresholds.insult) ||
+      (result.discrimination?.score > thresholds.discrimination) ||
+      (result.violent?.score > thresholds.violent)
+    );
+  }
+
+  private analyzeSightengineError(err: any): void {
+    try {
+      const errorDetails = err.error;
+      console.group('Analyse erreur Sightengine');
+      console.log('Status:', err.status);
+      console.log('Message:', errorDetails?.message || 'Pas de message');
+      console.log('Code erreur:', errorDetails?.code || 'Inconnu');
+      console.groupEnd();
+    } catch (e) {
+      console.error('Erreur analyse:', e);
+    }
+  }
 }

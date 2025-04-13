@@ -52,44 +52,48 @@
         </emoji-mart>
       </div>
 
-    <!-- Add to your post -->
-    <div class="fb-add-to-post">
-      <div class="fb-add-to-post-label">Ajouter à votre publication</div>
-      <div class="fb-add-to-post-options">
-        <button class="fb-add-option" (click)="fileInput.click()" [disabled]="isSubmitting">
-          <i class="fas fa-images"></i>
-        </button>
-        <button class="fb-add-option" [disabled]="isSubmitting">
-          <i class="fas fa-user-tag"></i>
-        </button>
-        <button class="fb-add-option" (click)="toggleEmojiPicker()" [disabled]="isSubmitting">
-          <i class="fas fa-smile"></i>
-        </button>
-        <button class="fb-add-option" [disabled]="isSubmitting">
-          <i class="fas fa-map-marker-alt"></i>
-        </button>
-        <button class="fb-add-option" [disabled]="isSubmitting">
-          <i class="fas fa-ellipsis-h"></i>
+      <!-- Add to your post -->
+      <div class="fb-add-to-post">
+        <div class="fb-add-to-post-label">Ajouter à votre publication</div>
+        <div class="fb-add-to-post-options">
+          <button class="fb-add-option" (click)="fileInput.click()" [disabled]="isSubmitting">
+            <i class="fas fa-images"></i>
+          </button>
+          <button class="fb-add-option" [disabled]="isSubmitting">
+            <i class="fas fa-user-tag"></i>
+          </button>
+          <button class="fb-add-option" (click)="toggleEmojiPicker()" [disabled]="isSubmitting">
+            <i class="fas fa-smile"></i>
+          </button>
+          <button class="fb-add-option" (click)="toggleVoiceRecognition()" [disabled]="isSubmitting">
+            <i class="fas fa-microphone" [class.recording]="isListening"></i>
+          </button>
+          <button class="fb-add-option" [disabled]="isSubmitting">
+            <i class="fas fa-map-marker-alt"></i>
+          </button>
+          <button class="fb-add-option" [disabled]="isSubmitting">
+            <i class="fas fa-ellipsis-h"></i>
+          </button>
+        </div>
+        <input type="file" #fileInput 
+              (change)="onFileSelected($event)"
+              accept="image/*"
+              class="d-none"
+              [disabled]="isSubmitting">
+      </div>
+
+      <!-- Post Button -->
+      <div class="fb-post-button-container">
+        <button class="fb-post-button" 
+                (click)="createPost()" 
+                [disabled]="(!newPostContent.trim() && !selectedFile) || isSubmitting">
+          <span *ngIf="!isSubmitting">Publier</span>
+          <span *ngIf="isSubmitting">
+            <i class="fas fa-spinner fa-spin me-2"></i>
+            Publication...
+          </span>
         </button>
       </div>
-      <input type="file" #fileInput 
-             (change)="onFileSelected($event)"
-             accept="image/*"
-             class="d-none"
-             [disabled]="isSubmitting">
     </div>
-
-    <!-- Post Button -->
-    <div class="fb-post-button-container">
-      <button class="fb-post-button" 
-              (click)="createPost()" 
-              [disabled]="(!newPostContent.trim() && !selectedFile) || isSubmitting">
-        <span *ngIf="!isSubmitting">Publier</span>
-        <span *ngIf="isSubmitting">
-          <i class="fas fa-spinner fa-spin me-2"></i>
-          Publication...
-        </span>
-      </button>
-
-    </div>  </div>
+  </div>
 </div>

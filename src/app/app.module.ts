@@ -34,6 +34,7 @@ import { UpdateClothingComponent } from './features/Clothing/update-clothing/upd
 import { PickerModule } from '@ctrl/ngx-emoji-mart';
 import { PostUserComponent } from './features/Post/post-user/post-user.component';
 import { CarbonCalculatorComponent } from './features/CarbonCalculator/carbon-calculator/carbon-calculator.component';
+import { SpeechComponent } from './speech/speech.component';
 
 @NgModule({
   declarations: [
@@ -63,7 +64,8 @@ import { CarbonCalculatorComponent } from './features/CarbonCalculator/carbon-ca
     ListFoodClothingfrontComponent,
     UpdateClothingComponent,
     PostUserComponent,
-    CarbonCalculatorComponent
+    CarbonCalculatorComponent,
+    SpeechComponent
   ],
   imports: [
     BrowserModule,

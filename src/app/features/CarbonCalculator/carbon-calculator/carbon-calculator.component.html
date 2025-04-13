@@ -1,64 +1,112 @@
 <div class="carbon-calculator-container">
-    <h2 class="calculator-title">Calculateur d'Empreinte Carbone</h2>
-  
-    <div class="input-section">
-      <div class="form-group">
-        <label for="depart" class="input-label">📍 Point de départ</label>
-        <input type="text" id="depart" [(ngModel)]="depart" (change)="onAddressChange('depart')" 
-               class="form-control input-field" placeholder="Ex: Gare de Lyon, Paris" />
+  <h2 class="calculator-title">Calculateur d'Empreinte Carbone</h2>
+
+  <!-- Section upload de ticket -->
+  <div class="ticket-upload-section">
+    <h3 class="upload-title">📎 Ou uploader un ticket</h3>
+    
+    <div class="file-upload-area" (click)="fileInput.click()">
+      <input #fileInput type="file" (change)="onFileSelected($event)" accept="image/*,.pdf" class="file-input">
+      
+      <div *ngIf="!selectedFile" class="upload-prompt">
+        <i class="upload-icon fas fa-cloud-upload-alt"></i>
+        <p>Cliquez pour sélectionner un ticket</p>
+        <small>Formats acceptés : JPG, PNG, PDF (max 5MB)</small>
       </div>
-  
-      <div class="form-group">
-        <label for="arrivee" class="input-label">🏁 Point d'arrivée</label>
-        <input type="text" id="arrivee" [(ngModel)]="arrivee" (change)="onAddressChange('arrivee')" 
-               class="form-control input-field" placeholder="Ex: Tour Eiffel, Paris" />
-      </div>
-    </div>
-  
-    <div class="map-container">
-      <div id="map"></div>
-      <div *ngIf="isLoading" class="map-loading-overlay">
-    <div class="spinner-border text-primary" role="status">
-      <span class="visually-hidden">Chargement...</span>
-    </div>
-      <button (click)="clearMarkers()" class="clear-button">
-        <i class="fas fa-trash-alt"></i> Effacer la carte
-      </button>
-    </div>
-  
-    <div class="transport-section">
-      <label class="transport-label">🚗 Mode de transport</label>
-      <select [(ngModel)]="transportType" (change)="updateDistanceAndCarbon()" class="transport-select">
-        <option value="bus">🚌 Bus</option>
-        <option value="car">🚗 Voiture</option>
-        <option value="bike">🚲 Vélo</option>
-        <option value="walk">🚶 Marche</option>
-      </select>
-    </div>
-  
-    <div class="results-section">
-      <div class="result-card">
-        <div class="result-icon">📏</div>
-        <div>
-          <div class="result-label">Distance</div>
-          <div class="result-value">{{ distance | number: '1.2-2' }} km</div>
+      
+      <div *ngIf="selectedFile" class="file-preview">
+        <div *ngIf="previewUrl" class="image-preview">
+          <img [src]="previewUrl" alt="Aperçu du ticket">
         </div>
-      </div>
-  
-      <div class="result-card highlight">
-        <div class="result-icon">🌱</div>
-        <div>
-          <div class="result-label">Empreinte carbone</div>
-          <div class="result-value">{{ carbonFootprint | number:'1.1-2' }} kg CO₂</div>
+        <div class="file-info">
+          <p>{{ selectedFile.name }}</p>
+          <p>{{ selectedFile.size / 1024 | number:'1.0-0' }} KB</p>
         </div>
+        <button (click)="resetUpload($event)" class="clear-file-btn">
+          <i class="fas fa-times"></i>
+        </button>
       </div>
     </div>
-  
-    <div *ngIf="errorMessage" class="error-message">
-      ⚠️ {{ errorMessage }}
-    </div>
-  
-    <button (click)="saveFootprint()" class="save-button" [disabled]="!distance">
-      💾 Sauvegarder ce trajet
+    
+    <button (click)="uploadTicket()" [disabled]="!selectedFile || isUploading" class="upload-btn">
+      <span *ngIf="!isUploading"><i class="fas fa-file-import"></i> Extraire les informations</span>
+      <span *ngIf="isUploading"><i class="fas fa-spinner fa-spin"></i> Traitement...</span>
     </button>
+    
+    <div *ngIf="uploadProgress !== null" class="upload-progress">
+      <div class="progress-bar">
+        <div class="progress" [style.width.%]="uploadProgress"></div>
+      </div>
+      <span>{{ uploadProgress }}%</span>
+    </div>
   </div>
+
+  <div class="input-section">
+    <div class="form-group">
+      <label for="depart" class="input-label">📍 Point de départ</label>
+      <input type="text" id="depart" [(ngModel)]="depart" (change)="onAddressChange('depart')" 
+             class="form-control input-field" placeholder="Ex: Gare de Lyon, Paris" />
+    </div>
+
+    <div class="form-group">
+      <label for="arrivee" class="input-label">🏁 Point d'arrivée</label>
+      <input type="text" id="arrivee" [(ngModel)]="arrivee" (change)="onAddressChange('arrivee')" 
+             class="form-control input-field" placeholder="Ex: Tour Eiffel, Paris" />
+    </div>
+  </div>
+
+  <div class="map-container">
+    <div id="map"></div>
+    <div *ngIf="isLoading" class="map-loading-overlay">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Chargement...</span>
+      </div>
+    </div>
+  </div>
+
+  <button (click)="clearMarkers()" class="clear-button">
+    <i class="fas fa-trash-alt"></i> Effacer la carte
+  </button>
+
+  <div class="transport-section">
+    <label class="transport-label">🚗 Mode de transport</label>
+    <select [(ngModel)]="transportType" (change)="updateDistanceAndCarbon()" class="transport-select">
+      <option value="car">🚗 Voiture</option>
+      <option value="bus">🚌 Bus</option>
+      <option value="train">🚆 Train</option>
+      <option value="plane">✈️ Avion</option>
+      <option value="bike">🚲 Vélo</option>
+      <option value="walk">🚶 Marche</option>
+    </select>
+  </div>
+
+  <div class="results-section">
+    <div class="result-card">
+      <div class="result-icon">📏</div>
+      <div>
+        <div class="result-label">Distance</div>
+        <div class="result-value">{{ distance / 1000 | number: '1.2-2' }} km</div>
+      </div>
+    </div>
+
+    <div class="result-card highlight">
+      <div class="result-icon">🌱</div>
+      <div>
+        <div class="result-label">Empreinte carbone</div>
+        <div class="result-value">{{ carbonFootprint | number:'1.1-2' }} kg CO₂</div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="errorMessage" class="error-message">
+    <i class="fas fa-exclamation-triangle"></i> {{ errorMessage }}
+  </div>
+
+  <div *ngIf="successMessage" class="success-message">
+    <i class="fas fa-check-circle"></i> {{ successMessage }}
+  </div>
+
+  <button (click)="saveFootprint()" class="save-button" [disabled]="!distance">
+    <i class="fas fa-save"></i> Sauvegarder ce trajet
+  </button>
+</div>

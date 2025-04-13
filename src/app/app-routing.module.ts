@@ -10,6 +10,7 @@ import { PostListComponent } from './features/Post/post-list/post-list.component
 import { AddClothingComponent } from './features/Clothing/add-clothing/add-clothing.component';
 import { ListFoodClothingfrontComponent } from './features/Food/list-food-clothingfront/list-food-clothingfront.component';
 import { CarbonCalculatorComponent } from './features/CarbonCalculator/carbon-calculator/carbon-calculator.component';
+import { SpeechComponent } from './speech/speech.component';
 const routes: Routes = [
   {
     path: '',
@@ -22,6 +23,8 @@ const routes: Routes = [
       { path: 'postlist', component: PostListComponent },
       { path: 'listD', component: ListFoodClothingfrontComponent },
       {path: 'carbonPrint', component: CarbonCalculatorComponent},
+      {path: 'test', component: SpeechComponent}
+
 
 
     ]
