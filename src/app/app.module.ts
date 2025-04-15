@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';  // <-- Import FormsModule
+import { HttpClientModule } from '@angular/common/http'; // ✅ Add this
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -15,11 +16,8 @@ import { HomeComponent } from './pages/home/home.component';
 import { TestimonialComponent } from './layouts/main-layout/testimonial/testimonial.component';
 import { ServiceComponent } from './layouts/main-layout/service/service.component';
 import { GuidesComponent } from './layouts/main-layout/guides/guides.component';
-import { LogementModule } from './features/logement/logement/logement.module';
 import { LogementListFrontComponent } from './features/logement/components/logement-list-front/logement-list-front.component';
-import { DisponibilityAddComponent } from './features/disponibility/disponibility-add/disponibility-add.component';
-import { LogementCreateFrontComponent } from './features/logement/components/logement-create-front/logement-create-front.component';
-
+import { LogementDetailComponent } from './features/logement/components/logement-detail/logement-detail.component';
 
 @NgModule({
   declarations: [
@@ -35,15 +33,15 @@ import { LogementCreateFrontComponent } from './features/logement/components/log
     ServiceComponent,
     GuidesComponent,
     LogementListFrontComponent,
-    DisponibilityAddComponent,
-    LogementCreateFrontComponent,
+    LogementDetailComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     NgbModule,
-    LogementModule, 
-    FormsModule 
+    FormsModule ,
+    HttpClientModule, // ✅ Make sure it's here
+
   ],
   providers: [],
   bootstrap: [AppComponent]

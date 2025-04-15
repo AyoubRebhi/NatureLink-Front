@@ -1,82 +1,141 @@
-/* Container for the entire detail view */
-.logement-detail-container {
-    max-width: 1200px;
-    margin: 50px auto;
-    padding: 30px;
-    background-color: #fff;
-    border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  }
-  
-  /* Main detail card styling */
-  .logement-detail {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.logement-detail-wrapper {
+  max-width: 1000px;
+  margin: auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.image-slider-container {
+  position: relative;
+  margin-bottom: 20px;
+
+  .slider {
+    position: relative;
     text-align: center;
-    padding: 20px;
-  }
-  
-  /* Styling for the image container */
-  .logement-image-container {
-    width: 100%;
-    max-width: 600px;
-    margin-bottom: 30px;
-  }
-  
-  .logement-image {
-    width: 100%;
-    height: auto;
-    max-height: 400px;
+    overflow: hidden; /* Keeps the images within bounds */
     border-radius: 10px;
-    object-fit: cover;
+
+    .slider-image {
+      width: 100%;
+      height: auto;
+      max-height: 500px; /* Ensures the image is smaller and more controlled */
+      object-fit: cover;
+      border-radius: 10px;
+      transition: transform 0.5s ease; /* Smooth transition for image changes */
+    }
+
+    .nav-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 30px;
+      background-color: rgba(0, 0, 0, 0.5);
+      color: white;
+      border: none;
+      padding: 10px;
+      cursor: pointer;
+      z-index: 1;
+      border-radius: 50%; /* Rounded nav buttons */
+      transition: background-color 0.3s ease;
+
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.8); /* Darker hover effect */
+      }
+
+      &.left {
+        left: 10px;
+      }
+
+      &.right {
+        right: 10px;
+      }
+    }
   }
-  .no-details-message {
-    text-align: center;
-    font-size: 1.5rem;
-    color: #ff4d4d;
-    margin-top: 30px;
+
+  .thumbnails {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+
+    .thumbnail-img {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 5px;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+
+      &.active {
+        border-color: #007bff;
+        transform: scale(1.1); /* Slight zoom effect on active thumbnail */
+      }
+
+      &:hover {
+        transform: scale(1.1); /* Zoom effect on hover */
+      }
+    }
   }
-  
-  /* Styling for the details section */
-  .logement-info {
-    width: 100%;
-    max-width: 800px;
-    margin-top: 20px;
-  }
-  
-  /* Title */
-  .logement-title {
-    font-size: 2.5rem;
-    font-weight: bold;
+}
+
+.logement-info {
+  background: #f9f9f9;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+
+  h2 {
+    font-size: 1.8rem;
+    margin-bottom: 10px;
     color: #333;
-    margin-bottom: 20px;
   }
-  
-  /* Individual detail items */
-  .logement-detail-item {
-    margin-bottom: 20px;
-  }
-  
-  .logement-detail-item strong {
-    font-size: 1.2rem;
+
+  p {
+    margin: 8px 0;
+    font-size: 1rem;
     color: #555;
   }
-  
-  .logement-description, .logement-location, .logement-price, .logement-phone, .logement-email {
-    font-size: 1.1rem;
-    color: #666;
-    margin-top: 5px;
+
+  ul {
+    list-style: disc;
+    margin-left: 20px;
   }
-  
-  /* Social Media link */
-  .social-link {
+
+  a {
     color: #007bff;
-    font-size: 1.1rem;
     text-decoration: none;
   }
-  
-  .social-link:hover {
+
+  a:hover {
     text-decoration: underline;
   }
-  
+}
+
+.no-details-message {
+  text-align: center;
+  margin-top: 50px;
+  font-size: 18px;
+  color: gray;
+}
+
+@media (max-width: 768px) {
+  .logement-detail-wrapper {
+    padding: 15px;
+  }
+
+  .image-slider-container {
+    margin-bottom: 15px;
+  }
+
+  .logement-info {
+    padding: 15px;
+  }
+
+  .thumbnail-img {
+    width: 60px;
+    height: 60px;
+  }
+}

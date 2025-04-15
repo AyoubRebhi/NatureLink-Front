@@ -1,18 +1,58 @@
-<div class="logement-list">
-  <div *ngFor="let logement of logements" class="logement-card">
-    <!-- Display image for each logement -->
-    <img [src]="logement.imageUrl || 'assets/img/default-image.jpg'" alt="Logement Image" class="logement-image" />
-    
-    <div class="logement-info">
-      <!-- Display title -->
-      <h3>{{ logement.titre }}</h3>
+<div class="main-content">
+  <div *ngIf="logements.length > 0; else noData" class="logement-list">
+    <div *ngFor="let logement of logements" class="logement-card">
       
-      <!-- Display other logement details -->
-      <p><strong>Location:</strong> {{ logement.location }}</p>
-      <p><strong>Price:</strong> {{ logement.price }} DT</p>
+      <!-- Images carousel (only if images exist) -->
+      <div class="logement-images">
+        <div class="image-slider">
+          <img
+            *ngIf="logement.images && logement.images.length > 0; else defaultImage"
+            [src]="'http://localhost:8080/uploads/' + logement.images[currentImageIndex[logement.id!]]"
+            alt="Logement Image"
+            class="logement-image"
+          />
+          <ng-template #defaultImage>
+            <img src="assets/img/defaultLogement.png" alt="Default" class="logement-image" />
+          </ng-template>
+
+          <!-- Navigation buttons if there are multiple images -->
+          <button class="slider-btn left" *ngIf="logement.images && logement.images.length > 1" (click)="prevSlide(logement.id!, logement.images.length)">
+            &#10094; <!-- Left arrow character -->
+          </button>
+          
+          <button class="slider-btn right" *ngIf="logement.images && logement.images.length > 1" (click)="nextSlide(logement.id!, logement.images.length)">
+            &#10095; <!-- Right arrow character -->
+          </button>
+          
+        </div>
+      </div>
       
-      <!-- View More button to navigate to the detail page -->
-      <button class="btn btn-primary" (click)="viewMore(logement.id)">View More</button>
+      <!-- Logement Info -->
+      <div class="logement-info">
+        <h3>{{ logement.titre }}</h3>
+        <p><strong>Description:</strong> {{ logement.description }}</p>
+        <p><strong>Location:</strong> {{ logement.location }}</p>
+        <p><strong>Type:</strong> {{ logement.type }}</p>
+        <p><strong>Price:</strong> {{ logement.price }} DT</p>
+        <p><strong>Phone:</strong> {{ logement.phone }}</p>
+        <p><strong>Capacity:</strong> {{ logement.capacity }}</p>
+
+        <!-- Equipments list -->
+        <div *ngIf="logement.equipements?.length">
+          <p><strong>Équipements:</strong></p>
+          <ul>
+            <li *ngFor="let eq of logement.equipements">{{ eq.name }}</li>
+          </ul>
+        </div>
+
+        <!-- View More button -->
+        <a [routerLink]="['/logement/detail', logement.id]" class="btn btn-primary">View More</a>
+      </div>
     </div>
   </div>
+
+  <!-- Fallback when no logements are available -->
+  <ng-template #noData>
+    <p class="no-logements">No logements available</p>
+  </ng-template>
 </div>

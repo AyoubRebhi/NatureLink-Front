@@ -13,9 +13,9 @@
       <tbody>
         <tr *ngFor="let eq of equipements; let i = index">
           <td>{{ i + 1 }}</td>
-          <td>{{ eq.nom }}</td>
+          <td>{{ eq.name }}</td>
           <td>
-            <a class="btn btn-warning btn-sm" [routerLink]="['/admin/equipements/edit', eq.id]">Edit</a>
+            <a class="btn btn-warning btn-sm" [routerLink]="['/admin/equipement/edit', eq.id]">Edit</a>
             <button class="btn btn-danger btn-sm" (click)="deleteEquipement(eq.id!)">Delete</button>
           </td>
         </tr>

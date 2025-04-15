@@ -56,22 +56,28 @@
         </ul>
       </li>
 
-      <!-- Unit -->
-      <li class="menu-item has-submenu">
-        <div class="submenu-toggle" (click)="toggleSubmenu('unit')">
-          <i class="menu-icon fas fa-door-open"></i>
-          <span class="menu-text">Unit</span>
-          <i class="submenu-indicator fas fa-angle-down" [class.rotate]="submenus['unit']"></i>
-        </div>
-        <ul class="submenu-list" [class.open]="submenus['unit']">
-          <li class="submenu-item">
-            <a routerLink="/admin/unit/list" class="submenu-link">
-              <i class="submenu-icon far fa-circle"></i> List
-            </a>
-          </li>
-        </ul>
-      </li>
-
+    <!-- My Logements -->
+<li class="menu-item has-submenu">
+  <div class="submenu-toggle" (click)="toggleSubmenu('myLogement')">
+    <i class="menu-icon fas fa-user-home"></i>
+    <span class="menu-text">My Logements</span>
+    <i class="submenu-indicator fas fa-angle-down" [class.rotate]="submenus['myLogement']"></i>
+  </div>
+  <ul class="submenu-list" [class.open]="submenus['myLogement']">
+    <li class="submenu-item">
+      <a routerLink="/dashboardUser/list" class="submenu-link" routerLinkActive="active">
+        <i class="submenu-icon far fa-circle"></i>
+        <span>My Logements</span>
+      </a>
+    </li>
+    <li class="submenu-item">
+      <a routerLink="/dashboardUser/create" class="submenu-link" routerLinkActive="active">
+        <i class="submenu-icon far fa-circle"></i>
+        <span>Create Logement</span>
+      </a>
+    </li>
+  </ul>
+</li>
      <!-- Equipement -->
 <li class="menu-item has-submenu">
   <div class="submenu-toggle" (click)="toggleSubmenu('equipement')">
@@ -92,27 +98,6 @@
     </li>
   </ul>
 </li>
-      <!-- Disponibility -->
-      <li class="menu-item has-submenu">
-        <div class="submenu-toggle" (click)="toggleSubmenu('disponibility')">
-          <i class="menu-icon fas fa-cogs"></i>
-          <span class="menu-text">Disponibility</span>
-          <i class="submenu-indicator fas fa-angle-down" [class.rotate]="submenus['disponibility']"></i>
-        </div>
-        <ul class="submenu-list" [class.open]="submenus['disponibility']">
-          <li class="submenu-item">
-            <a routerLink="/admin/disponibility/list" class="submenu-link">
-              <i class="submenu-icon far fa-circle"></i> List
-            </a>
-          </li>
-          <li class="submenu-item">
-            <a routerLink="/admin/logement/list" class="submenu-link">
-              <i class="submenu-icon far fa-circle"></i> Add
-            </a>
-          </li>
-        </ul>
-      </li>
-      <!-- Disponibility -->
       <!-- Activities -->
       <li class="menu-item">
         <a routerLink="/admin/activity" class="menu-link" routerLinkActive="active">

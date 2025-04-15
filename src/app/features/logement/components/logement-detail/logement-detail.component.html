@@ -1,51 +1,61 @@
-<div *ngIf="logement; else noDetails">
-    <div class="logement-detail-container">
-      <div class="logement-detail">
-        <div class="logement-image-container">
-          <img [src]="logement?.image || 'default-image.jpg'" alt="logement image" class="logement-image">
-        </div>
-        
-        <div class="logement-info">
-          <h2 class="logement-title">{{ logement?.titre }}</h2>
-          
-          <div class="logement-detail-item">
-            <strong>Description:</strong>
-            <p class="logement-description">{{ logement?.description || 'No description available' }}</p>
-          </div>
-          
-          <div class="logement-detail-item">
-            <strong>Location:</strong>
-            <p class="logement-location">{{ logement?.location || 'No location available' }}</p>
-          </div>
-          
-          <div class="logement-detail-item">
-            <strong>Price:</strong>
-            <p class="logement-price">{{ logement?.price ? logement?.price + ' DT' : 'No price available' }}</p>
-          </div>
-          
-          <div class="logement-detail-item">
-            <strong>Phone:</strong>
-            <p class="logement-phone">{{ logement?.phone || 'No phone number available' }}</p>
-          </div>
-          
-          <div class="logement-detail-item">
-            <strong>Email:</strong>
-            <p class="logement-email">{{ logement?.email || 'No email available' }}</p>
-          </div>
-          
-          <div class="logement-detail-item">
-            <strong>Social Media:</strong>
-            <a *ngIf="logement?.socialMedia" [href]="logement?.socialMedia" target="_blank" class="social-link">View Social</a>
-            <p *ngIf="!logement?.socialMedia">No social media link available</p>
-          </div>
-        </div>
-      </div>
+<div *ngIf="logement; else noDetails" class="logement-detail-wrapper">
+
+  <!-- Image Slider -->
+  <div class="image-slider-container" *ngIf="logement?.images?.length">
+    <div class="slider">
+      <button class="nav-btn left" (click)="prevSlide()">&#10094;</button>
+
+      <img [src]="'http://localhost:8080/uploads/' + logement.images?.[currentImageIndex]" alt="Logement image" class="slider-image" />
+
+      <button class="nav-btn right" (click)="nextSlide()">&#10095;</button>
+    </div>
+
+    <!-- Thumbnails -->
+    <div class="thumbnails">
+      <img *ngFor="let img of logement?.images; let i = index"
+           [src]="'http://localhost:8080/uploads/' + img"
+           (click)="selectImage(i)"
+           [class.active]="i === currentImageIndex"
+           class="thumbnail-img" />
     </div>
   </div>
-  
-  <ng-template #noDetails>
-    <div class="no-details-message">
-      <p>No details available for this logement.</p>
+
+  <!-- Fallback if no images -->
+  <div *ngIf="!logement?.images?.length">
+    <img src="assets/img/defaultLogement.png" alt="Default Image" class="slider-image" />
+  </div>
+
+  <!-- Details Section -->
+  <div class="logement-info">
+    <h2>{{ logement.titre }}</h2>
+
+    <p><strong>Description:</strong> {{ logement.description || 'N/A' }}</p>
+    <p><strong>Location:</strong> {{ logement.location || 'N/A' }}</p>
+    <p><strong>Type:</strong> {{ logement.type || 'N/A' }}</p>
+    <p><strong>Price:</strong> {{ logement.price ? logement.price + ' DT' : 'N/A' }}</p>
+    <p><strong>Capacity:</strong> {{ logement.capacity || 'N/A' }}</p>
+    <p><strong>Single Rooms:</strong> {{ logement.singleRooms || 'N/A' }}</p>
+    <p><strong>Double Rooms:</strong> {{ logement.doubleRooms || 'N/A' }}</p>
+    <p><strong>Phone:</strong> {{ logement.phone || 'N/A' }}</p>
+    <p><strong>Email:</strong> {{ logement.email || 'N/A' }}</p>
+    <p><strong>Social Media:</strong> 
+      <a *ngIf="logement.socialMedia" [href]="logement.socialMedia" target="_blank">Visit</a>
+      <span *ngIf="!logement.socialMedia">N/A</span>
+    </p>
+
+    <!-- Equipments -->
+    <div *ngIf="logement?.equipements?.length">
+      <p><strong>Équipements:</strong></p>
+      <ul>
+        <li *ngFor="let eq of logement?.equipements">{{ eq.name }}</li>
+      </ul>
     </div>
-  </ng-template>
-  
+    <span *ngIf="!logement?.equipements?.length">No équipements available</span>
+  </div>
+</div>
+
+<ng-template #noDetails>
+  <div class="no-details-message">
+    <p>No details available for this logement.</p>
+  </div>
+</ng-template>

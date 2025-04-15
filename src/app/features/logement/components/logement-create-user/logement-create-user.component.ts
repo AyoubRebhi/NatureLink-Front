@@ -6,11 +6,11 @@ import { Equipement } from 'src/app/core/models/equipement.model';
 import { HttpClient } from '@angular/common/http';  // Import HttpClient
 
 @Component({
-  selector: 'app-logement-create',
-  templateUrl: './logement-create.component.html',
-  styleUrls: ['./logement-create.component.scss'],
+  selector: 'app-logement-create-user',
+  templateUrl: './logement-create-user.component.html',
+  styleUrls: ['./logement-create-user.component.scss'],
 })
-export class LogementCreateComponent implements OnInit {
+export class LogementCreateUserComponent implements OnInit {
   logement: any = {
     titre: '',
     description: '',
@@ -20,6 +20,7 @@ export class LogementCreateComponent implements OnInit {
     phone: '',
     email: '',
     capacity: '',
+
     socialMedia: '',
     equipementIds: [],
     newEquipements: [],
@@ -112,7 +113,6 @@ export class LogementCreateComponent implements OnInit {
     formData.append('type', this.logement.type);
     formData.append('capacity', this.logement.capacity);
 
-  
     // Conditional fields
     if (this.logement.singleRooms !== undefined) {
       formData.append('singleRooms', this.logement.singleRooms.toString());
@@ -144,7 +144,7 @@ export class LogementCreateComponent implements OnInit {
     this.http.post('http://localhost:8080/logements/upload', formData).subscribe(
       response => {
         console.log('Logement created!', response);
-        this.router.navigate(['/admin/logement/list']); // Redirect to list or success page
+        this.router.navigate(['/dashboardUser/list']); // Redirect to list or success page
       },
       error => {
         console.error('Error creating logement:', error);

@@ -5,11 +5,13 @@ import { EquipementListComponent } from '../equipement-list/equipement-list.comp
 import { EquipementAddComponent } from '../equipement-add/equipement-add.component';   // Add component
 import { EquipementService } from 'src/app/core/services/equipement.service';
 import { FormsModule } from '@angular/forms';  // Import FormsModule for ngModel binding
+import { EquipementEditComponent } from '../equipement-edit/equipement-edit.component';
 
 @NgModule({
   declarations: [
     EquipementListComponent,
-    EquipementAddComponent  // Declare the Add component
+    EquipementAddComponent ,
+    EquipementEditComponent // Declare the Add component
   ],
   imports: [
     CommonModule,

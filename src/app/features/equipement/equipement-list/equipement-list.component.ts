@@ -24,8 +24,14 @@ export class EquipementListComponent implements OnInit {
 
   deleteEquipement(id: number) {
     if (confirm('Are you sure you want to delete this equipement?')) {
-      this.equipementService.delete(id).subscribe(() => {
-        this.loadEquipements();
+      this.equipementService.delete(id).subscribe({
+        next: () => {
+          this.loadEquipements();
+        },
+        error: (err) => {
+          console.error('Error deleting equipement:', err);
+          alert('This equipement cannot be deleted. It may be associated with a logement.');
+        }
       });
     }
   }

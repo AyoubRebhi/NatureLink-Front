@@ -19,7 +19,7 @@ export class LogementListComponent implements OnInit {
   }
 
   loadLogements() {
-    this.http.get('http://localhost:8080/api/logements')
+    this.http.get('http://localhost:8080/logements')
       .pipe(
         catchError((error) => {
           console.error('Error fetching logements:', error);
@@ -30,4 +30,15 @@ export class LogementListComponent implements OnInit {
         this.logements = data;
       });
   }
+  deleteLogement(id: number) {
+    if (confirm('Are you sure you want to delete this logement?')) {
+      this.http.delete(`http://localhost:8080/logements/${id}`)
+        .subscribe(() => {
+          this.logements = this.logements.filter(l => l.id !== id);
+        }, error => {
+          console.error('Error deleting logement:', error);
+        });
+    }
+  }
+  
 }

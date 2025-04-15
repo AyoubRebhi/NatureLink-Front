@@ -1,57 +1,58 @@
-<div *ngIf="logements.length > 0; else noData">
-  <table class="table table-bordered">
+<div *ngIf="logements.length > 0; else noData" class="logement-list-container">
+  <div class="table-responsive">
+    <table class="table table-bordered">
     <thead>
       <tr>
+        <th>id</th>
         <th>Titre</th>
         <th>Description</th>
         <th>Location</th>
+        <th>Type</th>
         <th>Price (DT)</th>
+        <th>Propriétaire ID</th>
         <th>Phone</th>
         <th>Email</th>
+        <th>Capacity</th>
+        <th>Social Media</th>
+        <th>Single Rooms</th>
+        <th>Double Rooms</th>
         <th>Équipements</th>
-        <th>Disponibilités</th>
-        <th>Actions</th> <!-- Add Actions Column -->
+        <th>Actions</th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let logement of logements">
+        <td>{{ logement.id }}</td>
         <td>{{ logement.titre }}</td>
         <td>{{ logement.description }}</td>
         <td>{{ logement.location }}</td>
+        <td>{{ logement.type }}</td>
         <td>{{ logement.price }} DT</td>
+        <td>{{ logement.proprietarield }}</td>
         <td>{{ logement.phone }}</td>
         <td>{{ logement.email }}</td>
+        <td>{{ logement.capacity }}</td>
+        <td>{{ logement.socialMedia }}</td>
+        <td>{{ logement.singleRooms || 'N/A' }}</td>
+        <td>{{ logement.doubleRooms || 'N/A' }}</td>
         <td>
-          <ul>
-            <li *ngFor="let eq of logement.equipements">{{ eq.nom }}</li>
+          <ul *ngIf="logement.equipements?.length">
+            <li *ngFor="let eq of logement.equipements">{{ eq.name }}</li>
           </ul>
+          <span *ngIf="!logement.equipements?.length">No equipements</span>
         </td>
         <td>
-          <ul>
-            <li *ngFor="let disp of logement.disponibilities">
-              Du {{ disp.startDate }} au {{ disp.endDate }}
-            </li>
-          </ul>
-        </td>
-        <td>
-          <!-- Link to add a new disponibility for the selected logement -->
-          <a [routerLink]="['/admin/disponibility/add', logement.id]" class="btn btn-primary btn-sm">
-            Add Disponibility
+          <a [routerLink]="['/admin/logement/edit', logement.id]" class="btn btn-warning btn-sm">
+            Update
           </a>
-
-          <!-- Link to show units for the selected logement -->
-          <a [routerLink]="['/admin/unit/show', logement.id]" class="btn btn-info btn-sm">
-            Show Units
-          </a>
-
-          <!-- Link to add a new unit for the selected logement -->
-          <a [routerLink]="['/admin/unit/add', logement.id]" class="btn btn-success btn-sm">
-            Add Unit
-          </a>
+          <button (click)="deleteLogement(logement.id)" class="btn btn-danger btn-sm">
+            Delete
+          </button>
         </td>
       </tr>
     </tbody>
   </table>
+  </div>
 </div>
 
 <ng-template #noData>

@@ -109,7 +109,17 @@
   color: #6c757d;
   font-size: 18px;
 }
-
 .logement-list-container .table-responsive {
   overflow-x: auto;
+  max-height: 600px; /* or any height you prefer */
+  overflow-y: auto;
+}
+.logement-list-container .table-responsive::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+
+.logement-list-container .table-responsive::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 4px;
 }

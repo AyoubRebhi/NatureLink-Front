@@ -1,0 +1,66 @@
+<div class="main-content">
+  <a [routerLink]="'/dashboardUser/create'" class="btn btn-primary mb-3">Create Logement</a>
+
+  <!-- Only render container if logements exist -->
+  <div *ngIf="logements.length > 0; else noData" class="logement-cards-container">
+    <div *ngFor="let logement of logements" class="logement-card">
+      <div class="logement-header">
+        <h3>{{ logement.titre }}</h3>
+      </div>
+
+      <div *ngIf="logement.images && logement.images.length" class="logement-images">
+        <!-- Image list -->
+       
+
+        <!-- Image Carousel -->
+        <div class="carousel-container">
+          <div class="image-slider">
+            <img [src]="'http://localhost:8080/uploads/' + logement.images[currentImageIndex[logement.id || 0]]" 
+                 alt="Image" 
+                 class="logement-image"/>
+          </div>
+          <button class="slider-btn left" (click)="prevSlide(logement.id || 0, logement.images.length)">
+            &#10094;
+          </button>
+          <button class="slider-btn right" (click)="nextSlide(logement.id || 0, logement.images.length)">
+            &#10095;
+          </button>
+        </div>
+        <div class="image-list">
+          <div *ngFor="let img of logement.images; let i = index" 
+               class="image-item" 
+               [class.active]="currentImageIndex[logement.id || 0] === i">
+            <img [src]="'http://localhost:8080/uploads/' + img" alt="Image" class="logement-image"/>
+          </div>
+        </div>
+      </div>
+
+      <div class="logement-body">
+        <p><strong>Description:</strong> {{ logement.description }}</p>
+        <p><strong>Location:</strong> {{ logement.location }}</p>
+        <p><strong>Type:</strong> {{ logement.type }}</p>
+        <p><strong>Price:</strong> {{ logement.price }} DT</p>
+        <p><strong>Phone:</strong> {{ logement.phone }}</p>
+        <p><strong>Email:</strong> {{ logement.email }}</p>
+        <p><strong>Social Media:</strong> {{ logement.socialMedia }}</p>
+        <p><strong>Capacity:</strong> {{ logement.capacity }}</p>
+        <p><strong>Single Rooms:</strong> {{ logement.singleRooms || 'N/A' }}</p>
+        <p><strong>Double Rooms:</strong> {{ logement.doubleRooms || 'N/A' }}</p>
+        <p><strong>Équipements:</strong></p>
+        <ul *ngIf="logement.equipements?.length">
+          <li *ngFor="let eq of logement.equipements">{{ eq.name }}</li>
+        </ul>
+        <span *ngIf="!logement.equipements?.length">No équipements</span>
+      </div>
+
+      <div class="logement-actions">
+        <a [routerLink]="['/dashboardUser/edit', logement.id]" class="btn btn-warning btn-sm">Update</a>
+        <button (click)="deleteLogement(logement.id!)" class="btn btn-danger btn-sm">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #noData>
+    <p>No logements available</p>
+  </ng-template>
+</div>

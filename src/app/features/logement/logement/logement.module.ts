@@ -7,12 +7,15 @@ import { LogementService } from 'src/app/core/services/logement.service'; // Upd
 import { ReactiveFormsModule } from '@angular/forms';
 import { LogementRoutingModule } from './logement-routing.module';
 import { HttpClientModule } from '@angular/common/http'; // Import HttpClientModule
-import { FormsModule } from '@angular/forms'; // Import FormsModule
+import { FormsModule } from '@angular/forms';
+import { LogementCreateUserComponent } from '../components/logement-create-user/logement-create-user.component'; // Import FormsModule
 @NgModule({
   declarations: [
     LogementListComponent,
     LogementCreateComponent,
     LogementEditComponent,
+    LogementCreateUserComponent,
+    
   ],
   imports: [
     CommonModule,

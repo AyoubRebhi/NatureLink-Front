@@ -8,7 +8,6 @@ import { DashboardRoutingModule } from './dashboard-routing.module';
 import { SidebarDashComponent } from '../../layouts/dashboard/dashboard-layout/sidebar-dash/sidebar-dash.component';
 import { LogementModule } from '../logement/logement/logement.module'; 
 import { HttpClientModule } from '@angular/common/http'; // Import HttpClientModule
-import { DisponibilityModule } from '../disponibility/disponibility/disponibility.module'; // Import DisponibilityModule
 
 @NgModule({
   declarations: [
@@ -22,7 +21,6 @@ import { DisponibilityModule } from '../disponibility/disponibility/disponibilit
     RouterModule,
     DashboardRoutingModule,
     LogementModule,
-    DisponibilityModule,
     HttpClientModule,
   ],
   exports: [

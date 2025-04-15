@@ -1,26 +1,31 @@
+export enum LogementType {
+  HOUSE = 'HOUSE',
+  CABIN = 'CABIN',
+  TENT = 'TENT',
+  MAISON_DHOTE = 'MAISON_DHOTE',
+}
+
 export interface Equipement {
-    id: number;
-    nom: string;
-  }
-  
-  export interface Disponibility {
-    id: number;
-    startDate: string;
-    endDate: string;
-  }
-  
-  export interface Logement {
-    id: number;
-    titre: string;
-    description: string;
-    location: string;
-    equipements: Equipement[];
-    price: number;
-    image: string;
-    proprietarield: number;
-    phone: string;
-    email: string;
-    socialMedia: string;
-    disponibilities: Disponibility[];
-  }
-  
+  id: number;
+  name: string;
+  description?: string;
+}
+
+export interface Logement {
+  id?: number;
+  titre: string;
+  description: string;
+  location: string;
+  type: LogementType;
+  price: number;
+  proprietarield: number;
+  phone: string;
+  email: string;
+  capacity: number;
+  socialMedia: string;
+  images?: string[]; // updated to list of images
+  singleRooms?: number;
+  doubleRooms?: number;
+  equipements?: Equipement[];
+}
+

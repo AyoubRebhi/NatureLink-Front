@@ -1,0 +1,155 @@
+/* Layout for the main content */
+.main-content {
+  padding: 2rem;
+  padding-left: 240px; /* adjust for sidebar */
+  padding-top: 90px;    /* adjust for top header */
+  background-color: #f5f5f5;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+/* Create button */
+.main-content .btn {
+  margin-bottom: 1.5rem;
+}
+
+/* Cards container */
+.logement-cards-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: flex-start;
+}
+
+/* Individual card */
+.logement-card {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  width: calc(33.33% - 1rem); /* 3 per row with gap */
+  min-width: 280px;
+  box-sizing: border-box;
+  padding: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease-in-out;
+}
+
+.logement-card:hover {
+  transform: translateY(-5px);
+}
+
+/* Card header */
+.logement-header h3 {
+  margin-bottom: 0.5rem;
+  font-size: 1.2rem;
+  color: #333;
+}
+
+/* Image list */
+.image-list {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.image-item {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  transition: transform 0.3s;
+}
+
+.image-item.active {
+  border-color: #007bff;
+  transform: scale(1.1);
+}
+
+/* Carousel container */
+.carousel-container {
+  position: relative;
+  width: 100%;
+  height: 180px;
+  overflow: hidden;
+}
+
+.image-slider {
+  width: 100%;
+  height: 100%;
+}
+
+.logement-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.slider-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  background-color: rgba(0, 0, 0, 0.4);
+  color: white;
+  border: none;
+  font-size: 24px;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: background-color 0.3s ease;
+}
+
+.slider-btn:hover {
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+.slider-btn.left {
+  left: 10px;
+}
+
+.slider-btn.right {
+  right: 10px;
+}
+
+.logement-body p {
+  margin: 0.3rem 0;
+  font-size: 0.95rem;
+}
+
+.logement-body ul {
+  margin: 0.3rem 0;
+  padding-left: 1.2rem;
+  font-size: 0.9rem;
+}
+
+/* Actions */
+.logement-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+
+.btn-sm {
+  font-size: 0.8rem;
+  padding: 0.4rem 0.8rem;
+}
+
+/* Responsive layout */
+@media (max-width: 1024px) {
+  .logement-card {
+    width: calc(50% - 1rem); /* 2 per row */
+  }
+}
+
+@media (max-width: 600px) {
+  .main-content {
+    padding: 1rem;
+  }
+
+  .logement-card {
+    width: 100%; /* full width on mobile */
+  }
+}

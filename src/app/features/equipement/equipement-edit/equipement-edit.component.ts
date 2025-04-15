@@ -4,13 +4,13 @@ import { EquipementService } from 'src/app/core/services/equipement.service';
 import { Equipement } from 'src/app/core/models/equipement.model';
 
 @Component({
-  selector: 'app-equipement-add',
-  templateUrl: './equipement-add.component.html',
-  styleUrls: ['./equipement-add.component.scss'],  // Add your custom styles here
+  selector: 'app-equipement-edit',
+  templateUrl: './equipement-edit.component.html',
+  styleUrls: ['./equipement-edit.component.scss'],
 })
-export class EquipementAddComponent implements OnInit {
+export class EquipementEditComponent implements OnInit {
   equipement: Equipement = { name: '' };
-  isEdit = false;
+  isEdit = true;
 
   constructor(
     private route: ActivatedRoute,
@@ -21,21 +21,16 @@ export class EquipementAddComponent implements OnInit {
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
-      this.isEdit = true;
       this.equipementService.getById(+id).subscribe((data) => (this.equipement = data));
     }
   }
 
   onSubmit() {
-    if (this.isEdit && this.equipement.id) {
+    if (this.equipement.id) {
       this.equipementService.update(this.equipement.id, this.equipement).subscribe(() => {
         // Navigate to the equipment list page after update
         this.router.navigate(['/admin/equipement/list']);
       });
-    } else {
-      this.equipementService.create(this.equipement).subscribe(() => {
-        // Navigate to the equipment list page after creation
-        this.router.navigate(['/admin/equipement/list']);
-      });
-    }}
+    }
+  }
 }
