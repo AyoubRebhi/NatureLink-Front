@@ -4,6 +4,7 @@ import { Boutique } from 'src/app/core/models/boutique.module';
 import { Produit } from 'src/app/core/models/produit.module';
 import { BoutiqueService } from 'src/app/services/boutique.service';
 import { ActivatedRoute, Router } from '@angular/router';
+
 @Component({
   selector: 'app-boutique-update',
   templateUrl: './boutique-update.component.html',
@@ -41,8 +42,8 @@ BoutiqueForm !:FormGroup;
       this.BoutiqueForm = this.fb.group({
         nom: ['', Validators.required],
         addresse: ['', Validators.required],
-        email: ['', Validators.required],
-        telephone:['',Validators.required]
+        email: ['', Validators.required, Validators.pattern('^[a-zA-Z0-9._%+-]+@gmail\\.com$')],
+        telephone:['',Validators.required, Validators.pattern('^[0-9]{8}$')]
       });
   }
   onSubmit(): void {

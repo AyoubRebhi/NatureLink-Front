@@ -39,8 +39,8 @@
           placeholder="Enter shop email">
         <div *ngIf="BoutiqueForm.get('email')?.invalid && BoutiqueForm.get('email')?.touched" 
              class="error-message">
-          email is required
-        </div>
+             Email must be a valid Gmail address (e.g. user@gmail.com)
+            </div>
       </div>
       <div class="form-group">
         <label for="telephone">Shop Telephone</label>
@@ -48,7 +48,8 @@
           type="text" 
           id="Telephone" 
           formControlName="Telephone" 
-          placeholder="Enter shop telehone">
+          placeholder="Enter shop telehone"
+          maxlength="8">
         <div *ngIf="BoutiqueForm.get('Telephone')?.invalid && BoutiqueForm.get('Telephone')?.touched" 
              class="error-message">
           Telephone is required

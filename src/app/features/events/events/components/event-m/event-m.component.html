@@ -1,4 +1,4 @@
-<button class="book-now" [routerLink]="['/admin/events/Add']">➕ Add Event </button>
+<button class="book-now" [routerLink]="['/admin/events/Add']" *ngIf="isAdminView">➕ Add Event </button>
 
 <div class="event-management-container">
 
@@ -38,7 +38,8 @@
           <div class="event-actions" *ngIf="isAdminView">
             <button class="event-btn update" [routerLink]="['/admin/events/update', event.id]">Update</button>
             <button class="event-btn delete" (click)="deleteEvent(event.id)">Delete</button>
-            
+            <button class="export-btn" (click)="downloadPDF()">📄 Export PDF</button>
+
           </div>
         </div>
       </div>

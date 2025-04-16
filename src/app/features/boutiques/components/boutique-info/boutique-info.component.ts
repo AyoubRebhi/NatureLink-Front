@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { BoutiqueService } from 'src/app/services/boutique.service';
 import { Produit } from 'src/app/core/models/produit.module';
 import { ActivatedRoute } from '@angular/router';
-// If you want to show a message after deletion
+import * as L from 'leaflet';
+import { HttpClient } from '@angular/common/http';
 @Component({
   selector: 'app-boutique-info',
   templateUrl: './boutique-info.component.html',
@@ -21,8 +22,22 @@ export class BoutiqueInfoComponent implements OnInit {
   isLoading = true;
   isAdminView = false;
 
+  map: any;
 
-constructor(private boutiqueservice:BoutiqueService,private route:ActivatedRoute){}
+  loadMap(lat: number, lon: number): void {
+    const map = L.map('map').setView([lat, lon], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    L.marker([lat, lon]).addTo(map)
+      .bindPopup(this.boutiqueDetails.nom)
+      .openPopup();
+
+    
+  }
+  
+constructor(private boutiqueservice:BoutiqueService,private route:ActivatedRoute, private http:HttpClient){}
 
 ngOnInit(): void {
   this.route.params.subscribe(params => {
@@ -40,6 +55,8 @@ loadBoutiqueDetails(): void {
   this.boutiqueservice.getBoutiqueById(this.boutiqueId).subscribe({
     next: (boutique) => {
       this.boutiqueDetails = boutique;
+      this.geocodeAdresseAndDisplayMap(this.boutiqueDetails.adresse);
+
       console.log(this.boutiqueDetails);
     },
     error: (err) => {
@@ -74,6 +91,16 @@ deleteProduit(productId: number): void {
   }
 }
 
-  
+geocodeAdresseAndDisplayMap(adresse: string): void {
+  const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(adresse)}`;
+  this.http.get<any[]>(url).subscribe(data => {
+    if (data.length > 0) {
+      const { lat, lon } = data[0];
+      this.loadMap(parseFloat(lat), parseFloat(lon));
+    } else {
+      console.warn('Address not found');
+    }
+  });
+}
   
 }

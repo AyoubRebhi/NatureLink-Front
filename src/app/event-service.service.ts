@@ -26,10 +26,16 @@ export class EventServiceService {
   }
 
   getEventById(id: number): Observable<Event> {
-    return this.http.get<Event>(`${BASIC_URl}/All/${id}`);
+    return this.http.get<Event>(`${BASIC_URl}/event/All/${id}`);
   }
   deleteEvent(id: number): Observable<any> {
     return this.http.delete(`${BASIC_URl}/event/All/delete/${id}`);
+  }
+
+  downloadEventsPDF(): Observable<Blob> {
+    return this.http.get(`${BASIC_URl}/event/export/pdf`, {
+      responseType: 'blob'
+    });
   }
   
 }

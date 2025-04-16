@@ -115,11 +115,13 @@
               "node_modules/wow.js/dist/wow.min.js",
               "src/assets/css/style.css",
               "src/assets/css/bootstrap.min.css",
-              "src/styles.scss"
+              "src/styles.scss",
+              "node_modules/leaflet/dist/leaflet.css"
+
 
             ],
             "scripts": [
-              "src/assets/dist/js",
+              "src/assets/dist/js/demo.js",
               "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js",
               "node_modules/jquery/dist/jquery.min.js"
             ]

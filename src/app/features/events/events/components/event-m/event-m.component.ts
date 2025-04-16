@@ -74,4 +74,17 @@ updateFilteredEvents() {
     );
   }
 }
+
+downloadPDF() {
+  this.eventservice.downloadEventsPDF().subscribe(blob => {
+    const link = document.createElement('a');
+    link.href = window.URL.createObjectURL(blob);
+    link.download = 'events.pdf';
+    link.click();
+  }, error => {
+    console.error('PDF download failed', error);
+  });
+}
+
+
 }

@@ -2,6 +2,7 @@ import { Component,OnInit } from '@angular/core';
 import { EventServiceService } from 'src/app/event-service.service';
 import { FormBuilder,FormGroup, Validators } from '@angular/forms';
 import { Event } from 'src/app/core/models/event.module';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-event-add',
   templateUrl: './event-add.component.html',
@@ -21,7 +22,7 @@ export class EventAddComponent implements OnInit {
     title: '',
     image:''
   };
-  constructor(private fb:FormBuilder,private eventservice:EventServiceService ){
+  constructor(private fb:FormBuilder,private eventservice:EventServiceService,private router:Router ){
     
   }
 
@@ -58,6 +59,7 @@ onSubmit(): void {
     // Call the service to save the event
     this.eventservice.postEvent(this.newEvent).subscribe(response => {
       console.log('Event added:', response);
+      this.router.navigate(['/admin/events/management']);
     });
   } else {
     // Mark all fields as touched to trigger validation

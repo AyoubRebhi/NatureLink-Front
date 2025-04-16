@@ -3,6 +3,7 @@ import { FormBuilder,FormGroup, Validators } from '@angular/forms';
 import { Boutique } from 'src/app/core/models/boutique.module';
 import { Produit } from 'src/app/core/models/produit.module';
 import { BoutiqueService } from 'src/app/services/boutique.service';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-boutique-add',
   templateUrl: './boutique-add.component.html',
@@ -20,7 +21,7 @@ export class BoutiqueAddComponent implements OnInit {
       image:'',
       produits: [],
     };
-    constructor(private fb:FormBuilder,private boutiqueservice:BoutiqueService ){}
+    constructor(private fb:FormBuilder,private boutiqueservice:BoutiqueService,private router:Router ){}
     ngOnInit(): void {
       this.initializeForm();
     }
@@ -28,8 +29,8 @@ export class BoutiqueAddComponent implements OnInit {
       this.BoutiqueForm = this.fb.group({
         nom: ['', Validators.required],
         addresse: ['', Validators.required],
-        email: ['', Validators.required],
-        Telephone: ['', Validators.required],
+        email: ['', Validators.required, Validators.pattern('^[a-zA-Z0-9._%+-]+@...\\.com$')],
+        Telephone: ['', Validators.required, Validators.pattern('^[0-9]{8}$')],
       });
   }
   onSubmit(): void {
@@ -45,6 +46,7 @@ export class BoutiqueAddComponent implements OnInit {
       // Call the service to save the event
       this.boutiqueservice.createBoutique(this.newBoutique).subscribe(response => {
         console.log('Event added:', response);
+        this.router.navigate(['/admin/boutiques/list_boutiques']);
       });
     } else {
       // Mark all fields as touched to trigger validation

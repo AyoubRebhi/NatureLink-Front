@@ -9,7 +9,7 @@
     <div class="collapse navbar-collapse" id="navbarCollapse">
       <div class="navbar-nav ms-auto py-0">
         <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-item nav-link">
-          Home
+          
         </a>
         <a routerLink="/about" routerLinkActive="active" class="nav-item nav-link">About</a>
         <a routerLink="/services" routerLinkActive="active" class="nav-item nav-link">Services</a>
@@ -45,11 +45,11 @@
   <div *ngIf="currentRoute !== '/'" class="container-fluid hero-header">
     <div class="container">
       <div class="hero-content">
-        <h1 class="display-3 text-white animated slideInDown">{{ pageTitle }}</h1>
+        <h1 class="display-3 text-white animated slideInDown"></h1>
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb justify-content-center">
-            <li class="breadcrumb-item"><a routerLink="/">Home</a></li>
-            <li class="breadcrumb-item text-white active" aria-current="page">{{ pageTitle }}</li>
+            <li class="breadcrumb-item"><a routerLink="/"></a></li>
+            <li class="breadcrumb-item text-white active" aria-current="page"></li>
           </ol>
         </nav>
       </div>
