@@ -1,0 +1,40 @@
+<form [formGroup]="menuForm" (ngSubmit)="onSubmit()">
+  <!-- Plats -->
+  <div class="form-group">
+    <label for="plats">Plats</label>
+    <input type="text" id="plats" formControlName="plats" class="form-control">
+    <div *ngIf="menuForm.get('plats')?.invalid && menuForm.get('plats')?.touched" class="text-danger">
+      <small *ngIf="menuForm.get('plats')?.errors?.['required']">Ce champ est requis</small>
+      <small *ngIf="menuForm.get('plats')?.errors?.['maxlength']">Maximum 100 caractères</small>
+    </div>
+  </div>
+
+  <!-- Prix Moyen -->
+  <div class="form-group">
+    <label for="prixMoyen">Prix moyen</label>
+    <input type="number" id="prixMoyen" formControlName="prixMoyen" class="form-control" step="0.01">
+    <div *ngIf="menuForm.get('prixMoyen')?.invalid && menuForm.get('prixMoyen')?.touched" class="text-danger">
+      <small *ngIf="menuForm.get('prixMoyen')?.errors?.['required']">Ce champ est requis</small>
+      <small *ngIf="menuForm.get('prixMoyen')?.errors?.['min']">Le prix doit être positif</small>
+      <small *ngIf="menuForm.get('prixMoyen')?.errors?.['max']">Prix maximum: 1000</small>
+    </div>
+  </div>
+
+  <!-- Messages d'erreur et de succès -->
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+  </div>
+  <div *ngIf="successMessage" class="alert alert-success">
+    {{ successMessage }}
+  </div>
+
+  <!-- Boutons -->
+  <button type="submit" class="btn btn-primary" [disabled]="isLoading">
+    <span *ngIf="isLoading" class="spinner-border spinner-border-sm"></span>
+    {{ isLoading ? 'En cours...' : 'Enregistrer' }}
+  </button>
+
+  <button type="button" class="btn btn-secondary ml-2" (click)="goBack()">
+    Retour
+  </button>
+</form>

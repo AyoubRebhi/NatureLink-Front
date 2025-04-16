@@ -1,0 +1,84 @@
+<div id="restaurantList">
+  <!-- Barre de recherche -->
+  <div class="row mb-4">
+    <div class="col-lg-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-xxl">
+              <div class="search-box">
+                <input
+                  type="text"
+                  class="form-control"
+                  [(ngModel)]="searchTerm"
+                  placeholder="Rechercher un restaurant..." />
+                <i class="ri-search-line search-icon"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Liste des restaurants -->
+  <div class="row">
+    <div *ngFor="let restaurant of filteredRestaurants" class="col-md-6 col-lg-4 mb-4">
+      <div class="card h-100 shadow-sm">
+
+        <img
+          [src]="restaurant.image ? restaurantService.getImageUrl(restaurant.image) : 'assets/images/default.jpg'"
+          (error)="onImageError($event)"
+          class="card-img-top"
+          alt="Image du restaurant"
+          style="height: 200px; object-fit: cover;" />
+
+        <div class="card-body d-flex flex-column">
+          <h5 class="card-title">{{ restaurant.nom }}</h5>
+          <p class="card-text">{{ restaurant.description }}</p>
+          <ul class="list-unstyled mb-3">
+            <li><strong>Localisation:</strong> {{ restaurant.localisation }}</li>
+            <li><strong>Cuisine:</strong> {{ restaurant.typeCuisine }}</li>
+            <li><strong>Horaires:</strong> {{ restaurant.horairesOuverture }}</li>
+          </ul>
+
+          <div class="mt-auto d-flex justify-content-between">
+            <!-- Voir les détails -->
+            <button class="btn btn-sm btn-outline-primary"
+                    title="Voir les détails"
+                    [routerLink]="['/admin/restaurants/details', restaurant.id, 'menus']">
+              <i class="bi bi-eye"></i>
+              Voir
+            </button>
+
+            <!-- Modifier -->
+            <button class="btn btn-sm btn-outline-warning"
+                    title="Modifier"
+                    [routerLink]="['edit', restaurant.id]">
+              <i class="bi bi-pencil"></i>
+              Modifier
+            </button>
+
+            <!-- Supprimer -->
+            <button class="btn btn-sm btn-outline-danger"
+                    title="Supprimer"
+                    (click)="deleteRestaurant(restaurant.id!)">
+              <i class="bi bi-trash"></i>
+              Supprimer
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Aucun résultat -->
+    <div *ngIf="filteredRestaurants.length === 0 && !isLoading" class="text-center py-4 col-12">
+      <p class="text-muted">Aucun restaurant trouvé.</p>
+    </div>
+
+    <!-- Chargement -->
+    <div *ngIf="isLoading" class="text-center py-4 col-12">
+      <p class="text-muted">Chargement des restaurants...</p>
+    </div>
+  </div>
+</div>

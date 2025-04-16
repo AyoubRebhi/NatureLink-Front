@@ -1,0 +1,51 @@
+<div class="container">
+  <h2 class="mb-4">Modifier le Menu</h2>
+
+  <!-- Message de succès -->
+  <div *ngIf="successMessage" class="alert alert-success">
+    <i class="bi bi-check-circle"></i> {{ successMessage }}
+  </div>
+
+  <!-- Message d'erreur -->
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    <i class="bi bi-exclamation-triangle"></i> {{ errorMessage }}
+  </div>
+
+  <form [formGroup]="menuForm" (ngSubmit)="onSubmit()">
+    <div class="mb-3">
+      <label for="plats" class="form-label">Plats</label>
+      <input
+        type="text"
+        id="plats"
+        class="form-control"
+        formControlName="plats"
+        placeholder="Nom du plat"
+      />
+      <div *ngIf="menuForm.get('plats')?.invalid && menuForm.get('plats')?.touched" class="text-danger">
+        Ce champ est requis.
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="prixMoyen" class="form-label">Prix Moyen (€)</label>
+      <input
+        type="number"
+        id="prixMoyen"
+        class="form-control"
+        formControlName="prixMoyen"
+        placeholder="Prix moyen"
+      />
+      <div *ngIf="menuForm.get('prixMoyen')?.invalid && menuForm.get('prixMoyen')?.touched" class="text-danger">
+        Veuillez entrer un prix valide.
+      </div>
+    </div>
+
+    <div class="d-flex justify-content-between">
+      <button type="button" class="btn btn-secondary" (click)="cancelUpdate()">Annuler</button>
+      <button type="submit" class="btn btn-primary" [disabled]="isLoading || menuForm.invalid">
+        <span *ngIf="isLoading" class="spinner-border spinner-border-sm"></span>
+        Enregistrer
+      </button>
+    </div>
+  </form>
+</div>

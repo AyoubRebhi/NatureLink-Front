@@ -1,0 +1,49 @@
+<form [formGroup]="restaurantForm" (ngSubmit)="saveRestaurant()">
+  <!-- Messages -->
+  <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+  <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+
+  <!-- Nom -->
+  <div class="form-group">
+    <label for="nom">Nom</label>
+    <input type="text" id="nom" formControlName="nom" class="form-control">
+  </div>
+
+  <!-- Description -->
+  <div class="form-group">
+    <label for="description">Description</label>
+    <textarea id="description" formControlName="description" class="form-control"></textarea>
+  </div>
+
+  <!-- Localisation -->
+  <div class="form-group">
+    <label for="localisation">Localisation</label>
+    <input type="text" id="localisation" formControlName="localisation" class="form-control">
+  </div>
+
+  <!-- Type de Cuisine -->
+  <div class="form-group">
+    <label for="typeCuisine">Type de Cuisine</label>
+    <input type="text" id="typeCuisine" formControlName="typeCuisine" class="form-control">
+  </div>
+
+  <!-- Horaires -->
+  <div class="form-group">
+    <label for="horairesOuverture">Horaires d'ouverture</label>
+    <input type="text" id="horairesOuverture" formControlName="horairesOuverture" class="form-control">
+  </div>
+
+  <!-- Image -->
+  <div class="form-group">
+    <label for="image">Image</label>
+    <input type="file" id="image" class="form-control" (change)="onImageSelected($event)">
+    <small *ngIf="selectedImage" class="form-text text-muted">Fichier sélectionné : {{ selectedImage.name }}</small>
+    <div *ngIf="!selectedImage && restaurantForm.touched" class="text-danger">Veuillez sélectionner une image.</div>
+  </div>
+
+  <!-- Bouton Ajouter -->
+  <button type="submit" [disabled]="restaurantForm.invalid || !selectedImage" class="btn btn-primary">Ajouter</button>
+</form>
+
+<!-- Retour -->
+<button class="btn btn-secondary mt-3" (click)="goBack()">Retour</button>

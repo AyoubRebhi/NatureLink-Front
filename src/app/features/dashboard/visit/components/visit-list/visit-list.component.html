@@ -1,0 +1,82 @@
+<div class="container-fluid py-4">
+  <div class="card">
+    <div class="card-header">
+      <div class="d-flex justify-content-between align-items-center">
+        <h2 class="mb-0">Liste des Visites</h2>
+        <div class="search-box w-25">
+          <input type="text" class="form-control" [(ngModel)]="searchTerm" placeholder="Rechercher...">
+          <i class="bi bi-search"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-body">
+      <!-- Alertes -->
+      <div *ngIf="error" class="alert alert-danger alert-dismissible fade show">
+        {{ error }}
+        <button type="button" class="btn-close" (click)="error = ''"></button>
+      </div>
+
+      <!-- Loading -->
+      <div *ngIf="isLoading" class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Chargement...</span>
+        </div>
+      </div>
+
+      <!-- Tableau -->
+      <div *ngIf="!isLoading" class="table-responsive">
+        <table class="table table-hover align-middle">
+          <thead class="table-light">
+            <tr>
+              <th>ID</th>
+              <th>Date</th>
+              <th>Heure</th>
+              <th>Prix</th>
+              <th>Durée</th>
+              <th>Monument</th>
+              <th>Guide</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let visit of filteredVisits">
+              <td>{{ visit.id }}</td>
+              <td>{{ visit.date | date: 'dd/MM/yyyy' }}</td>
+
+              <td>{{ visit.time }}</td>
+              <td>{{ visit.price }} €</td>
+              <td>{{ visit.duration }}</td>
+              <td>{{ visit.monument?.nom || visit.nomMonument || '-' }}</td>
+              <td>
+                {{ visit.guide ? (visit.guide.firstName + ' ' + visit.guide.lastName) : (visit.nomGuide || '-') }}
+              </td>
+              <td>
+                <div class="btn-group btn-group-sm">
+
+                  <button class="btn btn-sm btn-warning me-2" [routerLink]="['edit',visit.id]">
+                    <i class="bi bi-pencil"></i>
+                  </button>
+
+                  <button class="btn btn-sm btn-danger" (click)="deleteVisit(visit.id)">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Aucun résultat -->
+        <div *ngIf="filteredVisits.length === 0 && !isLoading" class="text-center py-4">
+          <p class="text-muted">
+            {{ searchTerm ? 'Aucun résultat trouvé' : 'Aucune visite disponible' }}
+          </p>
+          <button *ngIf="searchTerm" (click)="searchTerm = ''" class="btn btn-sm btn-link">
+            Réinitialiser la recherche
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
