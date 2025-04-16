@@ -11,7 +11,7 @@
 
             <div class="col-lg-12 mb-4">
               <label class="form-label">📍 Select Activity Location on Map <span class="text-danger">*</span></label>
-            
+
               <div class="map-container border rounded mb-2">
                 <div #map id="map" style="height: 100%; width: 100%;"></div>
                 <div *ngIf="isLoading" class="map-loading-overlay">
@@ -20,15 +20,16 @@
                   </div>
                 </div>
               </div>
-            
+
               <div class="d-flex justify-content-between align-items-center">
-                <input type="text" class="form-control me-2" [(ngModel)]="activity.location" name="location" placeholder="Selected location..." readonly>
+                <input type="text" class="form-control me-2" [(ngModel)]="activity.location" name="location"
+                  placeholder="Selected location..." readonly>
                 <button type="button" class="btn btn-outline-danger btn-sm" (click)="clearLocation()">
                   <i class="fas fa-trash-alt"></i> Clear
                 </button>
               </div>
             </div>
-            
+
             <div class="col-lg-12 mb-3">
               <label for="description" class="form-label">Description <span class="text-danger">*</span></label>
               <textarea class="form-control" id="description" rows="3" required [(ngModel)]="activity.description"
@@ -98,6 +99,37 @@
               <button type="button" class="btn btn-info" (click)="generateActivity()">Generate Activity</button>
             </div>
 
+            <!-- Add this after the Generate Activity button -->
+            <div class="col-lg-12 mb-3">
+              <label class="form-label">Generate Images from Description</label>
+              <div class="input-group mb-2">
+                <button class="btn btn-primary" type="button" (click)="generateImages()"
+                  [disabled]="!activity.description">
+                  <i class="fas fa-image me-1"></i> Generate Images
+                </button>
+                <input type="text" class="form-control" placeholder="Or enter custom search terms" #imageSearchInput>
+                <button class="btn btn-outline-secondary" type="button"
+                  (click)="generateImages(imageSearchInput.value)">
+                  <i class="fas fa-search"></i>
+                </button>
+              </div>
+
+              <!-- Generated images preview -->
+              <div class="generated-images-container mb-3" *ngIf="generatedImages.length > 0">
+                <div class="d-flex flex-wrap gap-2">
+                  <div class="generated-image-item" *ngFor="let img of generatedImages; let i = index">
+                    <img [src]="img" class="img-thumbnail" [alt]="'Generated image ' + (i + 1)">
+                    <div class="image-actions">
+                      <button class="btn btn-sm btn-success" (click)="addToSelectedImages(img)">
+                        <i class="fas fa-plus"></i> Add
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Keep your existing upload section -->
             <div class="col-lg-12 mb-3">
               <label class="form-label">Upload Images <span class="text-danger">*</span></label>
               <input type="file" class="form-control" (change)="onImagesSelected($event)" multiple accept="image/*"

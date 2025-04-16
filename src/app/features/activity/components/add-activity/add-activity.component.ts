@@ -35,6 +35,11 @@ export class AddActivityComponent implements AfterViewInit {
   map!: L.Map;
   marker!: L.Marker;
   isLoading = false;
+
+  // Add these new properties
+  generatedImages: string[] = [];
+  isGeneratingImages = false;
+
   @ViewChild('map', { static: false }) mapElement!: ElementRef;
 
   constructor(private activityService: ActivityService, private router: Router) { }
@@ -49,11 +54,11 @@ export class AddActivityComponent implements AfterViewInit {
       zoom: 7,
       zoomControl: true
     });
-    
+
     setTimeout(() => {
       this.map.invalidateSize();  // 👈 Forces map to recalculate dimensions
     }, 0);
-    
+
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; OpenStreetMap contributors'
@@ -155,5 +160,41 @@ export class AddActivityComponent implements AfterViewInit {
         alert('⚠️ Failed to generate activity.');
       }
     });
+  }
+  generateImages(customQuery?: string): void {
+    if (!this.activity.description && !customQuery) {
+      alert('Please enter a description or search terms');
+      return;
+    }
+
+    this.isGeneratingImages = true;
+    const searchQuery = customQuery || this.activity.description;
+    
+    this.activityService.getActivityImages(searchQuery).subscribe({
+      next: (response) => {
+        this.generatedImages = response.images;
+        this.isGeneratingImages = false;
+      },
+      error: (err) => {
+        console.error('Error generating images:', err);
+        alert('Failed to generate images');
+        this.isGeneratingImages = false;
+      }
+    });
+  }
+
+  addToSelectedImages(imageUrl: string): void {
+    // Convert data URL to File object if needed
+    fetch(imageUrl)
+      .then(res => res.blob())
+      .then(blob => {
+        const file = new File([blob], 'generated-image.jpg', { type: 'image/jpeg' });
+        this.selectedImages.push(file);
+        alert('Image added to selection!');
+      })
+      .catch(err => {
+        console.error('Error adding image:', err);
+        alert('Failed to add image');
+      });
   }
 }

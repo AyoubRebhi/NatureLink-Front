@@ -50,10 +50,19 @@ export class ActivityService {
   generateActivityFromAI(params: any): Observable<any> {
     return this.http.post<any>(`${this.baseUrl}/generate`, params);
   }
-  
+
   generateImageSearchPrompt(description: string): Observable<{ query: string }> {
     return this.http.post<{ query: string }>(
       `${this.baseUrl}/generate-image-query`,
+      { description }
+    );
+  }
+  /**
+   * NEW: Get real images from Unsplash based on description
+   */
+  getActivityImages(description: string): Observable<{ images: string[] }> {
+    return this.http.post<{ images: string[] }>(
+      `${this.baseUrl}/get-activity-images`,
       { description }
     );
   }
@@ -63,8 +72,5 @@ export class ActivityService {
       { description }
     );
   }
-  
-  
-
 
 }
