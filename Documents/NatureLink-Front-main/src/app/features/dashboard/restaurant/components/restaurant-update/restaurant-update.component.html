@@ -1,0 +1,47 @@
+<div class="container">
+  <h2>Modifier un Restaurant</h2>
+
+  <form [formGroup]="restaurantForm" (ngSubmit)="updateRestaurant()">
+    <div *ngIf="successMessage" class="alert alert-success">
+      {{ successMessage }}
+    </div>
+
+    <div *ngIf="errorMessage" class="alert alert-danger">
+      {{ errorMessage }}
+    </div>
+
+    <div class="form-group">
+      <label for="nom">Nom</label>
+      <input type="text" id="nom" formControlName="nom" class="form-control">
+    </div>
+
+    <div class="form-group">
+      <label for="description">Description</label>
+      <textarea id="description" formControlName="description" class="form-control"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="localisation">Localisation</label>
+      <input type="text" id="localisation" formControlName="localisation" class="form-control">
+    </div>
+
+    <div class="form-group">
+      <label for="typeCuisine">Type de Cuisine</label>
+      <input type="text" id="typeCuisine" formControlName="typeCuisine" class="form-control">
+    </div>
+
+    <div class="form-group">
+      <label for="horairesOuverture">Horaires d'ouverture</label>
+      <input type="text" id="horairesOuverture" formControlName="horairesOuverture" class="form-control">
+    </div>
+
+    <div class="form-group">
+      <label for="image">Image</label>
+      <input type="text" id="image" formControlName="image" class="form-control">
+    </div>
+
+    <button type="submit" [disabled]="restaurantForm.invalid" class="btn btn-primary">Mettre à jour</button>
+  </form>
+
+  <button class="btn btn-secondary mt-3" (click)="goBack()">Retour</button>
+</div>

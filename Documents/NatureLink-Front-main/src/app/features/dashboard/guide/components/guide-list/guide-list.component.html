@@ -1,0 +1,73 @@
+<div id="guideList">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-xxl">
+              <div class="search-box">
+                <input
+                  type="text"
+                  class="form-control"
+                  [(ngModel)]="searchTerm"
+                  placeholder="Rechercher un guide..."
+                />
+                <i class="ri-search-line search-icon"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="card-title mb-0">
+            Guides touristiques
+            <span class="badge bg-dark ms-1">{{ filteredGuides.length }}</span>
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-centered table-nowrap">
+              <thead class="table-light">
+                <tr>
+                  <th>ID</th>
+                  <th>Prénom</th>
+                  <th>Nom</th>
+                  <th>Email</th>
+                  <th>Téléphone</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let guide of filteredGuides">
+                  <td>{{ guide.id }}</td>
+                  <td>{{ guide.firstName }}</td>
+                  <td>{{ guide.lastName }}</td>
+                  <td>{{ guide.email }}</td>
+                  <td>{{ guide.phone }}</td>
+                  <td>
+                  
+                    <button class="btn btn-sm btn-warning me-2" [routerLink]="['edit', guide.id]">
+                      <i class="bi bi-pencil"></i>
+                    </button>
+                    <button class="btn btn-sm btn-danger" (click)="deleteGuide(guide.id!)">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div *ngIf="filteredGuides.length === 0" class="text-center py-4">
+            <p class="text-muted">Aucun guide trouvé.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

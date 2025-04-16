@@ -1,0 +1,89 @@
+<div class="container mt-4">
+  <h2 class="mb-4">Ajouter un Guide</h2>
+
+  <form [formGroup]="guideForm" (ngSubmit)="saveGuide()">
+    <!-- Messages d'alerte -->
+    <div *ngIf="successMessage" class="alert alert-success alert-dismissible fade show">
+      {{ successMessage }}
+      <button type="button" class="btn-close" (click)="successMessage = ''"></button>
+    </div>
+
+    <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show">
+      {{ errorMessage }}
+      <button type="button" class="btn-close" (click)="errorMessage = ''"></button>
+    </div>
+
+    <!-- Champ Prénom -->
+    <div class="form-group mb-3">
+      <label for="firstName" class="form-label">Prénom</label>
+      <input
+        type="text"
+        id="firstName"
+        formControlName="firstName"
+        class="form-control"
+        [ngClass]="{ 'is-invalid': guideForm.get('firstName')?.invalid && guideForm.get('firstName')?.touched }"
+      >
+      <div *ngIf="guideForm.get('firstName')?.errors?.['required'] && guideForm.get('firstName')?.touched" class="invalid-feedback">
+        Le prénom est requis.
+      </div>
+    </div>
+
+    <!-- Champ Nom -->
+    <div class="form-group mb-3">
+      <label for="lastName" class="form-label">Nom</label>
+      <input
+        type="text"
+        id="lastName"
+        formControlName="lastName"
+        class="form-control"
+        [ngClass]="{ 'is-invalid': guideForm.get('lastName')?.invalid && guideForm.get('lastName')?.touched }"
+      >
+      <div *ngIf="guideForm.get('lastName')?.errors?.['required'] && guideForm.get('lastName')?.touched" class="invalid-feedback">
+        Le nom est requis.
+      </div>
+    </div>
+
+    <!-- Champ Email -->
+    <div class="form-group mb-3">
+      <label for="email" class="form-label">Email</label>
+      <input
+        type="email"
+        id="email"
+        formControlName="email"
+        class="form-control"
+        [ngClass]="{ 'is-invalid': guideForm.get('email')?.invalid && guideForm.get('email')?.touched }"
+      >
+      <div *ngIf="guideForm.get('email')?.errors?.['required'] && guideForm.get('email')?.touched" class="invalid-feedback">
+        L'email est requis.
+      </div>
+      <div *ngIf="guideForm.get('email')?.errors?.['email'] && guideForm.get('email')?.touched" class="invalid-feedback">
+        Veuillez entrer une adresse email valide.
+      </div>
+    </div>
+
+    <!-- Champ Téléphone -->
+    <div class="form-group mb-4">
+      <label for="phone" class="form-label">Téléphone</label>
+      <input
+        type="text"
+        id="phone"
+        formControlName="phone"
+        class="form-control"
+        [ngClass]="{ 'is-invalid': guideForm.get('phone')?.invalid && guideForm.get('phone')?.touched }"
+      >
+      <div *ngIf="guideForm.get('phone')?.errors?.['required'] && guideForm.get('phone')?.touched" class="invalid-feedback">
+        Le numéro de téléphone est requis.
+      </div>
+    </div>
+
+    <!-- Boutons -->
+    <div class="d-flex justify-content-between">
+      <button type="button" class="btn btn-outline-secondary" (click)="goBack()">
+        <i class="bi bi-arrow-left"></i> Retour
+      </button>
+      <button type="submit" class="btn btn-primary" [disabled]="guideForm.invalid">
+        <i class="bi bi-save"></i> Enregistrer
+      </button>
+    </div>
+  </form>
+</div>

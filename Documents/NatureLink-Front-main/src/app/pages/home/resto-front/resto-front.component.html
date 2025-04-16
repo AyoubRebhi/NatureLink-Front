@@ -1,0 +1,63 @@
+<div class="restaurant-front-container">
+  <div class="search-section">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-md-8">
+          <div class="search-box">
+            <input
+              type="text"
+              class="form-control"
+              [(ngModel)]="searchTerm"
+              (input)="filterRestaurants()"
+              placeholder="Trouvez un restaurant..."
+            />
+            <i class="ri-search-line search-icon"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container restaurant-list">
+    <div class="row">
+      <div *ngFor="let restaurant of filteredRestaurants" class="col-md-6 col-lg-4 mb-4">
+        <div class="card h-100 shadow-sm">
+          <img
+            [src]="getRestaurantImage(restaurant.image)"
+            class="card-img-top"
+            alt="{{ restaurant.nom }}"
+            onerror="this.src='assets/images/default-restaurant.jpg'"
+          >
+
+          <div class="card-body d-flex flex-column">
+            <h3 class="card-title">{{ restaurant.nom }}</h3>
+            <p class="card-text text-muted">{{ restaurant.description }}</p>
+
+            <ul class="restaurant-info list-unstyled">
+              <li><i class="ri-map-pin-line"></i> {{ restaurant.localisation }}</li>
+              <li><i class="ri-restaurant-line"></i> {{ restaurant.typeCuisine }}</li>
+              <li><i class="ri-time-line"></i> {{ restaurant.horairesOuverture }}</li>
+            </ul>
+
+            <div class="mt-auto text-center">
+              <button
+              class="btn btn-primary"
+             [routerLink]="['/restaurant', restaurant.id]"
+            >
+           <i class="ri-eye-line"></i> Voir les détails
+           </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="filteredRestaurants.length === 0" class="col-12 text-center py-5">
+        <div class="no-result">
+          <i class="ri-restaurant-line"></i>
+          <h4>Aucun restaurant trouvé</h4>
+          <p>Essayez avec d'autres termes de recherche</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
