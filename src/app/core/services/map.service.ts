@@ -12,9 +12,7 @@ export class MapService {
   private endMarker: L.Marker | null = null;
   markers: any;
 
-  // Ajoutez ces méthodes à votre MapService existant
-
-getStartLatLng(): L.LatLng | null {
+  getStartLatLng(): L.LatLng | null {
     return this.startMarker?.getLatLng() || null;
   }
   
@@ -25,6 +23,7 @@ getStartLatLng(): L.LatLng | null {
   hasBothMarkers(): boolean {
     return !!this.startMarker && !!this.endMarker;
   }
+
   initMap(elementId: string, lat: number, lng: number): void {
     this.map = L.map(elementId).setView([lat, lng], 13);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -36,15 +35,13 @@ getStartLatLng(): L.LatLng | null {
     return this.map;
   }
 
-  // Dans MapService
-async reverseGeocode(latlng: L.LatLng): Promise<string | null> {
+  async reverseGeocode(latlng: L.LatLng): Promise<string | null> {
     try {
       const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latlng.lat}&lon=${latlng.lng}&zoom=18&addressdetails=1`;
       const response = await fetch(url);
       const data = await response.json();
       
       if (data.address) {
-        // Construire une adresse lisible
         const addressParts = [];
         if (data.address.road) addressParts.push(data.address.road);
         if (data.address.house_number) addressParts.push(data.address.house_number);
@@ -76,10 +73,10 @@ async reverseGeocode(latlng: L.LatLng): Promise<string | null> {
       .bindPopup(isStart ? 'Point de départ' : 'Point d\'arrivée');
 
     if (isStart) {
-      if (this.startMarker) this.map.removeLayer(this.startMarker);
+      if (this.startMarker && this.map) this.map.removeLayer(this.startMarker);
       this.startMarker = marker;
     } else {
-      if (this.endMarker) this.map.removeLayer(this.endMarker);
+      if (this.endMarker && this.map) this.map.removeLayer(this.endMarker);
       this.endMarker = marker;
     }
 
@@ -88,6 +85,22 @@ async reverseGeocode(latlng: L.LatLng): Promise<string | null> {
         this.calculateDistance();
       }
     });
+  }
+
+  removeMarker(isDeparture: boolean): void {
+    if (!this.map) return;
+    
+    if (isDeparture && this.startMarker) {
+      this.map.removeLayer(this.startMarker);
+      this.startMarker = null;
+    } else if (!isDeparture && this.endMarker) {
+      this.map.removeLayer(this.endMarker);
+      this.endMarker = null;
+    }
+  }
+
+  hasMarker(isDeparture: boolean): boolean {
+    return isDeparture ? !!this.startMarker : !!this.endMarker;
   }
 
   async calculateDistance(): Promise<number> {
@@ -99,8 +112,8 @@ async reverseGeocode(latlng: L.LatLng): Promise<string | null> {
     const endLatLng = this.endMarker.getLatLng();
 
     return new Promise((resolve, reject) => {
-      if (this.routingControl) {
-        this.map!.removeControl(this.routingControl);
+      if (this.routingControl && this.map) {
+        this.map.removeControl(this.routingControl);
       }
 
       const planOptions: L.Routing.PlanOptions = {
@@ -114,6 +127,8 @@ async reverseGeocode(latlng: L.LatLng): Promise<string | null> {
         L.Routing.waypoint(endLatLng)
       ], planOptions);
 
+      if (!this.map) throw new Error('Map not initialized');
+
       this.routingControl = L.Routing.control({
         waypoints: [startLatLng, endLatLng],
         routeWhileDragging: false,
@@ -122,15 +137,14 @@ async reverseGeocode(latlng: L.LatLng): Promise<string | null> {
         router: L.Routing.osrmv1({
           serviceUrl: 'https://router.project-osrm.org/route/v1'
         })
-      }).addTo(this.map!);
+      }).addTo(this.map);
 
-      // 🔥 Supprimer l'affichage des instructions d'itinéraire
       this.routingControl.getContainer()?.remove();
 
       this.routingControl.on('routesfound', (e) => {
         const routes = e.routes;
         if (routes?.[0]?.summary?.totalDistance) {
-          resolve(routes[0].summary.totalDistance / 1000); // distance en km
+          resolve(routes[0].summary.totalDistance / 1000);
         } else {
           reject(new Error('No valid route found'));
         }

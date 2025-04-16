@@ -20,6 +20,35 @@ export class PostFormComponent implements OnInit, OnDestroy {
     MODELS: 'nudity-2.0,wad,offensive'
   };
 
+  postContent: string = '';
+  generatedTags: string[] = [];
+  isLoading: boolean = false;
+  errorMessage: string = '';
+
+
+  generateTags() {
+    if (!this.postContent.trim()) {
+      this.errorMessage = "Le contenu ne peut pas être vide.";
+      return;
+    }
+
+    this.isLoading = true;
+    this.errorMessage = '';
+    this.generatedTags = [];
+
+    this.http.post<any>('http://localhost:5000/generate-tags', {
+      content: this.postContent
+    }).subscribe({
+      next: res => {
+        this.generatedTags = res.tags;
+        this.isLoading = false;
+      },
+      error: err => {
+        this.errorMessage = 'Erreur lors de la génération des tags.';
+        this.isLoading = false;
+      }
+    });
+  }
   newPostContent = '';
   selectedFile: File | null = null;
   imagePreview: string | ArrayBuffer | null = null;

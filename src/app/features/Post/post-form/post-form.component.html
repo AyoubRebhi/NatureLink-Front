@@ -59,21 +59,15 @@
           <button class="fb-add-option" (click)="fileInput.click()" [disabled]="isSubmitting">
             <i class="fas fa-images"></i>
           </button>
-          <button class="fb-add-option" [disabled]="isSubmitting">
-            <i class="fas fa-user-tag"></i>
-          </button>
+         
           <button class="fb-add-option" (click)="toggleEmojiPicker()" [disabled]="isSubmitting">
             <i class="fas fa-smile"></i>
           </button>
           <button class="fb-add-option" (click)="toggleVoiceRecognition()" [disabled]="isSubmitting">
             <i class="fas fa-microphone" [class.recording]="isListening"></i>
           </button>
-          <button class="fb-add-option" [disabled]="isSubmitting">
-            <i class="fas fa-map-marker-alt"></i>
-          </button>
-          <button class="fb-add-option" [disabled]="isSubmitting">
-            <i class="fas fa-ellipsis-h"></i>
-          </button>
+        
+         
         </div>
         <input type="file" #fileInput 
               (change)="onFileSelected($event)"

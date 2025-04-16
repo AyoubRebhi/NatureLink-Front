@@ -11,6 +11,7 @@ import { AddClothingComponent } from './features/Clothing/add-clothing/add-cloth
 import { ListFoodClothingfrontComponent } from './features/Food/list-food-clothingfront/list-food-clothingfront.component';
 import { CarbonCalculatorComponent } from './features/CarbonCalculator/carbon-calculator/carbon-calculator.component';
 import { SpeechComponent } from './speech/speech.component';
+import { TraveComponent } from './features/travel/trave/trave.component';
 const routes: Routes = [
   {
     path: '',
@@ -23,7 +24,9 @@ const routes: Routes = [
       { path: 'postlist', component: PostListComponent },
       { path: 'listD', component: ListFoodClothingfrontComponent },
       {path: 'carbonPrint', component: CarbonCalculatorComponent},
-      {path: 'test', component: SpeechComponent}
+      {path: 'test', component: SpeechComponent},
+      {path: 'recommandation', component: TraveComponent}
+
 
 
 

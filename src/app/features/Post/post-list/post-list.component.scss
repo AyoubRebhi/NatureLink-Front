@@ -591,3 +591,113 @@ body {
     }
   }
 }
+/* Style de base du bouton Like */
+.fb-action-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 12px;
+  border: none;
+  background: none;
+  color: #65676B; /* Couleur texte par défaut */
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin: 0 2px;
+
+  /* Icône */
+  .fa-thumbs-up {
+    margin-right: 6px;
+    font-size: 16px;
+    transition: all 0.2s ease;
+  }
+
+  /* État hover */
+  &:hover:not([disabled]) {
+    background-color: rgba(0, 0, 0, 0.05);
+    color: #31A24C; /* Vert au survol */
+
+    .fa-thumbs-up {
+      transform: scale(1.1);
+      color: #31A24C;
+    }
+  }
+
+  /* État actif (liké) */
+  &.active {
+    color: #31A24C; /* Vert quand liké */
+
+    .fa-thumbs-up {
+      color: #31A24C;
+    }
+  }
+
+  /* Compteur de likes */
+  .like-count {
+    margin-left: 4px;
+    font-size: 14px;
+    color: #65676B;
+  }
+
+  /* Indicateur de chargement */
+  .loading-like {
+    margin-left: 6px;
+    
+    .fa-spinner {
+      font-size: 14px;
+      color: #65676B;
+    }
+  }
+
+  /* État désactivé */
+  &[disabled] {
+    opacity: 0.7;
+    cursor: not-allowed;
+    
+    &:hover {
+      background: none;
+      color: #65676B;
+    }
+  }
+}
+
+.liked {
+  color: green;
+  background-color: rgba(0, 128, 0, 0.1);
+  border: 1px solid green;
+}
+
+.not-liked {
+  color: #666;
+  background-color: transparent;
+  border: 1px solid #ddd;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+/* Animation du like */
+@keyframes likeAnimation {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+/* Appliquer l'animation quand le like est activé */
+.fb-action-btn.active .fa-thumbs-up {
+  animation: likeAnimation 0.4s ease;
+  color: #31A24C; /* Couleur verte pendant l'animation */
+}
+
+/* Style spécifique pour la liste des posts */
+.fb-post-actions {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+  border-top: 1px solid #dddfe2;
+  border-bottom: 1px solid #dddfe2;
+}

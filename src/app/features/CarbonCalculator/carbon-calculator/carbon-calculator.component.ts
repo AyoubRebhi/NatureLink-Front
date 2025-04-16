@@ -11,7 +11,13 @@ import { HttpClient, HttpEventType } from '@angular/common/http';
   styleUrls: ['./carbon-calculator.component.scss']
 })
 export class CarbonCalculatorComponent implements AfterViewInit, OnDestroy {
+  // Dans CarbonCalculatorComponent
+showHistoryModal: boolean = false;
+userFootprints: any[] = [];
+isLoadingHistory: boolean = false;
+historyError: string | null = null;
   distance: number = 0;
+  loggedInUserId: number = 1; // À remplacer par l'ID réel de l'utilisateur connecté
   carbonFootprint: number = 0;
   transportType: keyof typeof this.emissionFactors = 'car';
   isLoading: boolean = false;
@@ -20,7 +26,43 @@ export class CarbonCalculatorComponent implements AfterViewInit, OnDestroy {
   depart: string = '';
   arrivee: string = '';
   private subscriptions: Subscription = new Subscription();
+// Méthodes pour gérer l'historique
+openHistoryModal(): void {
+  this.showHistoryModal = true;
+  this.loadUserFootprints();
+}
 
+closeHistoryModal(): void {
+  this.showHistoryModal = false;
+}
+
+loadUserFootprints(): void {
+  this.isLoadingHistory = true;
+  this.historyError = null;
+  
+  this.carbonService.getFootprintsByUser(this.loggedInUserId).subscribe({
+    next: (footprints) => {
+      this.userFootprints = footprints;
+      this.isLoadingHistory = false;
+    },
+    error: (err) => {
+      this.historyError = 'Erreur lors du chargement de l\'historique';
+      this.isLoadingHistory = false;
+      console.error(err);
+    }
+  });
+}
+
+formatDate(dateString: string | Date): string {
+  const date = typeof dateString === 'string' ? new Date(dateString) : dateString;
+  return date.toLocaleDateString('fr-FR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+}
   // Upload properties
   selectedFile: File | null = null;
   uploadProgress: number | null = null;
@@ -68,26 +110,35 @@ export class CarbonCalculatorComponent implements AfterViewInit, OnDestroy {
       try {
         this.isLoading = true;
         
+        // Déterminer quel marqueur mettre à jour
         let targetField: 'depart' | 'arrivee';
         if (!this.depart && !this.arrivee) {
           targetField = 'depart';
         } else if (this.depart && !this.arrivee) {
           targetField = 'arrivee';
         } else {
-          const replaceDepart = confirm('Voulez-vous remplacer le point de départ? (OK pour départ, Annuler pour arrivée)');
+          // Demander explicitement à l'utilisateur quel point il veut modifier
+          const replaceDepart = confirm('Voulez-vous modifier le point de départ? (OK pour départ, Annuler pour arrivée)');
           targetField = replaceDepart ? 'depart' : 'arrivee';
         }
+  
+        // Supprimer l'ancien marqueur avant d'ajouter le nouveau
+        this.mapService.removeMarker(targetField === 'depart');
   
         const address = await this.mapService.reverseGeocode(e.latlng);
         if (!address) {
           throw new Error('Impossible de trouver une adresse pour cet emplacement');
         }
   
+        // Mettre à jour l'adresse et ajouter le nouveau marqueur
         if (targetField === 'depart') {
           this.depart = address;
         } else {
           this.arrivee = address;
         }
+  
+        // Ajouter le nouveau marqueur
+        this.mapService.addMarker(e.latlng, targetField === 'depart');
   
         await this.onAddressChange(targetField);
       } catch (error) {
@@ -121,7 +172,7 @@ export class CarbonCalculatorComponent implements AfterViewInit, OnDestroy {
       maxZoom: zoomLevel
     });
   }
-  
+
   async onAddressChange(type: 'depart' | 'arrivee'): Promise<void> {
     const address = type === 'depart' ? this.depart : this.arrivee;
     if (!address) return;
@@ -152,9 +203,21 @@ export class CarbonCalculatorComponent implements AfterViewInit, OnDestroy {
     try {
       this.isLoading = true;
       this.errorMessage = null;
-      
-      this.distance = await this.mapService.calculateDistance();
-      this.carbonFootprint = this.distance * this.emissionFactors[this.transportType];
+
+      // Récupérer les coordonnées de départ et d'arrivée
+      const startLatLng = this.mapService.getStartLatLng();
+      const endLatLng = this.mapService.getEndLatLng();
+
+      // Vérifier que les deux points sont valides
+      if (!startLatLng || !endLatLng) {
+        throw new Error('Coordonnées de départ ou d\'arrivée invalides');
+      }
+
+      // Calculer la distance
+      this.distance = startLatLng.distanceTo(endLatLng);
+
+      // Calculer l'empreinte carbone
+      this.carbonFootprint = (this.distance * this.emissionFactors[this.transportType]) / 1000; // en kg CO2
     } catch (error) {
       this.handleError('Erreur lors du calcul de la distance ou de l\'empreinte carbone');
     } finally {
@@ -189,82 +252,47 @@ export class CarbonCalculatorComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-  uploadTicket(): void {
-    if (!this.selectedFile) {
-      this.handleError('Veuillez sélectionner un fichier');
-      return;
-    }
+ 
 
-    this.isUploading = true;
-    this.uploadProgress = 0;
-    this.errorMessage = null;
-    this.successMessage = null;
-
-    const formData = new FormData();
-    formData.append('ticket', this.selectedFile);
-
-    this.subscriptions.add(
-      this.http.post('http://localhost:5000/api/process-ticket', formData, {
-        reportProgress: true,
-        observe: 'events'
-      }).subscribe({
-        next: (event: any) => {
-          if (event.type === HttpEventType.UploadProgress && event.total) {
-            this.uploadProgress = Math.round(100 * event.loaded / event.total);
-          } else if (event.type === HttpEventType.Response) {
-            this.handleTicketResponse(event.body);
-          }
-        },
-        error: (err) => {
-          this.handleError(err.error?.message || 'Erreur lors du traitement du ticket');
-          this.resetUpload();
-        }
-      })
-    );
+  
+saveFootprint(): void {
+  if (!this.distance || !this.carbonFootprint) {
+    this.handleError('Veuillez d\'abord calculer une empreite carbone');
+    return;
   }
 
-  handleTicketResponse(data: any): void {
-    this.isUploading = false;
-    this.uploadProgress = null;
+  if (!this.depart || !this.arrivee) {
+    this.handleError('Veuillez spécifier les points de départ et d\'arrivée');
+    return;
+  }
 
-    if (data.success) {
-        // Nettoyage supplémentaire côté client si nécessaire
-        const cleanDeparture = data.departure.replace(/[^a-zA-Z\s]/g, '').trim();
-        const cleanDestination = data.destination.replace(/[^a-zA-Z\s]/g, '').trim();
-        
-        this.depart = cleanDeparture;
-        this.arrivee = cleanDestination;
-        
-        // Mise à jour des champs et de la carte
-        this.onAddressChange('depart');
-        this.onAddressChange('arrivee');
-    } else {
-        this.handleError(data.message || 'Impossible d\'extraire les informations du ticket');
-    }
+  const data = {
+    distance: this.distance/1000,
+    transportType: this.transportType,
+    carbonFootprint: this.carbonFootprint,
+    departurePoint: this.depart,
+    arrivalPoint: this.arrivee,
+    user: { id: this.loggedInUserId }, // Envoyer un objet user avec l'id
+    date: new Date()
+  };
+
+  this.subscriptions.add(
+    this.carbonService.saveFootprint(data).subscribe({
+      next: () => {
+        this.successMessage = 'Empreinte carbone enregistrée avec succès !';
+        // Afficher une alerte
+        alert('Empreinte carbone enregistrée avec succès !');
+        // Ou utiliser un toast/snackbar selon votre framework
+        setTimeout(() => this.successMessage = null, 4000)//orrection du timeout à 3000ms (3 secondes)
+      },
+      error: (err) => {
+        console.error('Erreur détaillée:', err);
+        this.handleError(err.error?.message || 'Erreur lors de l\'enregistrement');
+      }
+    })
+  );
 }
-  saveFootprint(): void {
-    if (!this.distance || !this.carbonFootprint) {
-      this.handleError('Veuillez d\'abord calculer une empreinte carbone');
-      return;
-    }
 
-    const data = {
-      distance: this.distance,
-      transportType: this.transportType,
-      carbonFootprint: this.carbonFootprint,
-      date: new Date()
-    };
-
-    this.subscriptions.add(
-      this.carbonService.saveFootprint(data).subscribe({
-        next: () => {
-          this.successMessage = 'Empreinte carbone enregistrée avec succès !';
-          setTimeout(() => this.successMessage = null, 30);
-        },
-        error: () => this.handleError('Erreur lors de l\'enregistrement')
-      })
-    );
-  }
 
   clearMarkers(): void {
     this.mapService.clearMarkers();
@@ -275,7 +303,6 @@ export class CarbonCalculatorComponent implements AfterViewInit, OnDestroy {
     this.resetUpload();
   }
 
-  
   private handleError(message: string): void {
     this.errorMessage = message;
     this.isLoading = false;
@@ -284,13 +311,13 @@ export class CarbonCalculatorComponent implements AfterViewInit, OnDestroy {
   }
 
   // carbon-calculator.component.ts
-public resetUpload(event?: Event): void {
-  if (event) {
-    event.stopPropagation(); // Important pour éviter de déclencher le clic sur le parent
+  public resetUpload(event?: Event): void {
+    if (event) {
+      event.stopPropagation(); // Important pour éviter de déclencher le clic sur le parent
+    }
+    this.isUploading = false;
+    this.uploadProgress = null;
+    this.selectedFile = null;
+    this.previewUrl = null;
   }
-  this.isUploading = false;
-  this.uploadProgress = null;
-  this.selectedFile = null;
-  this.previewUrl = null;
-}
 }

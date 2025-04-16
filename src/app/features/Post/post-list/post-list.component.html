@@ -93,22 +93,30 @@
             <span>{{ post.likesCount || 0 }} réactions</span>
           </div>
           <div class="fb-comment-share-count">
-            <span>{{ post.commentsCount  }} commentaires</span>
-            <span>{{ post.sharesCount || 0 }}        partages</span>
+          
           </div>
         </div>
 
         <!-- Post Actions -->
         <div class="fb-post-actions">
-          <button class="fb-action-btn" [class.active]="post.isLiked" >
-            <i class="far fa-thumbs-up"></i> J'aime
-          </button>
+          <!-- Dans votre boucle de posts -->
+          <button class="fb-action-btn" 
+          [class.active]="post.isLiked" 
+          (click)="toggleLike(post.id)"
+          [disabled]="likeLoading[post.id]">
+    <i [class.fas]="post.isLiked" 
+       [class.far]="!post.isLiked" 
+       class="fa-thumbs-up"></i> 
+    {{ post.isLiked ? 'Aimé' : 'J\'aime' }}
+    <span *ngIf="post.likesCount > 0" class="like-count">
+      ({{ post.likesCount }})
+    </span>
+  </button>
+
           <button class="fb-action-btn" (click)="toggleComments(post.id)">
             <i class="far fa-comment-alt"></i> Commenter
           </button>
-          <button class="fb-action-btn" >
-            <i class="fas fa-share"></i> Partager
-          </button>
+         
         </div>
 
         <!-- Comments Section -->

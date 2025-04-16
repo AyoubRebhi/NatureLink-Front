@@ -4,7 +4,10 @@ import { CommentaireService, Comment } from '../../../core/services/commentaire.
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
 import { catchError, switchMap, finalize } from 'rxjs/operators';
-import { Observable, of, throwError } from 'rxjs';
+import { forkJoin, Observable, of, throwError } from 'rxjs';
+import { LikeService } from 'src/app/core/services/Like.service';
+import { ChangeDetectorRef } from '@angular/core'; // Ajoutez cette importation
+
 
 @Component({
   selector: 'app-post-list',
@@ -28,17 +31,22 @@ export class PostListComponent implements OnInit {
   showComments: { [postId: number]: boolean } = {};
   isLoadingComments: { [postId: number]: boolean } = {};
   showDropdown: { [postId: number]: boolean } = {};
-  loggedInUserId = 1;
+  loggedInUserId = 1
+  likeLoading: { [postId: number]: boolean } = {};
 
   constructor(
     private postService: PostService,
     private commentService: CommentaireService,
+    private likeService: LikeService,
     private http: HttpClient,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private cdRef: ChangeDetectorRef // Ajoutez cette ligne
+
   ) {}
 
   ngOnInit(): void {
     this.loadPosts();
+    
   }
 
   loadPosts(): void {
@@ -46,12 +54,13 @@ export class PostListComponent implements OnInit {
     this.postService.getAllPosts().subscribe({
       next: (posts) => {
         this.posts = posts;
-        this.isLoading = false;
         this.posts.forEach(post => {
+          this.loadLikeStatus(post.id);
           if (post.imageUrl) {
             console.log(post.imageUrl);
           }
         });
+        this.isLoading = false;
       },
       error: (err) => {
         console.error('Erreur:', err);
@@ -59,6 +68,62 @@ export class PostListComponent implements OnInit {
       }
     });
   }
+
+  loadLikeStatus(postId: number): void {
+    this.likeService.getLikeCount(postId).subscribe(count => {
+      const post = this.posts.find(p => p.id === postId);
+      if (post) {
+        post.likesCount = count;
+      }
+    });
+    
+    this.likeService.hasUserLiked(postId, this.loggedInUserId).subscribe(hasLiked => {
+      const post = this.posts.find(p => p.id === postId);
+      if (post) {
+        post.isLiked = hasLiked;
+      }
+    });
+  }
+
+  toggleLike(postId: number): void {
+    if (this.likeLoading[postId]) return;
+    
+    this.likeLoading[postId] = true;
+    const post = this.posts.find(p => p.id === postId);
+    
+    if (!post) {
+      this.likeLoading[postId] = false;
+      return;
+    }
+  
+    // Sauvegarde de l'état actuel
+    const wasLiked = post.isLiked;
+    const oldCount = post.likesCount || 0;
+  
+    // Mise à jour optimiste
+    post.isLiked = !wasLiked;
+    post.likesCount = wasLiked ? oldCount - 1 : oldCount + 1;
+  
+    this.likeService.toggleLike(postId, this.loggedInUserId).subscribe({
+      next: (response) => {
+        // Synchronisation avec la réponse serveur
+        post.isLiked = response.liked;
+        post.likesCount = response.count;
+      },
+      error: (err) => {
+        console.error('Erreur:', err);
+        // Rollback
+        post.isLiked = wasLiked;
+        post.likesCount = oldCount;
+        this.toastr.error('Erreur lors du like');
+      },
+      complete: () => {
+        this.likeLoading[postId] = false;
+        this.cdRef.detectChanges();
+      }
+    });
+  }
+
 
   toggleComments(postId: number): void {
     if (!this.showComments[postId]) {

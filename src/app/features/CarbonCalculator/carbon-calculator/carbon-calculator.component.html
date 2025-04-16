@@ -1,57 +1,22 @@
 <div class="carbon-calculator-container">
-  <h2 class="calculator-title">Calculateur d'Empreinte Carbone</h2>
-
-  <!-- Section upload de ticket -->
-  <div class="ticket-upload-section">
-    <h3 class="upload-title">📎 Ou uploader un ticket</h3>
-    
-    <div class="file-upload-area" (click)="fileInput.click()">
-      <input #fileInput type="file" (change)="onFileSelected($event)" accept="image/*,.pdf" class="file-input">
-      
-      <div *ngIf="!selectedFile" class="upload-prompt">
-        <i class="upload-icon fas fa-cloud-upload-alt"></i>
-        <p>Cliquez pour sélectionner un ticket</p>
-        <small>Formats acceptés : JPG, PNG, PDF (max 5MB)</small>
-      </div>
-      
-      <div *ngIf="selectedFile" class="file-preview">
-        <div *ngIf="previewUrl" class="image-preview">
-          <img [src]="previewUrl" alt="Aperçu du ticket">
-        </div>
-        <div class="file-info">
-          <p>{{ selectedFile.name }}</p>
-          <p>{{ selectedFile.size / 1024 | number:'1.0-0' }} KB</p>
-        </div>
-        <button (click)="resetUpload($event)" class="clear-file-btn">
-          <i class="fas fa-times"></i>
-        </button>
-      </div>
-    </div>
-    
-    <button (click)="uploadTicket()" [disabled]="!selectedFile || isUploading" class="upload-btn">
-      <span *ngIf="!isUploading"><i class="fas fa-file-import"></i> Extraire les informations</span>
-      <span *ngIf="isUploading"><i class="fas fa-spinner fa-spin"></i> Traitement...</span>
+  <div class="header-section">
+    <h2 class="calculator-title">Carbon Footprint Calculator</h2>
+    <button (click)="openHistoryModal()" class="history-button">
+      <i class="fas fa-history"></i> My History
     </button>
-    
-    <div *ngIf="uploadProgress !== null" class="upload-progress">
-      <div class="progress-bar">
-        <div class="progress" [style.width.%]="uploadProgress"></div>
-      </div>
-      <span>{{ uploadProgress }}%</span>
-    </div>
   </div>
 
   <div class="input-section">
     <div class="form-group">
-      <label for="depart" class="input-label">📍 Point de départ</label>
+      <label for="depart" class="input-label">📍 Departure Point</label>
       <input type="text" id="depart" [(ngModel)]="depart" (change)="onAddressChange('depart')" 
-             class="form-control input-field" placeholder="Ex: Gare de Lyon, Paris" />
+             class="form-control input-field" placeholder="E.g. Gare de Lyon, Paris" />
     </div>
 
     <div class="form-group">
-      <label for="arrivee" class="input-label">🏁 Point d'arrivée</label>
+      <label for="arrivee" class="input-label">🏁 Arrival Point</label>
       <input type="text" id="arrivee" [(ngModel)]="arrivee" (change)="onAddressChange('arrivee')" 
-             class="form-control input-field" placeholder="Ex: Tour Eiffel, Paris" />
+             class="form-control input-field" placeholder="E.g. Eiffel Tower, Paris" />
     </div>
   </div>
 
@@ -59,24 +24,28 @@
     <div id="map"></div>
     <div *ngIf="isLoading" class="map-loading-overlay">
       <div class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">Chargement...</span>
+        <span class="visually-hidden">Loading...</span>
       </div>
     </div>
   </div>
 
-  <button (click)="clearMarkers()" class="clear-button">
-    <i class="fas fa-trash-alt"></i> Effacer la carte
-  </button>
+  <div class="action-buttons">
+    <button (click)="clearMarkers()" class="clear-button">
+      <i class="fas fa-trash-alt"></i> Clear Map
+    </button>
+    <button (click)="openHistoryModal()" class="history-button">
+      <i class="fas fa-history"></i> View My History
+    </button>
+  </div>
 
   <div class="transport-section">
-    <label class="transport-label">🚗 Mode de transport</label>
+    <label class="transport-label">🚗 Mode of Transport</label>
     <select [(ngModel)]="transportType" (change)="updateDistanceAndCarbon()" class="transport-select">
-      <option value="car">🚗 Voiture</option>
+      <option value="car">🚗 Car</option>
       <option value="bus">🚌 Bus</option>
       <option value="train">🚆 Train</option>
-      <option value="plane">✈️ Avion</option>
-      <option value="bike">🚲 Vélo</option>
-      <option value="walk">🚶 Marche</option>
+      <option value="plane">✈️ Plane</option>
+      <option value="bicycle">🚲 Bicycle</option>
     </select>
   </div>
 
@@ -92,7 +61,7 @@
     <div class="result-card highlight">
       <div class="result-icon">🌱</div>
       <div>
-        <div class="result-label">Empreinte carbone</div>
+        <div class="result-label">Carbon Footprint</div>
         <div class="result-value">{{ carbonFootprint | number:'1.1-2' }} kg CO₂</div>
       </div>
     </div>
@@ -106,7 +75,77 @@
     <i class="fas fa-check-circle"></i> {{ successMessage }}
   </div>
 
-  <button (click)="saveFootprint()" class="save-button" [disabled]="!distance">
-    <i class="fas fa-save"></i> Sauvegarder ce trajet
-  </button>
+  <div class="save-section">
+    <button (click)="saveFootprint()" class="save-button" [disabled]="!distance">
+      <i class="fas fa-save"></i> Save This Trip
+    </button>
+  </div>
+
+  <!-- History Modal -->
+  <div *ngIf="showHistoryModal" class="modal-overlay" (click)="closeHistoryModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3><i class="fas fa-history"></i> My Trip History</h3>
+        <button (click)="closeHistoryModal()" class="close-modal">&times;</button>
+      </div>
+      
+      <div class="modal-body">
+        <div *ngIf="isLoadingHistory" class="loading-history">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+          <p>Loading your history...</p>
+        </div>
+        
+        <div *ngIf="historyError" class="history-error">
+          <i class="fas fa-exclamation-circle"></i> {{ historyError }}
+        </div>
+        
+        <div *ngIf="!isLoadingHistory && userFootprints.length === 0" class="empty-history">
+          <i class="fas fa-info-circle"></i> No saved trips
+        </div>
+        
+        <div class="footprint-history">
+          <div *ngFor="let footprint of userFootprints" class="footprint-item">
+            <div class="footprint-header">
+              <span class="transport-icon">
+                <ng-container [ngSwitch]="footprint.transportType">
+                  <i *ngSwitchCase="'car'" class="fas fa-car"></i>
+                  <i *ngSwitchCase="'bus'" class="fas fa-bus"></i>
+                  <i *ngSwitchCase="'train'" class="fas fa-train"></i>
+                  <i *ngSwitchCase="'plane'" class="fas fa-plane"></i>
+                  <i *ngSwitchCase="'bicycle'" class="fas fa-bicycle"></i>
+                  <i *ngSwitchCase="'walk'" class="fas fa-walking"></i>
+                </ng-container>
+              </span>
+              <span class="footprint-date">{{ formatDate(footprint.date) }}</span>
+            </div>
+            <div class="footprint-details">
+              <div class="footprint-route">
+                <span class="from">{{ footprint.departurePoint }}</span>
+                <i class="fas fa-arrow-right"></i>
+                <span class="to">{{ footprint.arrivalPoint }}</span>
+              </div>
+              <div class="footprint-stats">
+                <div class="stat">
+                  <span class="stat-label">Distance:</span>
+                  <span class="stat-value">{{ footprint.distance | number:'1.2-2' }} km</span>
+                </div>
+                <div class="stat">
+                  <span class="stat-label">Footprint:</span>
+                  <span class="stat-value highlight">{{ footprint.carbonFootprint | number:'1.2-2' }} kg CO₂</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="modal-footer">
+        <button (click)="closeHistoryModal()" class="modal-close-btn">
+          <i class="fas fa-times"></i> Close
+        </button>
+      </div>
+    </div>
+  </div>
 </div>
