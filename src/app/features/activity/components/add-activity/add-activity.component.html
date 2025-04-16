@@ -9,12 +9,26 @@
               <input type="text" class="form-control" id="name" required [(ngModel)]="activity.name" name="name">
             </div>
 
-            <div class="col-lg-6 mb-3">
-              <label for="location" class="form-label">Location <span class="text-danger">*</span></label>
-              <input type="text" class="form-control" id="location" required [(ngModel)]="activity.location"
-                name="location">
+            <div class="col-lg-12 mb-4">
+              <label class="form-label">📍 Select Activity Location on Map <span class="text-danger">*</span></label>
+            
+              <div class="map-container border rounded mb-2">
+                <div #map id="map" style="height: 100%; width: 100%;"></div>
+                <div *ngIf="isLoading" class="map-loading-overlay">
+                  <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                  </div>
+                </div>
+              </div>
+            
+              <div class="d-flex justify-content-between align-items-center">
+                <input type="text" class="form-control me-2" [(ngModel)]="activity.location" name="location" placeholder="Selected location..." readonly>
+                <button type="button" class="btn btn-outline-danger btn-sm" (click)="clearLocation()">
+                  <i class="fas fa-trash-alt"></i> Clear
+                </button>
+              </div>
             </div>
-
+            
             <div class="col-lg-12 mb-3">
               <label for="description" class="form-label">Description <span class="text-danger">*</span></label>
               <textarea class="form-control" id="description" rows="3" required [(ngModel)]="activity.description"
@@ -82,7 +96,7 @@
 
             <div class="col-lg-12 mb-3 text-end">
               <button type="button" class="btn btn-info" (click)="generateActivity()">Generate Activity</button>
-            </div>            
+            </div>
 
             <div class="col-lg-12 mb-3">
               <label class="form-label">Upload Images <span class="text-danger">*</span></label>

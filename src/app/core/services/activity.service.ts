@@ -51,6 +51,20 @@ export class ActivityService {
     return this.http.post<any>(`${this.baseUrl}/generate`, params);
   }
   
+  generateImageSearchPrompt(description: string): Observable<{ query: string }> {
+    return this.http.post<{ query: string }>(
+      `${this.baseUrl}/generate-image-query`,
+      { description }
+    );
+  }
+  generateImageSearchQuery(description: string): Observable<{ query: string }> {
+    return this.http.post<{ query: string }>(
+      `${this.baseUrl}/generate-image-query`,
+      { description }
+    );
+  }
+  
+  
 
 
 }

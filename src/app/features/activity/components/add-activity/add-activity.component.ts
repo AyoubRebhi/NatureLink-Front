@@ -1,18 +1,20 @@
-import { Component } from '@angular/core';
+import { Component, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import { Router } from '@angular/router';
-import { Activity } from '../../../../core/models/activity.model';
 import { ActivityService } from '../../../../core/services/activity.service';
+import { Activity } from '../../../../core/models/activity.model';
+import * as L from 'leaflet';
 
 @Component({
   selector: 'app-add-activity',
   templateUrl: './add-activity.component.html',
   styleUrls: ['./add-activity.component.scss']
 })
-export class AddActivityComponent {
+
+export class AddActivityComponent implements AfterViewInit {
   activity: Activity = {
     name: '',
     description: '',
-    providerId: 1, // You may later retrieve this from a logged-in user context
+    providerId: 1,
     location: '',
     duration: 0,
     price: 0,
@@ -25,61 +27,101 @@ export class AddActivityComponent {
     tags: []
   };
 
-  equipmentInput: string = '';
-  moodInput: string = '';
-  tagInput: string = '';
+  equipmentInput = '';
+  moodInput = '';
+  tagInput = '';
   selectedImages: File[] = [];
+  //CRINGE L MAP
+  map!: L.Map;
+  marker!: L.Marker;
+  isLoading = false;
+  @ViewChild('map', { static: false }) mapElement!: ElementRef;
 
-  constructor(
-    private activityService: ActivityService,
-    private router: Router
-  ) {}
+  constructor(private activityService: ActivityService, private router: Router) { }
 
-  onImagesSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files) {
-      this.selectedImages = Array.from(input.files);
+  ngAfterViewInit(): void {
+    setTimeout(() => this.initMap(), 0); // ← Force delay to ensure full rendering
+  }
+
+  initMap(): void {
+    this.map = L.map('map', {
+      center: [36.8, 10.2],
+      zoom: 7,
+      zoomControl: true
+    });
+    
+    setTimeout(() => {
+      this.map.invalidateSize();  // 👈 Forces map to recalculate dimensions
+    }, 0);
+    
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(this.map);
+
+    const customIcon = L.icon({
+      iconUrl: 'assets/img/icon-map.png',
+      iconSize: [32, 32],
+      iconAnchor: [16, 32]
+    });
+
+    this.map.on('click', async (e: L.LeafletMouseEvent) => {
+      const { lat, lng } = e.latlng;
+
+      if (this.marker) {
+        this.marker.setLatLng(e.latlng);
+      } else {
+        this.marker = L.marker(e.latlng, { icon: customIcon }).addTo(this.map);
+      }
+
+      await this.reverseGeocode(lat, lng);
+    });
+  }
+
+  async reverseGeocode(lat: number, lng: number): Promise<void> {
+    this.isLoading = true;
+    try {
+      const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`);
+      const data = await res.json();
+      this.activity.location = data.display_name || `${lat}, ${lng}`;
+    } catch {
+      this.activity.location = `${lat}, ${lng}`;
+    } finally {
+      this.isLoading = false;
+    }
+  }
+  clearLocation(): void {
+    this.activity.location = '';
+    if (this.marker) {
+      this.map.removeLayer(this.marker);
+      this.marker = undefined!;
     }
   }
 
+  onImagesSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files) this.selectedImages = Array.from(input.files);
+  }
+
   onSubmit(): void {
-    // Transform comma-separated strings into arrays
-    if (this.equipmentInput.trim()) {
-      this.activity.requiredEquipment = this.equipmentInput.split(',').map(item => item.trim());
-    }
+    this.activity.requiredEquipment = this.equipmentInput.split(',').map(e => e.trim());
+    this.activity.mood = this.moodInput.split(',').map(m => m.trim());
+    this.activity.tags = this.tagInput.split(',').map(t => t.trim());
 
-    if (this.moodInput.trim()) {
-      this.activity.mood = this.moodInput.split(',').map(item => item.trim());
-    }
-
-    if (this.tagInput.trim()) {
-      this.activity.tags = this.tagInput.split(',').map(item => item.trim());
-    }
-
-    if (!this.selectedImages.length) {
-      alert('Please upload at least one image.');
-      return;
-    }
+    if (!this.selectedImages.length) return alert('Please upload at least one image.');
 
     const formData = new FormData();
-
-    // Append images
-    this.selectedImages.forEach(image => {
-      formData.append('images', image);
-    });
-
-    // Append activity as JSON blob
-    const activityBlob = new Blob([JSON.stringify(this.activity)], { type: 'application/json' });
-    formData.append('activity', activityBlob);
+    this.selectedImages.forEach(img => formData.append('images', img));
+    formData.append('activity', new Blob([JSON.stringify(this.activity)], { type: 'application/json' }));
 
     this.activityService.addActivityWithImages(formData).subscribe({
       next: () => {
-        alert('Activity added successfully!');
+        alert('Activity added!');
         this.router.navigate(['/admin/activity']);
       },
-      error: (err) => {
+      error: err => {
         console.error('Error adding activity:', err);
-        alert('Failed to add activity.');
+        alert('❌ Failed to add activity.');
       }
     });
   }
@@ -96,32 +138,22 @@ export class AddActivityComponent {
       mood: this.moodInput || '',
       tags: this.tagInput || ''
     };
-  
+
     this.activityService.generateActivityFromAI(promptParams).subscribe({
-      next: (response) => {
+      next: res => {
         try {
-          const generated = JSON.parse(response.choices[0].message.content);
-  
-          this.activity.name = generated.name;
-          this.activity.description = generated.description;
-          this.activity.location = generated.location;
-          this.activity.duration = generated.duration;
-          this.activity.price = generated.price;
-          this.activity.maxParticipants = generated.maxParticipants;
-          this.activity.difficultyLevel = generated.difficultyLevel;
-          this.activity.requiredEquipment = generated.requiredEquipment;
-          this.activity.type = generated.type;
+          const generated = JSON.parse(res.choices[0].message.content);
+          Object.assign(this.activity, generated);
           this.moodInput = generated.mood.join(', ');
           this.tagInput = generated.tags.join(', ');
         } catch (e) {
-          alert("⚠️ Failed to parse generated activity. Please try again.");
+          alert('⚠️ Failed to parse generated activity.');
         }
       },
-      error: (err) => {
-        console.error("Error generating activity:", err);
-        alert("⚠️ Failed to generate activity.");
+      error: err => {
+        console.error('Error generating activity:', err);
+        alert('⚠️ Failed to generate activity.');
       }
     });
   }
-  
 }

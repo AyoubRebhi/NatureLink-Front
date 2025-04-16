@@ -17,6 +17,7 @@ import { GuidesComponent } from './layouts/main-layout/guides/guides.component';
 import { HttpClientModule } from '@angular/common/http';
 import { TransportComponent } from './layouts/main-layout/transport/transport.component';
 import { FormsModule } from '@angular/forms';
+import { ActivityComponent } from './pages/activity/activity.component';
 
 
 @NgModule({
@@ -37,6 +38,7 @@ import { FormsModule } from '@angular/forms';
     ServiceComponent,
     NotFoundComponent,
     TransportComponent,
+    ActivityComponent,
   ],
   imports: [
     BrowserModule,
