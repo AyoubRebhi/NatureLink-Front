@@ -4,6 +4,7 @@ export interface User {
     email: string;
     role: Role;
     blocked: boolean;
+    profilePic?: string;
   }
   
   export enum Role {

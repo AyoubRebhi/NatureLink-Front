@@ -36,6 +36,7 @@ import { ProfileComponent } from './pages/profile/profile.component';
 import { PaymentsComponent } from './pages/payments/payments/payments.component';
 //import { PaymentsComponent } from './pages/payments/payments.component';
 import { CommonModule } from '@angular/common';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -52,6 +53,7 @@ import { CommonModule } from '@angular/common';
     AuthDialogComponent,
     ProfileComponent,
     PaymentsComponent,
+    
    
     
   ],

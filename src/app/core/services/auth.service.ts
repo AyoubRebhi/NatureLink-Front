@@ -10,7 +10,7 @@ import { PaymentService } from './payment.service';
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:9000';
+  public apiUrl = 'http://localhost:9000';
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
   private hasPendingPayments = new BehaviorSubject<boolean>(false);
@@ -166,7 +166,7 @@ export class AuthService {
 
   updateUser(userId: number, userData: any): Observable<User> {
     return this.http.put<User>(
-      `${this.apiUrl}/users/${userId}`,
+      `${this.apiUrl}/api/users/${userId}`,
       userData,
       { headers: this.getAuthHeaders() }
     ).pipe(
@@ -178,7 +178,7 @@ export class AuthService {
 
   deleteUser(userId: number): Observable<void> {
     return this.http.delete<void>(
-      `${this.apiUrl}/users/${userId}`,
+      `${this.apiUrl}/api/users/${userId}`,
       { headers: this.getAuthHeaders() }
     ).pipe(
       tap(() => this.logout())
@@ -201,7 +201,23 @@ export class AuthService {
   getAuthToken(): string {
     return localStorage.getItem('auth_token') || '';
   }
+  setCurrentUser(user: User): void {
+    this.currentUserSubject.next(user);
+    localStorage.setItem('current_user', JSON.stringify(user));
+  }
+// auth.service.ts
+uploadProfilePicture(userId: number, file: File): Observable<User> {
+  const formData = new FormData();
+  formData.append('file', file);
   
+  // Add the base API URL
+  return this.http.post<User>(
+    `${this.apiUrl}/api/users/${userId}/upload-profile-pic`, // Fixed URL
+    formData
+  ).pipe(
+    tap(updatedUser => this.setCurrentUser(updatedUser))
+  );
+}
  // auth.service.ts
 
 }
