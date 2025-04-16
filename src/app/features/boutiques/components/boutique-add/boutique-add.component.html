@@ -19,17 +19,21 @@
         </div>
       </div>
       <div class="form-group">
-        <label for="addresse">Shop address</label>
+        <label for="adresse">Shop address</label>
         <input 
           type="text" 
-          id="addresse" 
-          formControlName="addresse" 
-          placeholder="Enter shop addresse">
-        <div *ngIf="BoutiqueForm.get('addresse')?.invalid && BoutiqueForm.get('addresse')?.touched" 
+          id="adresse" 
+          formControlName="adresse" 
+          placeholder="Enter shop adresse"
+          (focus)="onAdresseFieldFocus()"
+          >
+        <div *ngIf="BoutiqueForm.get('adresse')?.invalid && BoutiqueForm.get('adresse')?.touched" 
              class="error-message">
           address is required
         </div>
       </div>
+      <div *ngIf="showMap" id="map" style="height: 400px; width: 100%; margin-top: 10px;"></div>
+
       <div class="form-group">
         <label for="email">Email</label>
         <input 
@@ -58,5 +62,6 @@
       <button type="submit" class="submit-btn" [disabled]="BoutiqueForm.invalid">
         Submit
       </button>
+
     </form>
   </div>

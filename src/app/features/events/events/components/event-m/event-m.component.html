@@ -38,12 +38,15 @@
           <div class="event-actions" *ngIf="isAdminView">
             <button class="event-btn update" [routerLink]="['/admin/events/update', event.id]">Update</button>
             <button class="event-btn delete" (click)="deleteEvent(event.id)">Delete</button>
-            <button class="export-btn" (click)="downloadPDF()">📄 Export PDF</button>
 
           </div>
         </div>
       </div>
+     
+      
     </div>
-    
+    <button (click)="generatePDF()" class="btn btn-primary">
+      Export Events as PDF
+    </button>
     
     

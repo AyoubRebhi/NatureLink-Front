@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EventServiceService } from 'src/app/event-service.service';
 import { FilterByTitlePipe } from 'src/app/shared/pipes/filter-by-title.pipe';
-
+import { jsPDF } from 'jspdf';
 @Component({
   selector: 'app-event-m',
   templateUrl: './event-m.component.html',
@@ -84,6 +84,87 @@ downloadPDF() {
   }, error => {
     console.error('PDF download failed', error);
   });
+}
+generatePDF() {
+  const doc = new jsPDF();
+  const pageWidth = doc.internal.pageSize.getWidth();
+  let y = 20;
+
+  const eventsToExport = this.filteredEvents.length ? this.filteredEvents : this.events;
+
+  // PDF Title
+  doc.setFontSize(18);
+  const title = 'Event List';
+  const titleWidth = doc.getTextWidth(title);
+  doc.text(title, (pageWidth - titleWidth) / 2, y);
+  y += 15;
+
+  const loadImage = (src: string): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = 'Anonymous';
+      img.src = src;
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+        ctx?.drawImage(img, 0, 0);
+        const base64 = canvas.toDataURL('image/jpeg');
+        resolve(base64);
+      };
+      img.onerror = (err) => reject(err);
+    });
+  };
+
+  const addEventToPDF = async () => {
+    for (let i = 0; i < eventsToExport.length; i++) {
+      const event = eventsToExport[i];
+      if (y > 240) {
+        doc.addPage();
+        y = 20;
+      }
+
+      // Add Image (resize to fit)
+      if (event.image) {
+        let imgData = event.image;
+
+        // If it's a URL, convert to base64
+        if (!imgData.startsWith('data:image')) {
+          try {
+            imgData = await loadImage(event.image);
+          } catch (e) {
+            console.error('Failed to load image', e);
+          }
+        }
+
+        doc.addImage(imgData, 'JPEG', (pageWidth - 60) / 2, y, 60, 40);
+        y += 50;
+      }
+
+      // Centered Text
+      const lines = [
+        `Event ${i + 1}`,
+        `Title: ${event.title || 'N/A'}`,
+        `Date: ${event.date || 'N/A'} `,
+        `Location: ${event.location || 'N/A'}`,
+        `Description: ${event.description || 'N/A'}`
+      ];
+
+      doc.setFontSize(12);
+      lines.forEach(line => {
+        const textWidth = doc.getTextWidth(line);
+        doc.text(line, (pageWidth - textWidth) / 2, y);
+        y += 7;
+      });
+
+      y += 10;
+    }
+
+    doc.save('events-with-images.pdf');
+  };
+
+  addEventToPDF();
 }
 
 
