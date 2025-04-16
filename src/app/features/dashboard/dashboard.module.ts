@@ -8,6 +8,8 @@ import { DashboardRoutingModule } from './dashboard-routing.module';
 import { SidebarDashComponent } from '../../layouts/dashboard/dashboard-layout/sidebar-dash/sidebar-dash.component';
 import { LogementModule } from '../logement/logement/logement.module'; 
 import { HttpClientModule } from '@angular/common/http'; // Import HttpClientModule
+import { NgChartsModule } from 'ng2-charts';
+
 
 @NgModule({
   declarations: [
@@ -22,6 +24,8 @@ import { HttpClientModule } from '@angular/common/http'; // Import HttpClientMod
     DashboardRoutingModule,
     LogementModule,
     HttpClientModule,
+    NgChartsModule,
+
   ],
   exports: [
     DashboardLayoutComponent

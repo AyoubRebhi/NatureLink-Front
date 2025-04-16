@@ -1,60 +1,53 @@
 <div *ngIf="logements.length > 0; else noData" class="logement-list-container">
-  <div class="table-responsive">
-    <table class="table table-bordered">
-    <thead>
-      <tr>
-        <th>id</th>
-        <th>Titre</th>
-        <th>Description</th>
-        <th>Location</th>
-        <th>Type</th>
-        <th>Price (DT)</th>
-        <th>Propriétaire ID</th>
-        <th>Phone</th>
-        <th>Email</th>
-        <th>Capacity</th>
-        <th>Social Media</th>
-        <th>Single Rooms</th>
-        <th>Double Rooms</th>
-        <th>Équipements</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let logement of logements">
-        <td>{{ logement.id }}</td>
-        <td>{{ logement.titre }}</td>
-        <td>{{ logement.description }}</td>
-        <td>{{ logement.location }}</td>
-        <td>{{ logement.type }}</td>
-        <td>{{ logement.price }} DT</td>
-        <td>{{ logement.proprietarield }}</td>
-        <td>{{ logement.phone }}</td>
-        <td>{{ logement.email }}</td>
-        <td>{{ logement.capacity }}</td>
-        <td>{{ logement.socialMedia }}</td>
-        <td>{{ logement.singleRooms || 'N/A' }}</td>
-        <td>{{ logement.doubleRooms || 'N/A' }}</td>
-        <td>
-          <ul *ngIf="logement.equipements?.length">
-            <li *ngFor="let eq of logement.equipements">{{ eq.name }}</li>
-          </ul>
-          <span *ngIf="!logement.equipements?.length">No equipements</span>
-        </td>
-        <td>
-          <a [routerLink]="['/admin/logement/edit', logement.id]" class="btn btn-warning btn-sm">
-            Update
-          </a>
-          <button (click)="deleteLogement(logement.id)" class="btn btn-danger btn-sm">
-            Delete
-          </button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <div class="table-wrapper">
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>id</th>
+            <th>Titre</th>
+            <th>Description</th>
+            <th>Type</th>
+            <th>Price (DT)</th>
+            <th>Propriétaire ID</th>
+            <th>Capacity</th>
+            <th>Équipements</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let logement of logements">
+            <td>{{ logement.id }}</td>
+            <td>{{ logement.titre }}</td>
+            <td>{{ logement.description }}</td>
+            <td>{{ logement.type }}</td>
+            <td>{{ logement.price }} DT</td>
+            <td>{{ logement.proprietarield }}</td>
+            <td>{{ logement.capacity }}</td>
+            <td>
+              <ul *ngIf="logement.equipements?.length">
+                <li *ngFor="let eq of logement.equipements">{{ eq.name }}</li>
+              </ul>
+              <span *ngIf="!logement.equipements?.length">No equipements</span>
+            </td>
+            <td>
+              <a [routerLink]="['/admin/logement/detail', logement.id]" class="btn btn-detail btn-sm">
+                details
+              </a>
+              <a [routerLink]="['/admin/logement/edit', logement.id]" class="btn btn-warning btn-sm">
+                Update
+              </a>
+              <button (click)="deleteLogement(logement.id)" class="btn btn-danger btn-sm">
+                Delete
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
 
 <ng-template #noData>
-  <p>No logements available</p>
+  <p class="no-data-message">No logements available</p>
 </ng-template>

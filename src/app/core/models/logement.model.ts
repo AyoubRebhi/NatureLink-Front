@@ -27,5 +27,7 @@ export interface Logement {
   singleRooms?: number;
   doubleRooms?: number;
   equipements?: Equipement[];
+  latitude?: number;
+  longitude?: number;
 }
 

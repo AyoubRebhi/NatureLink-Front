@@ -30,7 +30,6 @@
     <h2>{{ logement.titre }}</h2>
 
     <p><strong>Description:</strong> {{ logement.description || 'N/A' }}</p>
-    <p><strong>Location:</strong> {{ logement.location || 'N/A' }}</p>
     <p><strong>Type:</strong> {{ logement.type || 'N/A' }}</p>
     <p><strong>Price:</strong> {{ logement.price ? logement.price + ' DT' : 'N/A' }}</p>
     <p><strong>Capacity:</strong> {{ logement.capacity || 'N/A' }}</p>
@@ -42,6 +41,42 @@
       <a *ngIf="logement.socialMedia" [href]="logement.socialMedia" target="_blank">Visit</a>
       <span *ngIf="!logement.socialMedia">N/A</span>
     </p>
+
+ <!-- Google Map -->
+ <div *ngIf="safeMapUrl" class="map-container">
+  <h4>Location:</h4>
+  <iframe 
+    width="100%" 
+    height="300" 
+    frameborder="0" 
+    style="border:0;" 
+    [src]="safeMapUrl" 
+    allowfullscreen>
+  </iframe>
+</div>
+<!-- Button to view directions -->
+<button (click)="getDirections()" class="view-directions-btn">
+  View Directions
+</button>
+
+
+<!-- Directions Card -->
+<div *ngIf="showDirectionsCard && directionsUrl" class="directions-card">
+  <div class="directions-header">
+    <h4>Route to this Logement:</h4>
+    <button (click)="showDirectionsCard = false" class="close-btn">×</button>
+  </div>
+
+
+  <iframe
+    width="100%"
+    height="300"
+    frameborder="0"
+    style="border:0;"
+    [src]="directionsUrl"
+    allowfullscreen>
+  </iframe>
+</div>
 
     <!-- Equipments -->
     <div *ngIf="logement?.equipements?.length">

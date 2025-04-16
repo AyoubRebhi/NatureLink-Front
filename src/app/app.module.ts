@@ -3,6 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';  // <-- Import FormsModule
 import { HttpClientModule } from '@angular/common/http'; // ✅ Add this
+import { NgChartsModule } from 'ng2-charts';  // Corrected import
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -18,6 +19,8 @@ import { ServiceComponent } from './layouts/main-layout/service/service.componen
 import { GuidesComponent } from './layouts/main-layout/guides/guides.component';
 import { LogementListFrontComponent } from './features/logement/components/logement-list-front/logement-list-front.component';
 import { LogementDetailComponent } from './features/logement/components/logement-detail/logement-detail.component';
+import { GoogleMapsModule } from '@angular/google-maps';
+import { LogementStatsComponent } from './features/logement-stats/logement-stats.component';
 
 @NgModule({
   declarations: [
@@ -34,13 +37,16 @@ import { LogementDetailComponent } from './features/logement/components/logement
     GuidesComponent,
     LogementListFrontComponent,
     LogementDetailComponent,
+    LogementStatsComponent,
   ],
   imports: [
+    GoogleMapsModule,
     BrowserModule,
     AppRoutingModule,
     NgbModule,
     FormsModule ,
-    HttpClientModule, // ✅ Make sure it's here
+    HttpClientModule,
+    NgChartsModule // ✅ Make sure it's here
 
   ],
   providers: [],

@@ -9,6 +9,8 @@ import { EquipementListComponent } from '../equipement/equipement-list/equipemen
 import { EquipementAddComponent } from '../equipement/equipement-add/equipement-add.component';
 import { LogementEditComponent } from '../logement/components/logement-edit/logement-edit.component';
 import { EquipementEditComponent } from '../equipement/equipement-edit/equipement-edit.component';
+import { LogementStatsComponent } from '../logement-stats/logement-stats.component';
+import { LogementDetailBackComponent } from '../logement/components/logement-detail-back/logement-detail-back.component';
 // Import the form component
 const routes: Routes = [
   {
@@ -18,6 +20,7 @@ const routes: Routes = [
       { path: 'dashboard', component: DashboardComponent },
       { path: 'logement/list', component: LogementListComponent },
       { path: 'logement/add', component: LogementCreateComponent },
+      { path: 'logement/detail/:id', component: LogementDetailBackComponent },
       {
         path: 'logement/edit/:id',
         component: LogementEditComponent
@@ -25,7 +28,8 @@ const routes: Routes = [
       {path: 'equipement/list', component:EquipementListComponent}, 
       {path: 'equipement/add', component:EquipementAddComponent},
       {path: 'equipement/edit/:id', component:EquipementEditComponent},
-
+      {path: 'logement/stats', component: LogementStatsComponent},
+  
     ],
   },
 ];

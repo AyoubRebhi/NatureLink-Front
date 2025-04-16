@@ -52,6 +52,17 @@
         </ul>
         <span *ngIf="!logement.equipements?.length">No équipements</span>
       </div>
+      <p><strong>Location:</strong> {{ logement.location }}</p>
+      <button class="btn btn-primary" (click)="showLocationMap(logement)">View Location</button>
+
+      <!-- Equipments list -->
+      <div *ngIf="logement.equipements?.length">
+        <p><strong>Équipements:</strong></p>
+        <ul>
+          <li *ngFor="let eq of logement.equipements">{{ eq.name }}</li>
+        </ul>
+        
+      </div>
 
       <div class="logement-actions">
         <a [routerLink]="['/dashboardUser/edit', logement.id]" class="btn btn-warning btn-sm">Update</a>
@@ -59,6 +70,21 @@
       </div>
     </div>
   </div>
+<!-- Map popup overlay -->
+<div *ngIf="selectedLogementForMap" class="map-popup-overlay" (click)="closeMapPopup()">
+  <div class="map-popup-card" (click)="$event.stopPropagation()">
+    <h4>{{ selectedLogementForMap.titre }} - Location</h4>
+    <iframe
+      width="100%"
+      height="400"
+      [src]="mapUrl"
+      allowfullscreen
+      loading="lazy"
+      referrerpolicy="no-referrer-when-downgrade">
+    </iframe>
+    <button class="btn btn-secondary mt-3" (click)="closeMapPopup()">Close</button>
+  </div>
+</div>
 
   <ng-template #noData>
     <p>No logements available</p>

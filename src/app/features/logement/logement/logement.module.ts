@@ -8,14 +8,16 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { LogementRoutingModule } from './logement-routing.module';
 import { HttpClientModule } from '@angular/common/http'; // Import HttpClientModule
 import { FormsModule } from '@angular/forms';
-import { LogementCreateUserComponent } from '../components/logement-create-user/logement-create-user.component'; // Import FormsModule
+import { LogementCreateUserComponent } from '../components/logement-create-user/logement-create-user.component'; 
+import { LogementDetailBackComponent } from '../components/logement-detail-back/logement-detail-back.component';
+import { NgChartsModule } from 'ng2-charts';
 @NgModule({
   declarations: [
     LogementListComponent,
     LogementCreateComponent,
     LogementEditComponent,
     LogementCreateUserComponent,
-    
+    LogementDetailBackComponent
   ],
   imports: [
     CommonModule,
@@ -23,6 +25,8 @@ import { LogementCreateUserComponent } from '../components/logement-create-user/
     ReactiveFormsModule,
     HttpClientModule ,
     FormsModule,
+    NgChartsModule
+    
   ],
 
   providers: [LogementService],

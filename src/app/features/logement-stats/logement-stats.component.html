@@ -1,0 +1,41 @@
+<div class="stats-container">
+    <h2>📊 Logement Statistics</h2>
+  
+    <div class="stats-cards">
+      <div class="card">
+        <h4>Total Logements</h4>
+        <p>{{ totalLogements }}</p>
+      </div>
+      <div class="card">
+        <h4>Average Price</h4>
+        <p>{{ averagePrice | number:'1.0-2' }} TND</p>
+      </div>
+    </div>
+  
+    <div class="chart-section">
+        <!-- Types of Logements (Pie Chart) -->
+        <div class="chart-card">
+          <h4>Types of Logements</h4>
+          <div class="chart-wrapper">
+            <canvas baseChart
+        [data]="pieChartData"
+        [options]="pieChartOptions"
+        [type]="'pie'">
+</canvas>
+          </div>
+        </div>
+      
+        <!-- Price of Recent Logements (Bar Chart) -->
+        <div class="chart-card">
+          <h4>Price of Recent Logements</h4>
+          <div class="chart-wrapper">
+            <canvas baseChart
+                    [data]="barChartData"
+                    [options]="barChartOptions"
+                    [type]="'bar'">
+            </canvas>
+          </div>
+        </div>      
+    </div>
+  </div>
+  

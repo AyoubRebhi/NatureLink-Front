@@ -93,40 +93,37 @@
             "browserTarget": "naturelink-frontend:build"
           }
         },
-        "test": {
-          "builder": "@angular-devkit/build-angular:karma",
-          "options": {
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ],
-            "tsConfig": "tsconfig.spec.json",
-            "inlineStyleLanguage": "scss",
-            "assets": [
-              "src/favicon.ico",
-              "src/assets"
-            ],
-            "styles": [
-              "src/assets/dist/css/adminlte.min.css",
-              "src/assets/dist/css/skins/skin-blue.min.css",
-              "node_modules/bootstrap/dist/css/bootstrap.min.css",
-              "node_modules/@fortawesome/fontawesome-free/css/all.min.css",
-              "node_modules/jquery/dist/jquery.min.js",
-              "node_modules/owl.carousel/dist/owl.carousel.min.js",
-              "node_modules/wow.js/dist/wow.min.js",
-              "src/assets/css/style.css",
-              "src/assets/css/bootstrap.min.css",
-              "src/styles.scss"
+      "test": {
+  "builder": "@angular-devkit/build-angular:karma",
+  "options": {
+    "polyfills": [
+      "zone.js",
+      "zone.js/testing"
+    ],
+    "tsConfig": "tsconfig.spec.json",
+    "inlineStyleLanguage": "scss",
+    "assets": [
+      "src/favicon.ico",
+      "src/assets"
+    ],
+    "styles": [
+      "src/assets/dist/css/adminlte.min.css",
+      "src/assets/dist/css/skins/skin-blue.min.css",
+      "node_modules/bootstrap/dist/css/bootstrap.min.css",
+      "node_modules/@fortawesome/fontawesome-free/css/all.min.css",
+      "src/assets/css/style.css",
+      "src/assets/css/bootstrap.min.css",
+      "src/styles.scss"
+    ],
+    "scripts": [
+      "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js",
+      "node_modules/jquery/dist/jquery.min.js",
+      "node_modules/owl.carousel/dist/owl.carousel.min.js",
+      "node_modules/wow.js/dist/wow.min.js"
+    ]
+  }
+}
 
-            ],
-            "scripts": [
-              "src/assets/dist/js",
-              "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js",
-              "node_modules/jquery/dist/jquery.min.js"
-            ]
-
-          }
-        }
       }
     }
   },
