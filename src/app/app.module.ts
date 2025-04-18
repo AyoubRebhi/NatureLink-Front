@@ -1,4 +1,4 @@
-  import { NgModule } from '@angular/core';
+import { NgModule, NO_ERRORS_SCHEMA } from '@angular/core';
   import { BrowserModule } from '@angular/platform-browser';
   import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
@@ -18,6 +18,7 @@
   import { TransportComponent } from './layouts/main-layout/transport/transport.component';
   import { FormsModule } from '@angular/forms';
   import { ActivityComponent } from './pages/activity/activity.component';
+import { ActivityDetailsComponent } from './pages/activity-details/activity-details.component';
 
 
   @NgModule({
@@ -39,6 +40,7 @@
       NotFoundComponent,
       TransportComponent,
       ActivityComponent,
+      ActivityDetailsComponent,
     ],
     imports: [
       BrowserModule,
@@ -49,6 +51,7 @@
 
     ],
     providers: [],
+    schemas: [NO_ERRORS_SCHEMA],
     bootstrap: [AppComponent]
   })
   export class AppModule {}

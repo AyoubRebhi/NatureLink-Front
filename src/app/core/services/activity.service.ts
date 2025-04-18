@@ -72,5 +72,12 @@ export class ActivityService {
       { description }
     );
   }
-
+  recommendActivitiesWithData(moodInput: string, activities: any[]): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/recommend`, {
+      mood_input: moodInput,
+      activities: activities
+    });
+  }
+  
+  
 }

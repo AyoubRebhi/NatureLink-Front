@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { ActivityService } from '../../../../core/services/activity.service';
 import { Activity } from '../../../../core/models/activity.model';
 import * as L from 'leaflet';
+import { NgForm } from '@angular/forms'; // Add this import
 
 @Component({
   selector: 'app-add-activity',
@@ -26,6 +27,50 @@ export class AddActivityComponent implements AfterViewInit {
     mood: [],
     tags: []
   };
+
+  // Add form validation patterns
+  validationPatterns = {
+    name: /^[a-zA-Z0-9\s\-']{3,100}$/,
+    description: /^[\s\S]{20,2000}$/,
+    duration: /^[1-9]\d*$/, // Positive integers only
+    price: /^\d+(\.\d{1,2})?$/, // Decimal with up to 2 places
+    maxParticipants: /^[1-9]\d*$/ // Positive integers only
+  };
+
+  // Add validation messages
+  validationMessages = {
+    name: {
+      required: 'Activity name is required',
+      pattern: 'Name must be 3-100 characters (letters, numbers, spaces, hyphens, apostrophes)'
+    },
+    description: {
+      required: 'Description is required',
+      pattern: 'Description must be 20-2000 characters'
+    },
+    location: {
+      required: 'Location is required'
+    },
+    duration: {
+      required: 'Duration is required',
+      pattern: 'Duration must be a positive number (minutes)'
+    },
+    price: {
+      required: 'Price is required',
+      pattern: 'Price must be a positive number (e.g. 10 or 10.50)'
+    },
+    maxParticipants: {
+      required: 'Max participants is required',
+      pattern: 'Must be a positive number'
+    },
+    type: {
+      required: 'Activity type is required'
+    },
+    images: {
+      required: 'At least one image is required'
+    }
+  };
+
+
 
   equipmentInput = '';
   moodInput = '';
@@ -197,4 +242,6 @@ export class AddActivityComponent implements AfterViewInit {
         alert('Failed to add image');
       });
   }
+
+  
 }

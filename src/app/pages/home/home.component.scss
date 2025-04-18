@@ -1,14 +1,23 @@
 // Basic styling for spacing and alignment
 .container-xxl {
-    padding-top: 60px;
-    padding-bottom: 60px;
-  }
-  
-  .position-relative {
-    position: relative;
-  }
-  
-  .border-primary {
-    border-color: #007bff !important;
-  }
-  
+  padding-top: 60px;
+  padding-bottom: 60px;
+}
+
+.position-relative {
+  position: relative;
+}
+
+.border-primary {
+  border-color: #007bff !important;
+}
+
+.clickable {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.clickable:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}

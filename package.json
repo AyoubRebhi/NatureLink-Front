@@ -23,7 +23,7 @@
     "@ng-bootstrap/ng-bootstrap": "^15.0.0",
     "@popperjs/core": "^2.11.8",
     "admin-lte": "^2.4.18",
-    "bootstrap": "^5.3.3",
+    "bootstrap": "^5.3.5",
     "bootswatch": "^5.3.3",
     "font-awesome": "^4.7.0",
     "jquery": "^3.7.1",

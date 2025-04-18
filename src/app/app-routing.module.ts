@@ -6,6 +6,7 @@ import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { MainLayoutComponent } from './layouts/main-layout/main-layout.component';
 import { HomeComponent } from './pages/home/home.component';
 import { ActivityComponent } from './pages/activity/activity.component';
+import { ActivityDetailsComponent } from './pages/activity-details/activity-details.component';
 
 const routes: Routes = [
   {
@@ -15,7 +16,8 @@ const routes: Routes = [
       { path: '', component: HomeComponent },
       { path: 'about', component: AboutComponent },
       { path: 'services', component: ServicesComponent },
-      { path: 'activities', component: ActivityComponent}
+      { path: 'activities', component: ActivityComponent},
+      {path:'details/:id', component: ActivityDetailsComponent}
     ]
   },
   {

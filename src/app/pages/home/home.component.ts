@@ -97,8 +97,9 @@ export class HomeComponent {
     },
     {
       icon: 'fa-map',
-      title: 'Travel Guides',
-      description: 'Expert local guides and curated itineraries for unforgettable experiences.',
+      title: 'Activity Reservation',
+      description: 'Book exciting activities and experiences for your trip with ease.',
+      route: '/activities'  // Add this route property
     }
   ];
 }
