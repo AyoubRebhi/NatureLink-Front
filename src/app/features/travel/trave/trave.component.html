@@ -1,161 +1,193 @@
 <div class="travel-container">
-    <h1>Planificateur de Voyage Intelligent</h1>
-  
-    <form [formGroup]="travelForm" (ngSubmit)="onSubmit()" class="travel-form">
-      <div class="form-group">
-        <label for="destination">Destination</label>
-        <input 
-          type="text" 
-          id="destination" 
-          formControlName="destination" 
-          placeholder="Paris, Rome, Tokyo..."
-          [class.is-invalid]="f['destination'].invalid && (f['destination'].dirty || f['destination'].touched)"
-        >
-        <div *ngIf="f['destination'].invalid && (f['destination'].dirty || f['destination'].touched)" class="error-message">
-          Une destination est requise
-        </div>
+  <h1>Smart Travel Planner</h1>
+
+  <form [formGroup]="travelForm" (ngSubmit)="onSubmit()" class="travel-form" (keydown.enter)="handleEnter($any($event))"
+  >
+    <!-- Destination Input -->
+    <div class="form-group">
+      <label for="destination">Destination</label>
+      <input
+        type="text"
+        id="destination"
+        formControlName="destination"
+        placeholder="Paris, Rome, Tokyo..."
+        [class.is-invalid]="f['destination'].invalid && (f['destination'].dirty || f['destination'].touched)"
+        (input)="onDestinationInput($any($event.target).value)"
+        (keydown.enter)="$event.preventDefault()"
+      />
+      <div *ngIf="f['destination'].invalid && (f['destination'].dirty || f['destination'].touched)" class="error-message">
+        A destination is required
       </div>
-  
-      <div class="form-group">
-        <label for="days">Nombre de jours</label>
-        <input 
-          type="number" 
-          id="days" 
-          formControlName="days" 
-          min="1" 
-          max="30"
-          [class.is-invalid]="f['days'].invalid && (f['days'].dirty || f['days'].touched)"
-        >
-        <div *ngIf="f['days'].invalid && (f['days'].dirty || f['days'].touched)" class="error-message">
-          Entrez un nombre entre 1 et 30
-        </div>
+    </div>
+    
+    <!-- Map Container -->
+    <div class="map-container">
+      <div id="destinationMap" class="destination-map"></div>
+      <div class="map-instructions">
+        <p>Click on the map to select a destination or search for an address above</p>
       </div>
-  
-      <div class="form-group">
-        <label for="comfort_level">Niveau de confort</label>
-        <select id="comfort_level" formControlName="comfort_level">
-          <option *ngFor="let level of comfortLevels" [value]="level.value">{{level.label}}</option>
-        </select>
+    </div>
+
+    <!-- Days Input -->
+    <div class="form-group">
+      <label for="days">Number of Days</label>
+      <input
+        type="number"
+        id="days"
+        formControlName="days"
+        min="1"
+        max="30"
+        [class.is-invalid]="f['days'].invalid && (f['days'].dirty || f['days'].touched)"
+      />
+      <div *ngIf="f['days'].invalid && (f['days'].dirty || f['days'].touched)" class="error-message">
+        Enter a number between 1 and 30
       </div>
-  
-      <div class="form-group">
-        <label for="travel_style">Style de voyage</label>
-        <select id="travel_style" formControlName="travel_style">
-          <option *ngFor="let style of travelStyles" [value]="style.value">{{style.label}}</option>
-        </select>
-      </div>
-  
+    </div>
+
+    <!-- Comfort Level Select -->
+    <div class="form-group">
+      <label for="comfort_level">Comfort Level</label>
+      <select id="comfort_level" formControlName="comfort_level">
+        <option *ngFor="let level of comfortLevels" [value]="level.value">{{ level.label }}</option>
+      </select>
+    </div>
+
+    <!-- Travel Style Select -->
+    <div class="form-group">
+      <label for="travel_style">Travel Style</label>
+      <select id="travel_style" formControlName="travel_style">
+        <option *ngFor="let style of travelStyles" [value]="style.value">{{ style.label }}</option>
+      </select>
+    </div>
+
+    <!-- Form Actions -->
+    <div class="form-actions">
       <button type="submit" class="submit-btn" [disabled]="travelForm.invalid || isLoading">
-        <span *ngIf="!isLoading">Générer l'itinéraire</span>
-        <span *ngIf="isLoading">Génération en cours...</span>
+        <span *ngIf="!isLoading">Generate Itinerary</span>
+        <span *ngIf="isLoading">Generating...</span>
       </button>
-    </form>
-  
-    <div *ngIf="isLoading" class="loading-indicator">
-      <div class="spinner"></div>
-      <p>Création de votre itinéraire personnalisé...</p>
+      
+      <button type="button" class="clear-btn" (click)="resetForm()" [disabled]="isLoading">
+        Reset Map
+      </button>
     </div>
-  
-    <div *ngIf="errorMessage" class="error-message">
-      <i class="icon-warning"></i> {{errorMessage}}
-    </div>
-  
-    <div *ngIf="itineraryResponse?.data as itineraryData" class="itinerary-result">
-      <div class="itinerary-header">
-        <h2>Itinéraire pour {{itineraryData.destination}} ({{itineraryData.days}} jours)</h2>
-        <div class="travel-info">
-          <span class="badge comfort-{{itineraryData.comfort_level}}">
-            {{itineraryData.comfort_level | titlecase}}
-          </span>
-          <span class="badge style-{{itineraryData.travel_style}}">
-            {{itineraryData.travel_style | titlecase}}
-          </span>
-        </div>
-      </div>
-      
-      <div class="days-navigation">
-        <button 
-          *ngFor="let day of itineraryData.itinerary" 
-          (click)="setActiveDay(day.day)"
-          [class.active]="activeDay === day.day"
-        >
-          Jour {{day.day}}
-        </button>
-      </div>
-      
-      <div *ngIf="getActiveDay() as day" class="day-itinerary">
-        <h3>Jour {{activeDay}}</h3>
-        
-        <div class="time-slot">
-          <h4><i class="icon-sunrise"></i> Matin</h4>
-          <div class="activity-card">
-            <h5>{{day.morning?.activity || 'Activité non spécifiée'}}</h5>
-            <p>{{day.morning?.description || 'Description non disponible'}}</p>
-            <div *ngIf="day.morning?.transport" class="activity-info">
-              <span class="info-label"><i class="icon-bus"></i> Transport:</span> {{day.morning.transport}}
-            </div>
-            <div *ngIf="day.morning?.duration" class="activity-info">
-              <span class="info-label"><i class="icon-clock"></i> Durée:</span> {{day.morning.duration}}
-            </div>
-          </div>
-        </div>
-        
-        <div class="time-slot">
-          <h4><i class="icon-sun"></i> Après-midi</h4>
-          <div class="activity-card">
-            <h5>{{day.afternoon?.activity || 'Activité non spécifiée'}}</h5>
-            <p>{{day.afternoon?.description || 'Description non disponible'}}</p>
-            <div *ngIf="day.afternoon?.transport" class="activity-info">
-              <span class="info-label"><i class="icon-bus"></i> Transport:</span> {{day.afternoon.transport}}
-            </div>
-            <div *ngIf="day.afternoon?.duration" class="activity-info">
-              <span class="info-label"><i class="icon-clock"></i> Durée:</span> {{day.afternoon.duration}}
-            </div>
-          </div>
-        </div>
-        
-        <div class="time-slot">
-          <h4><i class="icon-moon"></i> Soirée</h4>
-          <div class="activity-card">
-            <h5>{{day.evening?.activity || 'Activité non spécifiée'}}</h5>
-            <p>{{day.evening?.description || 'Description non disponible'}}</p>
-            <div *ngIf="day.evening?.transport" class="activity-info">
-              <span class="info-label"><i class="icon-bus"></i> Transport:</span> {{day.evening.transport}}
-            </div>
-            <div *ngIf="day.evening?.duration" class="activity-info">
-              <span class="info-label"><i class="icon-clock"></i> Durée:</span> {{day.evening.duration}}
-            </div>
-          </div>
-        </div>
-        
-        <div class="tips-section">
-          <h4><i class="icon-tip"></i> Conseils du jour</h4>
-          <p>{{day.tips || 'Aucun conseil spécifique pour ce jour'}}</p>
-        </div>
-        
-        <div *ngIf="day.restaurant_options?.length" class="restaurants-section">
-          <h4><i class="icon-restaurant"></i> Options de restauration</h4>
-          <div class="restaurant-cards">
-            <div *ngFor="let restaurant of day.restaurant_options" class="restaurant-card">
-              <h5>{{restaurant.name || 'Nom non spécifié'}}</h5>
-              <p>{{restaurant.description || 'Description non disponible'}}</p>
-              <div class="price-range">
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <div class="general-info">
-        <div class="budget-section">
-          <h4><i class="icon-budget"></i> Budget estimé</h4>
-          <p>{{itineraryData.estimated_budget || 'Budget non estimé'}}</p>
-        </div>
-        
-        <div class="additional-tips">
-          <h4><i class="icon-info"></i> Conseils supplémentaires</h4>
-          <p>{{itineraryData.additional_tips || 'Aucun conseil supplémentaire'}}</p>
-        </div>
+  </form>
+
+  <!-- Loading Indicator -->
+  <div *ngIf="isLoading" class="loading-indicator">
+    <div class="spinner"></div>
+    <p>Creating your personalized itinerary...</p>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="errorMessage" class="error-message">
+    <i class="icon-warning"></i> {{ errorMessage }}
+  </div>
+
+  <!-- Itinerary Results -->
+  <div *ngIf="itineraryResponse?.data as itineraryData" class="itinerary-result">
+    <div class="itinerary-header">
+      <h2>Itinerary for {{ itineraryData.destination }} ({{ itineraryData.days }} days)</h2>
+      <div class="travel-info">
+        <span class="badge comfort-{{ itineraryData.comfort_level }}">
+          {{ itineraryData.comfort_level | titlecase }}
+        </span>
+        <span class="badge style-{{ itineraryData.travel_style }}">
+          {{ itineraryData.travel_style | titlecase }}
+        </span>
       </div>
     </div>
+
+    <!-- Days Navigation -->
+    <div class="days-navigation">
+      <button
+        *ngFor="let day of itineraryData.itinerary"
+        (click)="setActiveDay(day.day)"
+        [class.active]="activeDay === day.day"
+      >
+        Day {{ day.day }}
+      </button>
+    </div>
+
+    <!-- Day Itinerary -->
+    <div *ngIf="getActiveDay() as day" class="day-itinerary">
+      <h3>Day {{ activeDay }}</h3>
+
+      <!-- Morning Activity -->
+      <div class="time-slot">
+        <h4><i class="icon-sunrise"></i> Morning</h4>
+        <div class="activity-card">
+          <h5>{{ day.morning.activity }}</h5>
+          <p>{{ day.morning.description }}</p>
+          <div *ngIf="day.morning.transport" class="activity-info">
+            <span class="info-label"><i class="icon-bus"></i> Transport:</span> {{ day.morning.transport }}
+          </div>
+          <div *ngIf="day.morning.duration" class="activity-info">
+            <span class="info-label"><i class="icon-clock"></i> Duration:</span> {{ day.morning.duration }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Afternoon Activity -->
+      <div class="time-slot">
+        <h4><i class="icon-sun"></i> Afternoon</h4>
+        <div class="activity-card">
+          <h5>{{ day.afternoon.activity }}</h5>
+          <p>{{ day.afternoon.description }}</p>
+          <div *ngIf="day.afternoon.transport" class="activity-info">
+            <span class="info-label"><i class="icon-bus"></i> Transport:</span> {{ day.afternoon.transport }}
+          </div>
+          <div *ngIf="day.afternoon.duration" class="activity-info">
+            <span class="info-label"><i class="icon-clock"></i> Duration:</span> {{ day.afternoon.duration }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Evening Activity -->
+      <div class="time-slot">
+        <h4><i class="icon-moon"></i> Evening</h4>
+        <div class="activity-card">
+          <h5>{{ day.evening.activity }}</h5>
+          <p>{{ day.evening.description }}</p>
+          <div *ngIf="day.evening.transport" class="activity-info">
+            <span class="info-label"><i class="icon-bus"></i> Transport:</span> {{ day.evening.transport }}
+          </div>
+          <div *ngIf="day.evening.duration" class="activity-info">
+            <span class="info-label"><i class="icon-clock"></i> Duration:</span> {{ day.evening.duration }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Daily Tips -->
+      <div class="tips-section">
+        <h4><i class="icon-tip"></i> Daily Tips</h4>
+        <p>{{ day.tips }}</p>
+      </div>
+
+      <!-- Restaurant Options -->
+      <div *ngIf="day.restaurant_options?.length" class="restaurants-section">
+        <h4><i class="icon-restaurant"></i> Restaurant Options</h4>
+        <div class="restaurant-cards">
+          <div *ngFor="let restaurant of day.restaurant_options" class="restaurant-card">
+            <h5>{{ restaurant.name }}</h5>
+            <p>{{ restaurant.description }}</p>
+            <div class="price-range"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- General Info -->
+    <div class="general-info">
+      <div class="budget-section">
+        <h4><i class="icon-budget"></i> Estimated Budget</h4>
+        <p>{{ itineraryData.estimated_budget }}</p>
+      </div>
+
+      <div class="additional-tips">
+        <h4><i class="icon-info"></i> Additional Tips</h4>
+        <p>{{ itineraryData.additional_tips }}</p>
+      </div>
+    </div>
+  </div>
 </div>

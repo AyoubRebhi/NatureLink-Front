@@ -12,6 +12,7 @@ export class MapService {
   private endMarker: L.Marker | null = null;
   markers: any;
 
+  // Méthodes existantes
   getStartLatLng(): L.LatLng | null {
     return this.startMarker?.getLatLng() || null;
   }
@@ -201,6 +202,55 @@ export class MapService {
       }
     } catch (error) {
       console.error('Erreur de géocodage :', error);
+      return null;
+    }
+  }
+
+  // Nouvelles méthodes pour gérer les noms de ville
+  async getCityName(latlng: L.LatLng): Promise<string | null> {
+    try {
+      const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latlng.lat}&lon=${latlng.lng}&zoom=18&addressdetails=1`;
+      const response = await fetch(url);
+      const data = await response.json();
+      
+      if (data.address) {
+        return data.address.city 
+               || data.address.town 
+               || data.address.village 
+               || data.address.municipality 
+               || null;
+      }
+      return null;
+    } catch (error) {
+      console.error('Erreur lors de la récupération du nom de la ville:', error);
+      return null;
+    }
+  }
+
+  async getCoordinatesFromCity(cityName: string): Promise<L.LatLng | null> {
+    try {
+      const url = `https://nominatim.openstreetmap.org/search?format=json&city=${encodeURIComponent(cityName)}&limit=1`;
+      const response = await fetch(url);
+      const data = await response.json();
+
+      if (data.length > 0) {
+        return L.latLng(parseFloat(data[0].lat), parseFloat(data[0].lon));
+      }
+      return null;
+    } catch (error) {
+      console.error('Erreur lors de la récupération des coordonnées de la ville:', error);
+      return null;
+    }
+  }
+
+  async extractCityFromAddress(address: string): Promise<string | null> {
+    try {
+      const coordinates = await this.geocodeAddress(address);
+      if (!coordinates) return null;
+      
+      return await this.getCityName(coordinates);
+    } catch (error) {
+      console.error('Erreur lors de l\'extraction de la ville:', error);
       return null;
     }
   }

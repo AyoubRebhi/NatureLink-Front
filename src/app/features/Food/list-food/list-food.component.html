@@ -1,44 +1,41 @@
 <div class="food-list-container">
-    <div class="header">
-      <h2>Liste des Aliments</h2>
-      <div class="actions">
-       
-        <button (click)="navigateToAdd()" class="add-button">
-          + Ajouter un aliment
-        </button>
-      </div>
+  <div class="header">
+    <h2>Food List</h2>
+    <div class="actions">
+      <button (click)="navigateToAdd()" class="add-button">
+        + Add Food
+      </button>
     </div>
-  
-    <div *ngIf="isLoading" class="loading">Chargement en cours...</div>
-    
-    
-  
-    <div *ngIf="!isLoading && !error">
-      <div *ngIf="filteredFoods.length === 0" class="no-results">
-        Aucun aliment trouvé
-      </div>
-  
-      <div class="food-grid">
-        <div *ngFor="let food of filteredFoods" class="food-card">
-          <div class="food-image">
-            <img *ngIf="food.imageUrl" [src]="'http://localhost:9000'+food.imageUrl"  alt="{{ food.nom }}">
-            <div *ngIf="!food.imageUrl" class="no-image">Pas d'image</div>
+  </div>
+
+  <div *ngIf="isLoading" class="loading">Loading...</div>
+
+  <div *ngIf="!isLoading && !error">
+    <div *ngIf="filteredFoods.length === 0" class="no-results">
+      No food found
+    </div>
+
+    <div class="food-grid">
+      <div *ngFor="let food of filteredFoods" class="food-card">
+        <div class="food-image">
+          <img *ngIf="food.imageUrl" [src]="'http://localhost:9000'+food.imageUrl" alt="{{ food.nom }}">
+          <div *ngIf="!food.imageUrl" class="no-image">No image</div>
+        </div>
+        <div class="food-details">
+          <h3>{{ food.nom }}</h3>
+          <p>{{ food.description }}</p>
+          <div class="meta">
+            <span class="season">{{ food.season }}</span>
+            <span class="destination">Destination: {{ food.destinationId }}</span>
           </div>
-          <div class="food-details">
-            <h3>{{ food.nom }}</h3>
-            <p>{{ food.description  }}</p>
-            <div class="meta">
-              <span class="season">{{ food.season }}</span>
-              <span class="destination">Destination: {{ food.destinationId }}</span>
-            </div>
-          </div>
-          <div class="food-actions">
-            <button (click)="deleteFood(food.id!)" class="delete-btn"><i class="fas fa-trash"></i>Supprimer</button>
-            <button (click)="navigateToUpdate(food.id!)" class="btn btn-primary">
-              <i class="fas fa-edit"></i> Modifier
-            </button>
-          </div>
+        </div>
+        <div class="food-actions">
+          <button (click)="deleteFood(food.id!)" class="delete-btn"><i class="fas fa-trash"></i> Delete</button>
+          <button (click)="navigateToUpdate(food.id!)" class="btn btn-primary">
+            <i class="fas fa-edit"></i> Edit
+          </button>
         </div>
       </div>
     </div>
   </div>
+</div>

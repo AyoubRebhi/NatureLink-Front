@@ -4,6 +4,7 @@ import { ClothingService } from '../../../core/services/clothing.service';
 import { DestinationService } from '../../../core/services/destination.service';
 import { Router } from '@angular/router';
 import { Destination } from '../../../core/models/Destination.model';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-add-clothing',
@@ -11,8 +12,12 @@ import { Destination } from '../../../core/models/Destination.model';
   styleUrls: ['./add-clothing.component.scss']
 })
 export class AddClothingComponent implements OnInit {
+onCancel() {
+  this.router.navigate(['/admin/ClothingList']);
+}
   clothingForm: FormGroup;
   selectedFile: File | null = null;
+  imagePreview: SafeUrl | string = '';
   seasons = ['Printemps', 'Été', 'Automne', 'Hiver'];
   destinations: Destination[] = [];
   submitted = false;
@@ -22,7 +27,8 @@ export class AddClothingComponent implements OnInit {
     private fb: FormBuilder,
     private clothingService: ClothingService,
     private destinationService: DestinationService,
-    private router: Router
+    private router: Router,
+    private sanitizer: DomSanitizer
   ) {
     this.clothingForm = this.fb.group({
       name: ['', [Validators.required, Validators.maxLength(100)]],
@@ -58,17 +64,26 @@ export class AddClothingComponent implements OnInit {
       
       if (!file.type.match('image.*')) {
         this.clothingForm.get('image')?.setErrors({ invalidType: true });
+        this.imagePreview = '';
         return;
       }
       
       if (file.size > 5 * 1024 * 1024) {
         this.clothingForm.get('image')?.setErrors({ maxSize: true });
+        this.imagePreview = '';
         return;
       }
 
       this.selectedFile = file;
       this.clothingForm.patchValue({ image: file });
       this.clothingForm.get('image')?.updateValueAndValidity();
+
+      // Créer l'aperçu de l'image
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.imagePreview = this.sanitizer.bypassSecurityTrustUrl(reader.result as string);
+      };
+      reader.readAsDataURL(file);
     }
   }
 
@@ -103,6 +118,13 @@ export class AddClothingComponent implements OnInit {
         this.isLoading = false;
       }
     });
+  }
+  removeImage(): void {
+    this.imagePreview = '';
+    this.selectedFile = null;
+    this.clothingForm.patchValue({ image: null });
+    this.clothingForm.get('image')?.setErrors({ required: true });
+    this.clothingForm.get('image')?.markAsTouched();
   }
 
   // Safe getters with proper typing

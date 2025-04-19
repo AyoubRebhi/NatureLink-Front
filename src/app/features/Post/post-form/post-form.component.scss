@@ -41,10 +41,10 @@
 }
 
 .fb-add-to-post-options .fb-add-option:nth-child(3) {
-  color: #FFCA28; /* Couleur jaune pour le bouton émoji */
+  color:  rgba(0,0,0,0.15); /* Couleur jaune pour le bouton émoji */
   
   &:hover {
-    color: darken(#FFCA28, 10%);
+    color:  rgba(0,0,10,10.19);
   }
 }
 

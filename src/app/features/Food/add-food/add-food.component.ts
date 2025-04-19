@@ -18,6 +18,7 @@ export class AddFoodComponent implements OnInit {
   destinations: Destination[] = [];
   errorMessage: string | null = null;
   successMessage: string | null = null;
+  previewImageUrl: string | ArrayBuffer | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -54,6 +55,23 @@ export class AddFoodComponent implements OnInit {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       this.selectedFile = input.files[0];
+      
+      // Create preview URL
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.previewImageUrl = reader.result;
+      };
+      reader.readAsDataURL(this.selectedFile);
+    }
+  }
+
+  removeImage(): void {
+    this.selectedFile = null;
+    this.previewImageUrl = null;
+    // Reset file input
+    const fileInput = document.getElementById('image') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = '';
     }
   }
 
@@ -73,7 +91,7 @@ export class AddFoodComponent implements OnInit {
       name,
       description,
       season,
-      destination.id,  // On utilise destination.id au lieu de destinationId
+      destination.id,
       this.selectedFile
     ).subscribe({
       next: (food) => {

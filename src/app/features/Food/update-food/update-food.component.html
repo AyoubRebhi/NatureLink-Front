@@ -1,81 +1,81 @@
 <div class="container mt-4">
-    <h2>Modifier un aliment</h2>
-    
-    <div *ngIf="isLoading || loadingDestinations" class="text-center">
-      <div class="spinner-border" role="status">
-        <span class="visually-hidden">Chargement...</span>
-      </div>
-      <p>Chargement en cours...</p>
+  <h2>Edit Food</h2>
+  
+  <div *ngIf="isLoading || loadingDestinations" class="text-center">
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">Loading...</span>
     </div>
-  
-    <div *ngIf="errorMessage" class="alert alert-danger">
-      {{ errorMessage }}
-      <button type="button" class="btn-close float-end" (click)="errorMessage = null" aria-label="Close"></button>
-    </div>
-  
-    <form [formGroup]="foodForm" (ngSubmit)="onSubmit()" *ngIf="!isLoading && !loadingDestinations">
-      <div class="mb-3">
-        <label for="name" class="form-label">Nom</label>
-        <input type="text" class="form-control" id="name" formControlName="name">
-        <div *ngIf="foodForm.get('name')?.invalid && foodForm.get('name')?.touched" class="text-danger">
-          <span *ngIf="foodForm.get('name')?.errors?.['required']">Le nom est requis</span>
-          <span *ngIf="foodForm.get('name')?.errors?.['minlength']">Minimum 3 caractères</span>
-        </div>
-      </div>
-  
-      <div class="mb-3">
-        <label for="description" class="form-label">Description</label>
-        <textarea class="form-control" id="description" formControlName="description" rows="3"></textarea>
-        <div *ngIf="foodForm.get('description')?.invalid && foodForm.get('description')?.touched" class="text-danger">
-          La description est requise
-        </div>
-      </div>
-  
-      <div class="mb-3">
-        <label for="season" class="form-label">Saison</label>
-        <select class="form-select" id="season" formControlName="season">
-          <option value="">Sélectionnez une saison</option>
-          <option *ngFor="let season of seasons" [value]="season">{{ season }}</option>
-        </select>
-        <div *ngIf="foodForm.get('season')?.invalid && foodForm.get('season')?.touched" class="text-danger">
-          Veuillez sélectionner une saison
-        </div>
-      </div>
-  
-      <div class="mb-3">
-        <label for="destinationId" class="form-label">Destination</label>
-        <select class="form-select" id="destinationId" formControlName="destinationId">
-          <option value="">Sélectionnez une destination</option>
-          <option *ngFor="let destination of destinations" [value]="destination.id">
-            {{ destination.nom || destination.nom }}
-          </option>
-        </select>
-        <div *ngIf="foodForm.get('destinationId')?.invalid && foodForm.get('destinationId')?.touched" class="text-danger">
-          Veuillez sélectionner une destination
-        </div>
-      </div>
-  
-      <div class="mb-3">
-        <label for="image" class="form-label">Image</label>
-        <input type="file" class="form-control" id="image" 
-               (change)="onFileSelected($event)" 
-               accept="image/*">
-        
-        <div *ngIf="previewUrl" class="mt-2">
-          <img [src]="previewUrl" alt="Preview" class="img-thumbnail" style="max-height: 200px;">
-        </div>
-        <div *ngIf="currentImageUrl && !previewUrl">
-          <p>Aucune nouvelle image sélectionnée</p>
-        </div>
-      </div>
-  
-      <div class="d-flex justify-content-between mt-4">
-        <button type="button" class="btn btn-outline-secondary" (click)="onCancel()">
-          Annuler
-        </button>
-        <button type="submit" class="btn btn-primary" [disabled]="foodForm.invalid">
-          Enregistrer
-        </button>
-      </div>
-    </form>
+    <p>Loading...</p>
   </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+    <button type="button" class="btn-close float-end" (click)="errorMessage = null" aria-label="Close"></button>
+  </div>
+
+  <form [formGroup]="foodForm" (ngSubmit)="onSubmit()" *ngIf="!isLoading && !loadingDestinations">
+    <div class="mb-3">
+      <label for="name" class="form-label">Name</label>
+      <input type="text" class="form-control" id="name" formControlName="name">
+      <div *ngIf="foodForm.get('name')?.invalid && foodForm.get('name')?.touched" class="text-danger">
+        <span *ngIf="foodForm.get('name')?.errors?.['required']">Name is required</span>
+        <span *ngIf="foodForm.get('name')?.errors?.['minlength']">Minimum 3 characters</span>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="description" class="form-label">Description</label>
+      <textarea class="form-control" id="description" formControlName="description" rows="3"></textarea>
+      <div *ngIf="foodForm.get('description')?.invalid && foodForm.get('description')?.touched" class="text-danger">
+        Description is required
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="season" class="form-label">Season</label>
+      <select class="form-select" id="season" formControlName="season">
+        <option value="">Select a season</option>
+        <option *ngFor="let season of seasons" [value]="season">{{ season }}</option>
+      </select>
+      <div *ngIf="foodForm.get('season')?.invalid && foodForm.get('season')?.touched" class="text-danger">
+        Please select a season
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="destinationId" class="form-label">Destination</label>
+      <select class="form-select" id="destinationId" formControlName="destinationId">
+        <option value="">Select a destination</option>
+        <option *ngFor="let destination of destinations" [value]="destination.id">
+          {{ destination.nom || destination.nom }}
+        </option>
+      </select>
+      <div *ngIf="foodForm.get('destinationId')?.invalid && foodForm.get('destinationId')?.touched" class="text-danger">
+        Please select a destination
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="image" class="form-label">Image</label>
+      <input type="file" class="form-control" id="image" 
+             (change)="onFileSelected($event)" 
+             accept="image/*">
+      
+      <div *ngIf="previewUrl" class="mt-2">
+        <img [src]="previewUrl" alt="Preview" class="img-thumbnail" style="max-height: 200px;">
+      </div>
+      <div *ngIf="currentImageUrl && !previewUrl">
+        <p>No new image selected</p>
+      </div>
+    </div>
+
+    <div class="d-flex justify-content-between mt-4">
+      <button type="button" class="btn btn-outline-secondary" (click)="onCancel()">
+        Cancel
+      </button>
+      <button type="submit" class="btn btn-primary" [disabled]="foodForm.invalid">
+        Save
+      </button>
+    </div>
+  </form>
+</div>

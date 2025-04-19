@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TravelService, ItineraryRequest, ItineraryResponse, DayItinerary } from '../../../core/services/travel.service';
 import { MapService } from '../../../core/services/map.service';
@@ -9,15 +9,16 @@ import * as L from 'leaflet';
   templateUrl: './trave.component.html',
   styleUrls: ['./trave.component.scss']
 })
-export class TraveComponent implements OnInit {
+export class TraveComponent implements OnInit, OnDestroy {
   travelForm: FormGroup;
   isLoading = false;
   itineraryResponse: ItineraryResponse | null = null;
   errorMessage: string | null = null;
-  activeDay: number = 1;
+  activeDay = 1;
   mapInitialized = false;
   selectedLocation: L.LatLng | null = null;
   locationName: string | null = null;
+  private searchDebounceTimer: any;
 
   comfortLevels = [
     { value: 'économique', label: 'Économique' },
@@ -54,27 +55,27 @@ export class TraveComponent implements OnInit {
     this.initMap();
   }
 
+  ngOnDestroy(): void {
+    if (this.searchDebounceTimer) {
+      clearTimeout(this.searchDebounceTimer);
+    }
+  }
+
   initMap(): void {
     if (this.mapInitialized) return;
 
-    // Initialiser la carte avec une vue par défaut (Paris par exemple)
     this.mapService.initMap('destinationMap', 48.8566, 2.3522);
     const map = this.mapService.getMap();
     
     if (map) {
-      // Ajouter un événement de clic sur la carte
       map.on('click', async (e: L.LeafletMouseEvent) => {
         this.selectedLocation = e.latlng;
+        this.locationName = await this.mapService.getCityName(e.latlng);
         
-        // Récupérer le nom du lieu
-        this.locationName = await this.mapService.reverseGeocode(e.latlng);
-        
-        // Mettre à jour le formulaire
         this.travelForm.patchValue({
           destination: this.locationName || `${e.latlng.lat.toFixed(4)}, ${e.latlng.lng.toFixed(4)}`
         });
         
-        // Ajouter un marqueur à l'emplacement sélectionné
         this.mapService.clearMarkers();
         this.mapService.addMarker(e.latlng, true);
       });
@@ -83,24 +84,62 @@ export class TraveComponent implements OnInit {
     }
   }
 
+  async onDestinationInput(value: string): Promise<void> {
+    if (this.searchDebounceTimer) {
+      clearTimeout(this.searchDebounceTimer);
+    }
+
+    this.searchDebounceTimer = setTimeout(async () => {
+      if (value && value.length > 2) {
+        try {
+          const cityName = await this.mapService.extractCityFromAddress(value);
+          const searchTerm = cityName || value;
+          
+          const location = await this.mapService.geocodeAddress(searchTerm);
+          const map = this.mapService.getMap();
+          if (location && map) {
+            map.flyTo(location, 13);
+            this.selectedLocation = location;
+            this.locationName = await this.mapService.getCityName(location) || searchTerm;
+            
+            this.mapService.clearMarkers();
+            this.mapService.addMarker(location, true);
+          }
+        } catch (error) {
+          console.error('Error during destination input:', error);
+        }
+      }
+
+    }, 500);  }
+
+  handleEnter(event: KeyboardEvent): void {
+    if ((event.target as HTMLInputElement).id === 'destination') {
+      event.preventDefault();
+    }
+  }
+
   async onSearchAddress(address: string): Promise<void> {
     if (!address) return;
 
-    const location = await this.mapService.geocodeAddress(address);
-    if (location && this.mapService.getMap()) {
-      this.mapService.getMap()?.flyTo(location, 13);
+    const cityName = await this.mapService.extractCityFromAddress(address);
+    const searchTerm = cityName || address;
+
+    const location = await this.mapService.geocodeAddress(searchTerm);
+    const map = this.mapService.getMap();
+    if (location && map) {
+      map.flyTo(location, 13);
       this.selectedLocation = location;
-      this.locationName = address;
+      this.locationName = await this.mapService.getCityName(location) || searchTerm;
       
       this.travelForm.patchValue({
-        destination: address
+        destination: this.locationName
       });
       
       this.mapService.clearMarkers();
       this.mapService.addMarker(location, true);
     }
-  }
 
+  }
   onSubmit(): void {
     if (this.travelForm.invalid) {
       return;
@@ -143,5 +182,25 @@ export class TraveComponent implements OnInit {
     return this.itineraryResponse.data.itinerary.find(d => d.day === this.activeDay) || null;
   }
 
+  clearMap(): void {
+    this.mapService.clearMap();
+    this.selectedLocation = null;
+    this.locationName = null;
+    this.travelForm.patchValue({
+      destination: ''
+    });
+  }
+
+  resetForm(): void {
+    this.travelForm.reset({
+      days: 3,
+      comfort_level: 'standard',
+      travel_style: 'culturel'
+    });
+    this.clearMap();
+    this.itineraryResponse = null;
+    this.errorMessage = null;
+  }
+  
   get f() { return this.travelForm.controls; }
 }

@@ -1,8 +1,8 @@
 <div class="container">
-  <h2>Ajouter une nouvelle nourriture</h2>
+  <h2>Add New Food</h2>
   
   <form [formGroup]="foodForm" (ngSubmit)="onSubmit()" class="food-form">
-    <!-- Messages d'erreur/succès -->
+    <!-- Error/Success Messages -->
     <div *ngIf="errorMessage" class="alert error">
       {{ errorMessage }}
     </div>
@@ -10,21 +10,21 @@
       {{ successMessage }}
     </div>
 
-    <!-- Champ Nom -->
+    <!-- Name Field -->
     <div class="form-group">
-      <label for="name">Nom</label>
+      <label for="name">Name</label>
       <input 
         id="name" 
         type="text" 
         formControlName="name"
         [class.invalid]="nameControl?.invalid && nameControl?.touched">
       <div *ngIf="nameControl?.invalid && nameControl?.touched" class="error-message">
-        <div *ngIf="nameControl?.hasError('required')">Le nom est requis</div>
-        <div *ngIf="nameControl?.hasError('maxlength')">Maximum 100 caractères</div>
+        <div *ngIf="nameControl?.hasError('required')">Name is required</div>
+        <div *ngIf="nameControl?.hasError('maxlength')">Maximum 100 characters</div>
       </div>
     </div>
 
-    <!-- Champ Description -->
+    <!-- Description Field -->
     <div class="form-group">
       <label for="description">Description</label>
       <textarea 
@@ -33,44 +33,44 @@
         rows="4"
         [class.invalid]="descriptionControl?.invalid && descriptionControl?.touched"></textarea>
       <div *ngIf="descriptionControl?.invalid && descriptionControl?.touched" class="error-message">
-        <div *ngIf="descriptionControl?.hasError('required')">La description est requise</div>
-        <div *ngIf="descriptionControl?.hasError('maxlength')">Maximum 500 caractères</div>
+        <div *ngIf="descriptionControl?.hasError('required')">Description is required</div>
+        <div *ngIf="descriptionControl?.hasError('maxlength')">Maximum 500 characters</div>
       </div>
     </div>
 
-    <!-- Champ Saison -->
+    <!-- Season Field -->
     <div class="form-group">
-      <label for="season">Saison</label>
+      <label for="season">Season</label>
       <select 
         id="season" 
         formControlName="season"
         [class.invalid]="seasonControl?.invalid && seasonControl?.touched">
-        <option value="">Sélectionnez une saison</option>
+        <option value="">Select a season</option>
         <option *ngFor="let season of seasons" [value]="season">{{ season }}</option>
       </select>
       <div *ngIf="seasonControl?.invalid && seasonControl?.touched" class="error-message">
-        La saison est requise
+        Season is required
       </div>
     </div>
 
-    <!-- Champ Destination -->
+    <!-- Destination Field -->
     <div class="form-group">
       <label for="destination">Destination</label>
       <select 
         id="destination" 
         formControlName="destination"
         [class.invalid]="destinationControl?.invalid && destinationControl?.touched">
-        <option value="">Sélectionnez une destination</option>
+        <option value="">Select a destination</option>
         <option *ngFor="let dest of destinations" [ngValue]="dest">
           {{ dest.nom }}
         </option>
       </select>
       <div *ngIf="destinationControl?.invalid && destinationControl?.touched" class="error-message">
-        La destination est requise
+        Destination is required
       </div>
     </div>
 
-    <!-- Champ Image -->
+    <!-- Image Field -->
     <div class="form-group">
       <label for="image">Image</label>
       <input 
@@ -78,22 +78,33 @@
         type="file" 
         (change)="onFileSelected($event)"
         accept="image/*">
+      
+      <!-- Image Preview -->
+      <div *ngIf="previewImageUrl" class="image-preview">
+        <img [src]="previewImageUrl" alt="Preview of uploaded image">
+        <button 
+          type="button" 
+          class="remove-image-btn"
+          (click)="removeImage()">
+          ×
+        </button>
+      </div>
     </div>
 
-    <!-- Boutons -->
+    <!-- Buttons -->
     <div class="form-actions">
       <button 
         type="submit" 
         [disabled]="foodForm.invalid || isSubmitting"
         class="submit-btn">
-        <span *ngIf="!isSubmitting">Ajouter</span>
-        <span *ngIf="isSubmitting">En cours...</span>
+        <span *ngIf="!isSubmitting">Add</span>
+        <span *ngIf="isSubmitting">Submitting...</span>
       </button>
       <button 
         type="button" 
         (click)="navigateToFoods()"
         class="cancel-btn">
-        Annuler
+        Cancel
       </button>
     </div>
   </form>

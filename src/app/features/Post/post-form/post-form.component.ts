@@ -176,7 +176,7 @@ export class PostFormComponent implements OnInit, OnDestroy {
     this.recognition = new SpeechRecognition();
     this.recognition.continuous = false;
     this.recognition.interimResults = false;
-    this.recognition.lang = 'fr-FR';
+    this.recognition.lang = 'en-US';
 
     this.recognition.onresult = (event: any) => this.handleSpeechResult(event);
     this.recognition.onerror = (event: any) => this.handleSpeechError(event);
