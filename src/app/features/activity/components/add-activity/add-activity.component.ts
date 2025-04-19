@@ -85,6 +85,10 @@ export class AddActivityComponent implements AfterViewInit {
   generatedImages: string[] = [];
   isGeneratingImages = false;
 
+   // Add these loading states
+   isGeneratingActivity = false;
+   isGeocoding = false;
+
   @ViewChild('map', { static: false }) mapElement!: ElementRef;
 
   constructor(private activityService: ActivityService, private router: Router) { }
@@ -131,11 +135,31 @@ export class AddActivityComponent implements AfterViewInit {
   async reverseGeocode(lat: number, lng: number): Promise<void> {
     this.isLoading = true;
     try {
-      const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`);
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=10&addressdetails=1`
+      );
       const data = await res.json();
-      this.activity.location = data.display_name || `${lat}, ${lng}`;
+      const address = data.address;
+      
+      // Get simplified location (e.g., "Marsa, Tunisia")
+      let location = '';
+      if (address.city || address.town || address.village) {
+        location = address.city || address.town || address.village;
+      } else if (address.county) {
+        location = address.county;
+      }
+      
+      if (address.state || address.country) {
+        location += location ? `, ${address.country}` : address.country;
+      }
+      
+      this.activity.location = location || `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+      
+      // Center the map on the selected location
+      this.map.setView([lat, lng], 12);
+      
     } catch {
-      this.activity.location = `${lat}, ${lng}`;
+      this.activity.location = `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
     } finally {
       this.isLoading = false;
     }
@@ -181,6 +205,10 @@ export class AddActivityComponent implements AfterViewInit {
   }
 
   generateActivity(): void {
+    // Set loading states
+    this.isGeneratingActivity = true;
+    this.isGeocoding = true;
+  
     const promptParams = {
       location: this.activity.location || '',
       type: this.activity.type || '',
@@ -188,23 +216,50 @@ export class AddActivityComponent implements AfterViewInit {
       mood: this.moodInput || '',
       tags: this.tagInput || ''
     };
-
+  
     this.activityService.generateActivityFromAI(promptParams).subscribe({
-      next: res => {
+      next: async (res) => {
         try {
-          const generated = JSON.parse(res.choices[0].message.content);
-          Object.assign(this.activity, generated);
-          this.moodInput = generated.mood.join(', ');
-          this.tagInput = generated.tags.join(', ');
+          const response = JSON.parse(res.choices[0].message.content);
+          Object.assign(this.activity, response);
+          this.moodInput = response.mood?.join(', ') || '';
+          this.tagInput = response.tags?.join(', ') || '';
+  
+          if (response.location) {
+            const coords = await this.geocodeLocation(response.location);
+            if (coords) {
+              this.updateMapMarker(coords.lat, coords.lng);
+            }
+          }
         } catch (e) {
-          alert('⚠️ Failed to parse generated activity.');
+          console.error('Error:', e);
+          alert('⚠️ Failed to process generated activity');
+        } finally {
+          this.isGeneratingActivity = false;
+          this.isGeocoding = false;
         }
       },
-      error: err => {
-        console.error('Error generating activity:', err);
-        alert('⚠️ Failed to generate activity.');
+      error: (err) => {
+        console.error('Error:', err);
+        alert('⚠️ Failed to generate activity');
+        this.isGeneratingActivity = false;
+        this.isGeocoding = false;
       }
     });
+  }
+  
+  private updateMapMarker(lat: number, lng: number): void {
+    if (this.marker) {
+      this.marker.setLatLng([lat, lng]);
+    } else {
+      const customIcon = L.icon({
+        iconUrl: 'assets/img/icon-map.png',
+        iconSize: [32, 32],
+        iconAnchor: [16, 32]
+      });
+      this.marker = L.marker([lat, lng], { icon: customIcon }).addTo(this.map);
+    }
+    this.map.setView([lat, lng], 12);
   }
   generateImages(customQuery?: string): void {
     if (!this.activity.description && !customQuery) {
@@ -241,6 +296,42 @@ export class AddActivityComponent implements AfterViewInit {
         console.error('Error adding image:', err);
         alert('Failed to add image');
       });
+  }
+  async geocodeLocation(locationName: string): Promise<{ lat: number; lng: number } | null> {
+    try {
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(locationName)}&limit=1`
+      );
+      const data = await res.json();
+      if (data.length > 0) {
+        return {
+          lat: parseFloat(data[0].lat),
+          lng: parseFloat(data[0].lon)
+        };
+      }
+      return null;
+    } catch {
+      return null;
+    }
+  }
+  async onLocationChange(): Promise<void> {
+    if (this.activity.location) {
+      const coords = await this.geocodeLocation(this.activity.location);
+      if (coords) {
+        // Update map position
+        if (this.marker) {
+          this.marker.setLatLng([coords.lat, coords.lng]);
+        } else {
+          const customIcon = L.icon({
+            iconUrl: 'assets/img/icon-map.png',
+            iconSize: [32, 32],
+            iconAnchor: [16, 32]
+          });
+          this.marker = L.marker([coords.lat, coords.lng], { icon: customIcon }).addTo(this.map);
+        }
+        this.map.setView([coords.lat, coords.lng], 12);
+      }
+    }
   }
 
   
