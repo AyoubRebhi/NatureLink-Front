@@ -1,0 +1,195 @@
+<div class="travel-agency-container">
+  <!-- Header Section -->
+  <div class="agency-header">
+    <div class="agency-logo">
+      <i class="fas fa-plane-departure"></i>
+      <h1>{{ showUpcoming ? 'Upcoming Journeys' : 'Travel History' }}</h1>
+    </div>
+    <div class="agency-controls">
+      <button class="agency-toggle-btn" (click)="toggleView()">
+        {{ showUpcoming ? 'View Past Trips' : 'View Upcoming Trips' }}
+        <i class="fas" [class.fa-history]="showUpcoming" [class.fa-calendar-alt]="!showUpcoming"></i>
+      </button>
+      <button *ngIf="showUpcoming" class="agency-add-btn" (click)="goToAdd()">
+        <i class="fas fa-plus"></i> New Reservation
+      </button>
+    </div>
+  </div>
+
+  <!-- Filter Section -->
+  <div class="agency-filters">
+    <div class="search-box">
+      <i class="fas fa-search"></i>
+      <input
+        type="text"
+        [(ngModel)]="searchQuery"
+        placeholder="Search traveler names..."
+        (input)="filterReservations()"
+      />
+    </div>
+    <div class="filter-dropdown">
+      <i class="fas fa-filter"></i>
+      <select
+        [(ngModel)]="selectedType"
+        (change)="filterReservations()"
+      >
+        <option value="">All Trip Types</option>
+        <option [value]="type" *ngFor="let type of typeReservations">{{ type | titlecase }}</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Reservation Cards -->
+  <div *ngIf="filteredReservations.length > 0; else noReservations" class="reservation-cards">
+    <div 
+      *ngFor="let reservation of filteredReservations; let i = index"
+      class="reservation-card"
+      [class.selected]="reservation === selectedReservation"
+      (click)="selectReservation(reservation)"
+      [ngClass]="{
+        'activity': reservation.activityId,
+        'transport': reservation.transportId,
+        'logement': reservation.logementId,
+        'restaurant': reservation.restaurantId,
+        'event': reservation.eventId
+      }"
+    >
+      <div class="card-header">
+        <span class="card-badge">
+          <span *ngIf="reservation.activityId"><i class="fas fa-hiking"></i> Activity</span>
+          <span *ngIf="reservation.transportId"><i class="fas fa-bus"></i> Transport</span>
+          <span *ngIf="reservation.logementId"><i class="fas fa-hotel"></i> Accommodation</span>
+          <span *ngIf="reservation.restaurantId"><i class="fas fa-utensils"></i> Dining</span>
+          <span *ngIf="reservation.eventId"><i class="fas fa-calendar-check"></i> Event</span>
+        </span>
+        <span class="card-status" [ngClass]="reservation.statut.toLowerCase()">
+          {{ reservation.statut }}
+        </span>
+      </div>
+      
+      <div class="card-body">
+        <h3>{{ reservation.clientNames?.[0] ?? 'New Reservation' }}</h3>
+        <div class="card-dates">
+          <div class="date-item">
+            <i class="fas fa-plane-departure"></i>
+            <span>{{ reservation.dateDebut | date: 'MMM d, yyyy' }}</span>
+          </div>
+          <div class="date-item">
+            <i class="fas fa-plane-arrival"></i>
+            <span>{{ reservation.dateFin | date: 'MMM d, yyyy' }}</span>
+          </div>
+        </div>
+        
+        <div *ngIf="reservation.logementId" class="card-detail">
+          <i class="fas fa-door-open"></i>
+          <span>{{ reservation.numRooms }} room(s)</span>
+        </div>
+      </div>
+      
+      <div class="card-actions">
+        <button class="action-btn info" (click)="goToUpdate(reservation.id); $event.stopPropagation()" *ngIf="showUpcoming">
+          <i class="fas fa-edit"></i>
+        </button>
+        <button class="action-btn danger" (click)="deleteReservation(reservation.id!); $event.stopPropagation()" *ngIf="showUpcoming">
+          <i class="fas fa-trash"></i>
+        </button>
+        <button class="action-btn success" (click)="reservation.id ? downloadPDF(reservation.id) : null; $event.stopPropagation()">
+          <i class="fas fa-file-export"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #noReservations>
+    <div class="no-reservations">
+      <img src="assets/images/no-reservations.svg" alt="No reservations">
+      <h3>No {{ showUpcoming ? 'upcoming' : 'past' }} journeys found</h3>
+      <p>Start planning your next adventure!</p>
+      <button *ngIf="showUpcoming" class="agency-add-btn" (click)="goToAdd()">
+        <i class="fas fa-plus"></i> Create Your First Reservation
+      </button>
+    </div>
+  </ng-template>
+
+  <!-- Reservation Detail Modal -->
+  <div class="travel-modal" [class.active]="showModal" (click)="closeModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <button class="modal-close" (click)="closeModal()">
+        <i class="fas fa-times"></i>
+      </button>
+      
+      <div class="modal-header">
+        <h2>Trip Details</h2>
+        <span class="modal-badge" [ngClass]="{
+          'activity': selectedReservation?.activityId,
+          'transport': selectedReservation?.transportId,
+          'logement': selectedReservation?.logementId,
+          'restaurant': selectedReservation?.restaurantId,
+          'event': selectedReservation?.eventId
+        }">
+          <span *ngIf="selectedReservation?.activityId"><i class="fas fa-hiking"></i> Activity</span>
+          <span *ngIf="selectedReservation?.transportId"><i class="fas fa-bus"></i> Transport</span>
+          <span *ngIf="selectedReservation?.logementId"><i class="fas fa-hotel"></i> Accommodation</span>
+          <span *ngIf="selectedReservation?.restaurantId"><i class="fas fa-utensils"></i> Dining</span>
+          <span *ngIf="selectedReservation?.eventId"><i class="fas fa-calendar-check"></i> Event</span>
+        </span>
+      </div>
+      
+      <div class="modal-body">
+        <div class="detail-section">
+          <h3><i class="fas fa-users"></i> Travelers</h3>
+          <div class="travelers-list">
+            <div *ngFor="let clientName of selectedReservation?.clientNames" class="traveler-item">
+              <i class="fas fa-user"></i>
+              <span>{{ clientName }}</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="detail-section">
+          <h3><i class="fas fa-calendar-alt"></i> Trip Dates</h3>
+          <div class="date-range">
+            <div class="date-item">
+              <i class="fas fa-plane-departure"></i>
+              <div>
+                <span class="date-label">Departure</span>
+                <span class="date-value">{{ selectedReservation?.dateDebut | date: 'fullDate' }}</span>
+              </div>
+            </div>
+            <div class="date-item">
+              <i class="fas fa-plane-arrival"></i>
+              <div>
+                <span class="date-label">Return</span>
+                <span class="date-value">{{ selectedReservation?.dateFin | date: 'fullDate' }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="detail-section" *ngIf="selectedReservation?.logementId">
+          <h3><i class="fas fa-hotel"></i> Accommodation Details</h3>
+          <div class="detail-item">
+            <i class="fas fa-door-open"></i>
+            <span>{{ selectedReservation?.numRooms }} room(s)</span>
+          </div>
+        </div>
+        
+        <div class="detail-section">
+          <h3><i class="fas fa-info-circle"></i> Status</h3>
+          <div class="status-badge" [ngClass]="selectedReservation?.statut?.toLowerCase()">
+            {{ selectedReservation?.statut }}
+          </div>
+        </div>
+      </div>
+      
+      <div class="modal-footer">
+        <button class="modal-btn secondary" (click)="closeModal()">
+          <i class="fas fa-times"></i> Close
+        </button>
+        <button *ngIf="showUpcoming" class="modal-btn primary" (click)="goToUpdate(selectedReservation?.id); $event.stopPropagation()">
+          <i class="fas fa-edit"></i> Modify
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

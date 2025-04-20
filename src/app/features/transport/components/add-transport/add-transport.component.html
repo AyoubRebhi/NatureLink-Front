@@ -1,0 +1,41 @@
+
+<div class="row">
+  <div class="col-lg-12">
+    <div class="card">
+      <div class="card-body">
+        <form (ngSubmit)="onSubmit()" #transportForm="ngForm" enctype="multipart/form-data">
+          <div class="row">
+            <div class="col-lg-6 mb-3">
+              <label for="type" class="form-label">Type <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" id="type" required [(ngModel)]="transport.type" name="type">
+            </div>
+            <div class="col-lg-6 mb-3">
+              <label for="capacity" class="form-label">Capacity <span class="text-danger">*</span></label>
+              <input type="number" class="form-control" id="capacity" required [(ngModel)]="transport.capacity" name="capacity">
+            </div>
+            <div class="col-lg-6 mb-3">
+              <label for="pricePerKm" class="form-label">Price per Km <span class="text-danger">*</span></label>
+              <input type="number" class="form-control" id="pricePerKm" required [(ngModel)]="transport.pricePerKm" name="pricePerKm">
+            </div>
+            <div class="col-lg-6 mb-3">
+              <label class="form-label">Available</label>
+              <select class="form-control" [(ngModel)]="transport.available" name="available">
+                <option [ngValue]="true">Yes</option>
+                <option [ngValue]="false">No</option>
+              </select>
+            </div>
+            <div class="col-lg-6 mb-3">
+              <label class="form-label">Image <span class="text-danger">*</span></label>
+              <input type="file" class="form-control" (change)="onImageSelected($event)" required>
+            </div>
+          </div>
+
+          <div class="text-end">
+            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="button" class="btn btn-secondary ms-2" (click)="cancel()">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

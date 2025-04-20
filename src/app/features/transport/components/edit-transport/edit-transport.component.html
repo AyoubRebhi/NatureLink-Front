@@ -1,0 +1,59 @@
+<div class="row">
+    <div class="col-lg-12">
+      <div class="card">
+        <div class="card-body">
+          <form (ngSubmit)="onSubmit()" #transportForm="ngForm" enctype="multipart/form-data">
+            <div class="row">
+              <!-- Type -->
+              <div class="col-lg-6 mb-3">
+                <label for="type" class="form-label">Type <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="type" name="type" [(ngModel)]="transport.type" required>
+              </div>
+  
+              <!-- Capacity -->
+              <div class="col-lg-6 mb-3">
+                <label for="capacity" class="form-label">Capacity <span class="text-danger">*</span></label>
+                <input type="number" class="form-control" id="capacity" name="capacity" [(ngModel)]="transport.capacity" required>
+              </div>
+  
+              <!-- Price per Km -->
+              <div class="col-lg-6 mb-3">
+                <label for="pricePerKm" class="form-label">Price per Km <span class="text-danger">*</span></label>
+                <input type="number" class="form-control" id="pricePerKm" name="pricePerKm" [(ngModel)]="transport.pricePerKm" required>
+              </div>
+  
+              <!-- Available -->
+              <div class="col-lg-6 mb-3">
+                <label for="available" class="form-label">Availability</label>
+                <select class="form-select" id="available" name="available" [(ngModel)]="transport.available">
+                  <option [ngValue]="true">Available</option>
+                  <option [ngValue]="false">Unavailable</option>
+                </select>
+              </div>
+  
+              <!-- Image Upload -->
+              <div class="col-lg-6 mb-3">
+                <label class="form-label">Change Image</label>
+                <input type="file" class="form-control" (change)="onImageSelected($event)">
+              </div>
+  
+              <!-- Current Image Preview -->
+              <div class="col-lg-6 mb-3" *ngIf="transport.imgUrl">
+                <label class="form-label">Current Image</label>
+                <div class="img-thumbnail">
+                  <img [src]="transport.imgUrl" alt="Current Transport Image" class="img-fluid" style="max-height: 200px;">
+                </div>
+              </div>
+            </div>
+  
+            <!-- Buttons -->
+            <div class="text-end mt-4">
+              <button type="submit" class="btn btn-primary">Update</button>
+              <button type="button" class="btn btn-secondary ms-2" (click)="cancel()">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  
