@@ -26,7 +26,8 @@ import { MatListModule } from '@angular/material/list';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatChipsModule } from '@angular/material/chips';
-
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ToastrModule } from 'ngx-toastr';
 
 @NgModule({
   declarations: [
@@ -62,6 +63,12 @@ import { MatChipsModule } from '@angular/material/chips';
     MatGridListModule,
     MatDividerModule,
     MatChipsModule,      // ✅ this enables ngModel
+    BrowserAnimationsModule, // required for toastr
+    ToastrModule.forRoot({
+      timeOut: 3000,
+      positionClass: 'toast-top-right',
+      preventDuplicates: true,
+    }),
 
   ],
   providers: [],
