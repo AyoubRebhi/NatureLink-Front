@@ -23,10 +23,11 @@ const routes: Routes = [
         path: 'profile', 
         component: ProfileComponent,
         canActivate: [AuthGuard]
-      },
-      { path: 'auth', loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule) }
+      }
     ]
   },
+  { path: 'auth',
+     loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule) } ,
   {
     path: 'admin',
     loadChildren: () => 

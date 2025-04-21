@@ -1,6 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { UserService } from '../../../../core/services/user.service';
 import { User } from '../../../../core/models/user.model';
+import { PendingUser } from '../../../../core/models/pending-user.model';
 import { AuthService } from '../../../../core/services/auth.service';
 import { Router } from '@angular/router';
 import { MatTableDataSource } from '@angular/material/table';
@@ -12,11 +13,12 @@ import { MatTableDataSource } from '@angular/material/table';
 })
 export class AdminDashboardComponent implements OnInit {
   usersDataSource = new MatTableDataSource<User>([]);
-  isAdmin = false;
+  pendingUsersDataSource = new MatTableDataSource<PendingUser>([]);
   isLoading = true;
   errorMessage = '';
-  //displayedColumns: string[] = ['id', 'username', 'email', 'role', 'actions'];
   displayedColumns: string[] = ['id', 'username', 'email', 'role', 'status', 'actions'];
+  pendingDisplayedColumns: string[] = ['id', 'username', 'email', 'role', 'proofDocument', 'actions'];
+
   constructor(
     private userService: UserService,
     private authService: AuthService,
@@ -26,16 +28,34 @@ export class AdminDashboardComponent implements OnInit {
 
   ngOnInit(): void {
     console.log('AdminDashboardComponent initialized');
-    this.loadUsers();
+    this.loadData();
   }
 
-  private loadUsers(): void {
+  private loadData(): void {
+    this.isLoading = true;
+    this.errorMessage = '';
+
+    // Load active users
     this.userService.getAllUsers().subscribe({
       next: (users) => {
-        console.log('API Response:', users);
-        this.usersDataSource.data = users;  // Ensure you assign data to the MatTableDataSource
+        console.log('Active Users:', users);
+        this.usersDataSource.data = users;
+        this.loadPendingUsers();
+      },
+      error: (err) => {
+        this.handleError(err);
         this.isLoading = false;
-        this.cdr.detectChanges(); 
+      }
+    });
+  }
+
+  private loadPendingUsers(): void {
+    this.userService.getPendingUsers().subscribe({
+      next: (pendingUsers) => {
+        console.log('Pending Users:', pendingUsers);
+        this.pendingUsersDataSource.data = pendingUsers;
+        this.isLoading = false;
+        this.cdr.detectChanges();
       },
       error: (err) => {
         this.handleError(err);
@@ -46,51 +66,86 @@ export class AdminDashboardComponent implements OnInit {
 
   private handleError(err: any): void {
     console.error('Error details:', err);
-    
     if (err.status === 403) {
       this.errorMessage = 'Admin privileges required';
       setTimeout(() => this.router.navigate(['/']), 2000);
     } else if (err.status === 0) {
       this.errorMessage = 'Server unavailable';
     } else {
-      this.errorMessage = 'Failed to load users';
+      this.errorMessage = 'Failed to load data';
+    }
+    this.cdr.detectChanges();
+  }
+
+  blockUser(user: User): void {
+    this.userService.blockUser(user.id).subscribe({
+      next: (updatedUser) => {
+        this.updateUserInList(updatedUser);
+      },
+      error: (err) => {
+        console.error('Block failed:', err);
+        this.errorMessage = 'Failed to block user';
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  unblockUser(user: User): void {
+    this.userService.unblockUser(user.id).subscribe({
+      next: (updatedUser) => {
+        this.updateUserInList(updatedUser);
+      },
+      error: (err) => {
+        console.error('Unblock failed:', err);
+        this.errorMessage = 'Failed to unblock user';
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  approvePendingUser(pendingUser: PendingUser): void {
+    this.userService.approvePendingUser(pendingUser.id).subscribe({
+      next: (newUser) => {
+        // Remove from pending users
+        this.pendingUsersDataSource.data = this.pendingUsersDataSource.data.filter(u => u.id !== pendingUser.id);
+        // Add to active users
+        this.usersDataSource.data = [...this.usersDataSource.data, newUser];
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Approval failed:', err);
+        this.errorMessage = 'Failed to approve user';
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  rejectPendingUser(pendingUser: PendingUser): void {
+    this.userService.rejectPendingUser(pendingUser.id).subscribe({
+      next: () => {
+        // Remove from pending users
+        this.pendingUsersDataSource.data = this.pendingUsersDataSource.data.filter(u => u.id !== pendingUser.id);
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Rejection failed:', err);
+        this.errorMessage = 'Failed to reject user';
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  private updateUserInList(updatedUser: User): void {
+    const index = this.usersDataSource.data.findIndex(u => u.id === updatedUser.id);
+    if (index > -1) {
+      const newData = [...this.usersDataSource.data];
+      newData[index] = updatedUser;
+      this.usersDataSource.data = newData;
+      this.cdr.detectChanges();
     }
   }
-  // admin-dashboard.component.ts
-blockUser(user: User) {
-  this.userService.blockUser(user.id).subscribe({
-    next: (updatedUser) => {
-      this.updateUserInList(updatedUser);
-    },
-    error: (err) => {
-      console.error('Block failed:', err);
-      this.errorMessage = 'Failed to block user';
-    }
-  });
-}
 
-unblockUser(user: User) {
-  this.userService.unblockUser(user.id).subscribe({
-    next: (updatedUser) => {
-      this.updateUserInList(updatedUser);
-    },
-    error: (err) => {
-      console.error('Unblock failed:', err);
-      this.errorMessage = 'Failed to unblock user';
-    }
-  });
-}
-
-private updateUserInList(updatedUser: User) {
-  const index = this.usersDataSource.data.findIndex(u => u.id === updatedUser.id);
-  if (index > -1) {
-    const newData = [...this.usersDataSource.data];
-    newData[index] = updatedUser;
-    this.usersDataSource.data = newData;
+  viewUserPayments(user: User): void {
+    this.router.navigate([`/admin/users/${user.id}/payments`]);
   }
-}
-viewUserPayments(user: User): void {
-  this.router.navigate([`/admin/users/${user.id}/payments`]);
-}
-
 }

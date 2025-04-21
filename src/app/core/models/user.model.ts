@@ -10,5 +10,8 @@ export interface User {
   export enum Role {
     USER = 'USER',
     ADMIN = 'ADMIN',
-    EMPLOYEE = 'EMPLOYEE'
+    EMPLOYEE = 'EMPLOYEE' ,
+    AGENCE = 'AGENCE' , 
+    PROVIDER = 'PROVIDER' ,
+    MONUMENT = 'MONUMENT' 
   }

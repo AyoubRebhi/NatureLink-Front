@@ -6,6 +6,7 @@ import { mergeMap, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { User, Role } from '../models/user.model';
 import { PaymentService } from './payment.service';
+import { AuthResponse } from '../models/auth-response'
 @Injectable({
   providedIn: 'root'
 })
