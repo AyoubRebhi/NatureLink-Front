@@ -31,6 +31,9 @@
       </div>
       
       <button class="rate-button" (click)="openRatingModal(pack)">Noter ce pack</button>
+      <button class="generate-button" (click)="ggenerateImageForPack(pack)">
+        🖼️ Générer une image
+      </button>
     </div>
   </div>
 
@@ -78,6 +81,36 @@
     </div>
   </div>
 
+  <!-- AI Image Generation Popup -->
+  <div *ngIf="showImagePopup" class="image-popup-overlay">
+    <div class="image-popup-content">
+      <div class="image-popup-header">
+        <h3>{{ selectedImagePack?.nom }}</h3>
+        <button class="close-button" (click)="closeImagePopup()">×</button>
+      </div>
+      <div class="image-popup-body">
+        <p class="image-popup-price">{{ selectedImagePack?.prix }} TND</p>
+        <p class="image-popup-description">{{ selectedImagePack?.description }}</p>
+        
+        <div *ngIf="!generatedImageUrl" class="image-loading">
+          <div class="loading-spinner"></div>
+          <p>Génération de l'image en cours...</p>
+        </div>
+
+        <!-- ✅ Image Refresh Fix -->
+        <div *ngIf="generatedImageUrl" style="text-align: center;">
+          <img 
+          *ngIf="generatedImageUrl" 
+          [src]="generatedImageUrl" 
+          alt="Image générée par IA" 
+          class="generated-image"
+        />
+        
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Chatbot Interface -->
   <div class="chatbot-container" [class.active]="showChat">
     <div class="chatbot-header" (click)="toggleChat()">
@@ -90,7 +123,10 @@
     
     <div class="chatbot-body" *ngIf="showChat">
       <div class="chatbot-messages">
-        <div *ngFor="let message of chatbotMessages" class="message" [class.user]="message.role === 'user'" [class.bot]="message.role === 'bot'">
+        <div *ngFor="let message of chatbotMessages" 
+             class="message" 
+             [class.user]="message.role === 'user'" 
+             [class.bot]="message.role === 'bot'">
           <div class="message-content">
             {{ message.text }}
           </div>

@@ -46,4 +46,9 @@ export class PackService {
   askChatbot(message: string): Observable<any> {
     return this.http.post<any>(this.chatbotUrl, { message });
   }
+  generateImage(prompt: string) {
+    return this.http.post<{ image_url: string }>('http://localhost:5003/generate-image', { prompt });
+  }
+  
+  
 }

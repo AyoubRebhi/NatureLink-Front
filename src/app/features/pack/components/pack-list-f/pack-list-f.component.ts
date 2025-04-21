@@ -23,6 +23,12 @@ export class FrontListComponent implements OnInit {
   chatbotMessages: { role: 'user' | 'bot', text: string }[] = [];
   userMessage: string = '';
 
+  // 📸 Image Generation
+  selectedImagePack: PackDTO | null = null;
+  generatedImageUrl: string | null = null;
+  imageTimestamp: number = 0;
+  showImagePopup: boolean = false;
+
   constructor(private packService: PackService) {}
 
   ngOnInit(): void {
@@ -44,19 +50,17 @@ export class FrontListComponent implements OnInit {
               error: (error: HttpErrorResponse) => {
                 console.error(`Error fetching average rating for pack ${pack.id}:`, error);
                 pack.averageRating = 0;
-                this.errorMessage = `Failed to load rating for pack ${pack.nom || pack.id}`;
               }
             });
           });
         } else {
-          console.error('Unexpected data format:', data);
           this.errorMessage = 'Invalid pack data received';
         }
         this.loading = false;
       },
       error: (error: HttpErrorResponse) => {
         console.error('Error fetching packs:', error);
-        this.errorMessage = this.getErrorMessage(error) || 'Failed to load packs. Please try again later.';
+        this.errorMessage = 'Failed to load packs';
         this.loading = false;
       }
     });
@@ -66,7 +70,6 @@ export class FrontListComponent implements OnInit {
     const fullStars = Math.floor(rating);
     const hasHalfStar = rating % 1 >= 0.5;
     const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
-    
     const stars = new Array(fullStars).fill('★');
     if (hasHalfStar) stars.push('½');
     return stars.concat(new Array(emptyStars).fill('☆'));
@@ -90,24 +93,20 @@ export class FrontListComponent implements OnInit {
   }
 
   submitRating(): void {
-    if (!this.selectedPack) {
-      this.errorMessage = 'No pack selected';
+    if (!this.selectedPack || this.selectedRating <= 0 || this.selectedRating > 5) {
+      this.errorMessage = 'Invalid rating or pack selection';
       return;
     }
-  
-    if (this.selectedRating <= 0 || this.selectedRating > 5) {
-      this.errorMessage = 'Please select a rating between 1 and 5 stars';
-      return;
-    }
-  
+
     this.errorMessage = null;
     this.loading = true;
-  
+
     const ratingData: RatingDTO = {
       packId: this.selectedPack.id!,
       ratingValue: this.selectedRating,
       userId: this.userId
     };
+
     this.packService.addRating(ratingData).subscribe({
       next: () => {
         this.packService.getAverageRating(this.selectedPack!.id!).subscribe({
@@ -116,19 +115,50 @@ export class FrontListComponent implements OnInit {
             this.loading = false;
             this.closeRatingModal();
           },
-          error: (error: HttpErrorResponse) => {
-            console.error('Error fetching updated rating:', error);
+          error: () => {
             this.loading = false;
-            this.errorMessage = 'Rating submitted but failed to update display';
+            this.errorMessage = 'Rating saved, but failed to refresh average';
           }
         });
       },
       error: (error: HttpErrorResponse) => {
-        console.error('Error submitting rating:', error);
         this.loading = false;
-        this.errorMessage = error.error?.message || 'Failed to submit rating.';
+        this.errorMessage = error.error?.message || 'Error submitting rating.';
       }
     });
+  }
+
+  // 📷 Image generation (stable & no Angular error)
+  ggenerateImageForPack(pack: PackDTO): void {
+    this.selectedImagePack = pack;
+    this.showImagePopup = true;
+    this.generatedImageUrl = null;
+  
+    const prompt = `${pack.nom} - ${pack.description || ''}`;
+  
+    this.packService.generateImage(prompt).subscribe({
+      next: (res) => {
+        // Astuce : on attend 100ms avant d'assigner l'URL pour éviter l'erreur Angular NG0100
+        setTimeout(() => {
+          this.generatedImageUrl = `/static/${res.image_url.split('/').pop()}?t=${Date.now()}`;
+        }, 100);
+      },
+      error: () => {
+        this.generatedImageUrl = null;
+        this.errorMessage = '❌ Failed to generate image';
+      }
+    });
+  }
+  
+
+  getImageWithTimestamp(): string | null {
+    return this.generatedImageUrl ? `${this.generatedImageUrl}?t=${this.imageTimestamp}` : null;
+  }
+
+  closeImagePopup(): void {
+    this.showImagePopup = false;
+    this.selectedImagePack = null;
+    this.generatedImageUrl = null;
   }
 
   // 💬 Chatbot interaction
@@ -138,39 +168,34 @@ export class FrontListComponent implements OnInit {
 
   sendMessage(): void {
     if (!this.userMessage.trim()) return;
-
     const msg = this.userMessage;
     this.chatbotMessages.push({ role: 'user', text: msg });
     this.userMessage = '';
+    this.scrollChatToBottom();
 
     this.packService.askChatbot(msg).subscribe({
       next: (res) => {
         this.chatbotMessages.push({ role: 'bot', text: res.response });
+        this.scrollChatToBottom();
       },
       error: () => {
         this.chatbotMessages.push({ role: 'bot', text: '❌ Could not reach the chatbot.' });
+        this.scrollChatToBottom();
       }
     });
   }
 
+  private scrollChatToBottom(): void {
+    setTimeout(() => {
+      const el = document.querySelector('.chatbot-messages');
+      if (el) el.scrollTop = el.scrollHeight;
+    }, 100);
+  }
+
   private getErrorMessage(error: HttpErrorResponse): string {
     if (error.error instanceof ErrorEvent) {
-      return `An error occurred: ${error.error.message}`;
-    } else {
-      if (error.status === 0) {
-        return 'Network error: Please check your internet connection';
-      } else if (error.status === 400) {
-        return error.error?.message || 'Invalid request data';
-      } else if (error.status === 401) {
-        return 'Authentication required';
-      } else if (error.status === 403) {
-        return 'You are not authorized to perform this action';
-      } else if (error.status === 404) {
-        return 'Resource not found';
-      } else if (error.status >= 500) {
-        return 'Server error: Please try again later';
-      }
-      return error.message || 'An unknown error occurred';
+      return `Client-side error: ${error.error.message}`;
     }
+    return error.message || 'Unexpected error occurred';
   }
 }
