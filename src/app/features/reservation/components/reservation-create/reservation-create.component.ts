@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/
 import { ReservationService } from 'src/app/core/services/reservation.service';
 import { Reservation } from 'src/app/core/models/reservation.model';
 import { StatutReservation } from 'src/app/core/models/statut-reservation.model';
+import { TypeReservation } from 'src/app/core/models/type-reservation.model';
 import { Router } from '@angular/router';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
@@ -21,7 +22,11 @@ export class ReservationCreateComponent implements OnInit, OnDestroy {
   statutOptions: StatutReservation[] = Object.values(StatutReservation);
   numRooms: number = 1;
   clientId: number = 8;
-  logementId: number = 1;
+
+  // Fields for static reservation type testing
+  selectedType: TypeReservation = TypeReservation.ACTIVITE; // Default to TRANSPORT
+  typeSpecificId: number = 6; // ID for the selected type (e.g., transportId = 2)
+
   today: string;
   isLoading: boolean = false;
   errorMessage: string | null = null;
@@ -30,7 +35,6 @@ export class ReservationCreateComponent implements OnInit, OnDestroy {
 
   constructor(private reservationService: ReservationService, private router: Router) {
     this.today = new Date().toISOString().split('T')[0];
-    // Load statut options from local cache
     const cachedStatutOptions = localStorage.getItem('statutOptions');
     if (cachedStatutOptions) {
       this.statutOptions = JSON.parse(cachedStatutOptions);
@@ -85,7 +89,7 @@ export class ReservationCreateComponent implements OnInit, OnDestroy {
       this.errorMessage = 'Veuillez remplir tous les noms des clients.';
       return;
     }
-    if (this.logementId && this.numRooms < 1) {
+    if (this.selectedType === TypeReservation.LOGEMENT && this.numRooms < 1) {
       this.errorMessage = 'Veuillez entrer un nombre valide de chambres.';
       return;
     }
@@ -93,16 +97,26 @@ export class ReservationCreateComponent implements OnInit, OnDestroy {
       this.errorMessage = 'Veuillez entrer un ID de client valide.';
       return;
     }
+    if (!this.typeSpecificId || this.typeSpecificId <= 0) {
+      this.errorMessage = 'Veuillez entrer un ID valide pour le type de réservation.';
+      return;
+    }
 
+    // Build reservation object dynamically
     const reservation: Reservation = {
       userId: this.clientId,
       dateDebut: new Date(this.dateDebut),
       dateFin: new Date(this.dateFin),
       statut: this.selectedStatut,
+      typeres: this.selectedType,
       numClients: this.numClients,
-      clientNames: this.clientNames.map(name => name.trim()), // Trim names
-      numRooms: this.logementId ? this.numRooms : undefined,
-      logementId: this.logementId || undefined
+      clientNames: this.clientNames.map(name => name.trim()),
+      numRooms: this.selectedType === TypeReservation.LOGEMENT ? this.numRooms : undefined,
+      logementId: this.selectedType === TypeReservation.LOGEMENT ? this.typeSpecificId : undefined,
+      transportId: this.selectedType === TypeReservation.TRANSPORT ? this.typeSpecificId : undefined,
+      restaurantId: this.selectedType === TypeReservation.RESTAURANT ? this.typeSpecificId : undefined,
+      eventId: this.selectedType === TypeReservation.EVENT ? this.typeSpecificId : undefined,
+      activityId: this.selectedType === TypeReservation.ACTIVITE ? this.typeSpecificId : undefined
     };
 
     console.log('Reservation Payload:', JSON.stringify(reservation, null, 2));
@@ -119,10 +133,8 @@ export class ReservationCreateComponent implements OnInit, OnDestroy {
       error: (error) => {
         console.error('Error creating reservation:', error);
         this.isLoading = false;
-
-        // Handle error from GlobalExceptionHandler
         if (error.error && error.error.message) {
-          this.errorMessage = error.error.message; // e.g., "🚫 Invalid client name(s)..."
+          this.errorMessage = error.error.message;
           alert(`⚠️ ${this.errorMessage}`);
         } else if (error.status === 500) {
           this.errorMessage = 'Erreur serveur interne. Veuillez réessayer plus tard.';
@@ -143,7 +155,8 @@ export class ReservationCreateComponent implements OnInit, OnDestroy {
     this.selectedStatut = StatutReservation.EN_ATTENTE;
     this.numRooms = 1;
     this.clientId = 8;
-    this.logementId = 1;
+    this.selectedType = TypeReservation.TRANSPORT;
+    this.typeSpecificId = 2;
     this.errorMessage = null;
   }
 

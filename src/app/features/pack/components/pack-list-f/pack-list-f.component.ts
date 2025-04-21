@@ -3,6 +3,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { PackService } from 'src/app/core/services/pack.service';
 import { PackDTO } from 'src/app/core/models/pack.model';
 import { RatingDTO } from 'src/app/core/models/rating.model';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-front-list',
@@ -17,19 +18,17 @@ export class FrontListComponent implements OnInit {
   userId: number = 4;
   loading: boolean = false;
   errorMessage: string | null = null;
-
-  // 💬 Chatbot
   showChat: boolean = false;
   chatbotMessages: { role: 'user' | 'bot', text: string }[] = [];
   userMessage: string = '';
-
-  // 📸 Image Generation
   selectedImagePack: PackDTO | null = null;
-  generatedImageUrl: string | null = null;
-  imageTimestamp: number = 0;
+  generatedImageUrl: SafeUrl | null = null;
   showImagePopup: boolean = false;
 
-  constructor(private packService: PackService) {}
+  constructor(
+    private packService: PackService,
+    private sanitizer: DomSanitizer
+  ) {}
 
   ngOnInit(): void {
     this.fetchPacks();
@@ -128,40 +127,51 @@ export class FrontListComponent implements OnInit {
     });
   }
 
-  // 📷 Image generation (stable & no Angular error)
   ggenerateImageForPack(pack: PackDTO): void {
     this.selectedImagePack = pack;
     this.showImagePopup = true;
     this.generatedImageUrl = null;
-  
+    this.errorMessage = null;
+
     const prompt = `${pack.nom} - ${pack.description || ''}`;
-  
+
     this.packService.generateImage(prompt).subscribe({
       next: (res) => {
-        // Astuce : on attend 100ms avant d'assigner l'URL pour éviter l'erreur Angular NG0100
+        console.log('Generate Image Response:', res);
         setTimeout(() => {
-          this.generatedImageUrl = `/static/${res.image_url.split('/').pop()}?t=${Date.now()}`;
-        }, 100);
+          const imageUrl = `/static/${res.image_url}`; // Proxied to http://localhost:9000/generated_*.png
+          console.log('Generated Image URL:', imageUrl);
+          this.generatedImageUrl = this.sanitizer.bypassSecurityTrustUrl(imageUrl);
+          fetch(imageUrl)
+            .then(response => {
+              console.log('Image fetch status:', response.status, response.url);
+              if (!response.ok) {
+                throw new Error(`Image fetch failed: ${response.status}`);
+              }
+            })
+            .catch(err => console.error('Image fetch error:', err));
+        }, 2000);
       },
-      error: () => {
+      error: (error: HttpErrorResponse) => {
+        console.error('Generate Image Error:', error);
         this.generatedImageUrl = null;
         this.errorMessage = '❌ Failed to generate image';
       }
     });
   }
-  
 
-  getImageWithTimestamp(): string | null {
-    return this.generatedImageUrl ? `${this.generatedImageUrl}?t=${this.imageTimestamp}` : null;
+  onImageError(event: Event): void {
+    console.error('Image load error:', event);
+    this.errorMessage = 'Failed to load image. Please try again.';
   }
 
   closeImagePopup(): void {
     this.showImagePopup = false;
     this.selectedImagePack = null;
     this.generatedImageUrl = null;
+    this.errorMessage = null;
   }
 
-  // 💬 Chatbot interaction
   toggleChat(): void {
     this.showChat = !this.showChat;
   }

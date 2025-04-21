@@ -18,5 +18,6 @@ export interface Reservation {
   eventId?: number; // ID of the event (if it's an event reservation)
   restaurantId?: number; // ID of the restaurant (if it's a restaurant reservation)
   transportId?: number; // ID of the transport (if it's a transport reservation)
-  activityId?: number; // ID of the activity (if it's an activity reservation)
+  activityId?: number;
+   // ID of the activity (if it's an activity reservation)
 }

@@ -81,7 +81,6 @@
     </div>
   </div>
 
-  <!-- AI Image Generation Popup -->
   <div *ngIf="showImagePopup" class="image-popup-overlay">
     <div class="image-popup-content">
       <div class="image-popup-header">
@@ -91,21 +90,19 @@
       <div class="image-popup-body">
         <p class="image-popup-price">{{ selectedImagePack?.prix }} TND</p>
         <p class="image-popup-description">{{ selectedImagePack?.description }}</p>
-        
+  
         <div *ngIf="!generatedImageUrl" class="image-loading">
           <div class="loading-spinner"></div>
           <p>Génération de l'image en cours...</p>
         </div>
-
-        <!-- ✅ Image Refresh Fix -->
+  
         <div *ngIf="generatedImageUrl" style="text-align: center;">
-          <img 
-          *ngIf="generatedImageUrl" 
-          [src]="generatedImageUrl" 
-          alt="Image générée par IA" 
-          class="generated-image"
-        />
-        
+          <img [src]="generatedImageUrl" alt="Generated Image" style="max-width: 100%; height: auto;"
+               (error)="onImageError($event)" />
+        </div>
+  
+        <div *ngIf="errorMessage" class="alert alert-danger mt-3">
+          {{ errorMessage }}
         </div>
       </div>
     </div>
