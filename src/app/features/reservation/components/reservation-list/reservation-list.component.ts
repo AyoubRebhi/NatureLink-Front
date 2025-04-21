@@ -1,9 +1,16 @@
-// src/app/components/reservation-list/reservation-list.component.ts
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ReservationService } from 'src/app/core/services/reservation.service';
 import { Reservation } from 'src/app/core/models/reservation.model';
 import { TypeReservation } from 'src/app/core/models/type-reservation.model';
+
+interface ReservationStats {
+  totalReservations: number;
+  byType: { [key in TypeReservation]: number };
+  byStatus: { confirmed: number; pending: number; canceled: number };
+  totalClients: number;
+  mostFrequentType: string;
+}
 
 @Component({
   selector: 'app-reservation-list',
@@ -13,6 +20,19 @@ import { TypeReservation } from 'src/app/core/models/type-reservation.model';
 export class ReservationListComponent implements OnInit {
   reservations: Reservation[] = [];
   filteredReservations: Reservation[] = [];
+  reservationStats: ReservationStats = {
+    totalReservations: 0,
+    byType: {
+      [TypeReservation.ACTIVITE]: 0,
+      [TypeReservation.LOGEMENT]: 0,
+      [TypeReservation.RESTAURANT]: 0,
+      [TypeReservation.EVENT]: 0,
+      [TypeReservation.TRANSPORT]: 0
+    },
+    byStatus: { confirmed: 0, pending: 0, canceled: 0 },
+    totalClients: 0,
+    mostFrequentType: ''
+  };
   selectedReservation?: Reservation;
   userId = 8; // Replace with actual user ID (e.g., from auth service)
   searchQuery: string = '';
@@ -43,6 +63,7 @@ export class ReservationListComponent implements OnInit {
         if (!data || !Array.isArray(data)) {
           console.error('Invalid data format:', data);
           this.reservations = [];
+          this.updateStatistics();
           return;
         }
 
@@ -87,14 +108,66 @@ export class ReservationListComponent implements OnInit {
           });
 
         console.log('Mapped Reservations:', this.reservations);
+        this.updateStatistics();
         this.filterReservations();
       },
       error: (error) => {
         console.error(`Error fetching ${this.showUpcoming ? 'upcoming' : 'past'} reservations:`, error);
         this.reservations = [];
+        this.updateStatistics();
         this.filterReservations();
       }
     });
+  }
+
+  updateStatistics(): void {
+    // Reset stats
+    this.reservationStats = {
+      totalReservations: this.reservations.length,
+      byType: {
+        [TypeReservation.ACTIVITE]: 0,
+        [TypeReservation.LOGEMENT]: 0,
+        [TypeReservation.RESTAURANT]: 0,
+        [TypeReservation.EVENT]: 0,
+        [TypeReservation.TRANSPORT]: 0
+      },
+      byStatus: { confirmed: 0, pending: 0, canceled: 0 },
+      totalClients: 0,
+      mostFrequentType: ''
+    };
+
+    // Compute stats
+    this.reservations.forEach(reservation => {
+      // By type
+      if (reservation.typeres) {
+        this.reservationStats.byType[reservation.typeres]++;
+      }
+
+      // By status
+      if (reservation.statut) {
+        const status = reservation.statut.toLowerCase();
+        if (status.includes('confirm')) {
+          this.reservationStats.byStatus.confirmed++;
+        } else if (status.includes('attente') || status.includes('pending')) {
+          this.reservationStats.byStatus.pending++;
+        } else if (status.includes('annul') || status.includes('canceled')) {
+          this.reservationStats.byStatus.canceled++;
+        }
+      }
+
+      // Total clients
+      if (reservation.numClients) {
+        this.reservationStats.totalClients += reservation.numClients;
+      }
+    });
+
+    // Find most frequent type
+    const typeCounts = Object.entries(this.reservationStats.byType) as [TypeReservation, number][];
+    const mostFrequent = typeCounts.reduce((max, [type, count]) => 
+      count > max.count ? { type, count } : max, 
+      { type: '', count: 0 }
+    );
+    this.reservationStats.mostFrequentType = mostFrequent.type || 'None';
   }
 
   filterReservations(): void {
@@ -111,10 +184,6 @@ export class ReservationListComponent implements OnInit {
       const matchesType = this.selectedType
         ? reservation.typeres === this.selectedType
         : true;
-
-      console.log('Reservation:', reservation);
-      console.log('Matches search:', matchesSearch);
-      console.log('Matches type:', matchesType);
 
       return matchesSearch && matchesType;
     });

@@ -24,8 +24,8 @@ export class ReservationCreateComponent implements OnInit, OnDestroy {
   clientId: number = 8;
 
   // Fields for static reservation type testing
-  selectedType: TypeReservation = TypeReservation.ACTIVITE; // Default to TRANSPORT
-  typeSpecificId: number = 6; // ID for the selected type (e.g., transportId = 2)
+  selectedType: TypeReservation = TypeReservation.RESTAURANT; // Default to TRANSPORT
+  typeSpecificId: number = 8; // ID for the selected type (e.g., transportId = 2)
 
   today: string;
   isLoading: boolean = false;
