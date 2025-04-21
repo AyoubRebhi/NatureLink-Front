@@ -1,0 +1,64 @@
+<div class="container">
+  <!-- Header -->
+  <h2>Liste des Packs</h2>
+
+  <!-- Add Pack Button -->
+  <div class="text-right mb-6">
+    <button 
+      (click)="goToAdd()" 
+      class="add-button"
+    >
+      <span>➕</span> Ajouter un Pack
+    </button>
+  </div>
+
+  <!-- Loading Indicator -->
+  <div *ngIf="loading" class="loading-indicator">
+    <div class="spinner"></div>
+    <p>Chargement des packs...</p>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="errorMessage" class="error-message">
+    {{ errorMessage }}
+  </div>
+
+  <!-- No Packs Message -->
+  <div *ngIf="packs.length === 0 && !loading" class="empty-state">
+    <p>Aucun pack disponible pour le moment.</p>
+    <button (click)="goToAdd()" class="add-button">
+      <span>➕</span> Créer un nouveau pack
+    </button>
+  </div>
+
+  <!-- Packs Table -->
+  <div *ngIf="packs.length > 0 && !loading" class="table-container">
+    <table class="packs-table">
+      <thead>
+        <tr>
+          <th>Num</th>
+          <th>Nom</th>
+          <th>Prix</th>
+          <th>Description</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let pack of packs" [class.selected]="selectedPack?.id === pack.id">
+          <td>{{ packs.indexOf(pack) + 1 }}</td>
+          <td>{{ pack.nom }}</td>
+          <td>{{ pack.prix }} TND</td>
+          <td>{{ pack.description  }}</td>
+          <td class="actions">
+            <button (click)="goToUpdate(pack.id!); $event.stopPropagation()" class="edit-button">
+              ✏️ Modifier
+            </button>
+            <button (click)="deletePack(pack.id!); $event.stopPropagation()" class="delete-button">
+              🗑️ Supprimer
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

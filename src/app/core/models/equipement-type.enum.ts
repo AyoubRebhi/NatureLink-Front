@@ -1,0 +1,7 @@
+export enum EquipementType {
+    BIEN_EQUIPEE = 'BIEN_EQUIPEE',
+    NON_EQUIPEE = 'NON_EQUIPEE',
+    SEMI_EQUIPEE = 'SEMI_EQUIPEE',
+    CUISINE_EQUIPEE = 'CUISINE_EQUIPEE',
+  }
+  

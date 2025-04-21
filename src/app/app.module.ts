@@ -1,7 +1,6 @@
 import { NgModule, NO_ERRORS_SCHEMA } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './layouts/main-layout/header/header.component';
@@ -14,11 +13,11 @@ import { HomeComponent } from './pages/home/home.component';
 import { TestimonialComponent } from './layouts/main-layout/testimonial/testimonial.component';
 import { ServiceComponent } from './layouts/main-layout/service/service.component';
 import { GuidesComponent } from './layouts/main-layout/guides/guides.component';
-import { HttpClientModule } from '@angular/common/http';
 import { TransportComponent } from './layouts/main-layout/transport/transport.component';
-import { FormsModule } from '@angular/forms';
 import { ActivityComponent } from './pages/activity/activity.component';
 import { ActivityDetailsComponent } from './pages/activity-details/activity-details.component';
+import { HttpClientModule } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -28,6 +27,9 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatChipsModule } from '@angular/material/chips';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
+import { ReservationModule } from './features/reservation/reservation.module';
+import { PackModule } from './features/pack/pack.module';
+import { SharedModule } from './shared/shared.module';
 
 @NgModule({
   declarations: [
@@ -42,10 +44,6 @@ import { ToastrModule } from 'ngx-toastr';
     TestimonialComponent,
     ServiceComponent,
     GuidesComponent,
-    HomeComponent,
-    TestimonialComponent,
-    ServiceComponent,
-    NotFoundComponent,
     TransportComponent,
     ActivityComponent,
     ActivityDetailsComponent,
@@ -62,17 +60,19 @@ import { ToastrModule } from 'ngx-toastr';
     MatListModule,
     MatGridListModule,
     MatDividerModule,
-    MatChipsModule,      // ✅ this enables ngModel
+    MatChipsModule,
     BrowserAnimationsModule, // required for toastr
     ToastrModule.forRoot({
       timeOut: 3000,
       positionClass: 'toast-top-right',
       preventDuplicates: true,
     }),
-
+    ReservationModule, 
+    PackModule,
+    SharedModule // ✅ Add this if missing
   ],
   providers: [],
-  schemas: [NO_ERRORS_SCHEMA],
+  schemas: [NO_ERRORS_SCHEMA],  // Ensures that Angular doesn't throw errors for unknown elements
   bootstrap: [AppComponent]
 })
 export class AppModule { }

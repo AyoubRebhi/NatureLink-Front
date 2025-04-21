@@ -50,14 +50,12 @@
               "node_modules/leaflet/dist/leaflet.js",
               "node_modules/@popperjs/core/dist/umd/popper.min.js",
               "node_modules/bootstrap/dist/js/bootstrap.min.js"
-
-
             ]
-
           },
           "configurations": {
             "production": {
-              "budgets": [{
+              "budgets": [
+                {
                   "type": "initial",
                   "maximumWarning": "500kb",
                   "maximumError": "1mb"
@@ -83,6 +81,9 @@
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "proxyConfig": "proxy.conf.json"
+          },
           "configurations": {
             "production": {
               "browserTarget": "naturelink-frontend:build:production"
@@ -125,7 +126,6 @@
               "src/assets/css/style.css",
               "src/assets/css/bootstrap.min.css",
               "src/styles.scss"
-
             ],
             "scripts": [
               "src/assets/dist/js",
@@ -135,9 +135,7 @@
               "node_modules/leaflet/dist/leaflet.js",
               "node_modules/@popperjs/core/dist/umd/popper.min.js",
               "node_modules/bootstrap/dist/js/bootstrap.min.js"
-
             ]
-
           }
         }
       }

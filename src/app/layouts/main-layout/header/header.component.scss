@@ -24,3 +24,10 @@ html, body {
     justify-content: center;
     text-align: center;
 }
+.navbar-brand::before, .navbar-brand::after {
+    content: none;
+}
+.hero-header {
+    margin-top: 0px; /* Adjust this to push the hero section lower */
+}
+

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router, NavigationEnd, Event } from '@angular/router';
 import { filter } from 'rxjs/operators';
 
@@ -7,7 +7,8 @@ import { filter } from 'rxjs/operators';
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss']
 })
-export class HeaderComponent {
+export class HeaderComponent implements OnInit {
+  // Array of navigation links
   navLinks = [
     { path: '/', label: 'Home' },
     { path: '/about', label: 'About' },
@@ -19,19 +20,31 @@ export class HeaderComponent {
   currentRoute = '';
   pageTitle = '';
 
-  constructor(private router: Router) {
+  constructor(private router: Router) {}
+
+  ngOnInit(): void {
     this.router.events
       .pipe(
         filter((event: Event): event is NavigationEnd => event instanceof NavigationEnd)
       )
       .subscribe((event: NavigationEnd) => {
         this.currentRoute = event.url;
-        this.setPageTitle();
+        this.updatePageTitle(event.url);
       });
   }
 
-  private setPageTitle() {
-    const route = this.navLinks.find(link => this.currentRoute.includes(link.path));
-    this.pageTitle = route ? route.label : this.currentRoute.split('/').pop() || '';
+  // Dynamically updates the page title based on the current route
+  private updatePageTitle(route: string) {
+    const routeTitles: any = {
+      '/': 'Home',
+      '/about': 'About',
+      '/services': 'Services',
+      '/packages': 'Packages',
+      '/contact': 'Contact',
+      '/reservation/create': 'Create Reservation',
+    };
+
+    const routeObj = this.navLinks.find(link => route.includes(link.path));
+    this.pageTitle = routeTitles[route] || (routeObj ? routeObj.label : 'Page');
   }
 }

@@ -5,6 +5,7 @@ import { ServicesComponent } from './pages/services/services.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { MainLayoutComponent } from './layouts/main-layout/main-layout.component';
 import { HomeComponent } from './pages/home/home.component';
+import { FrontListComponent } from './features/pack/components/pack-list-f/pack-list-f.component';
 import { ActivityComponent } from './pages/activity/activity.component';
 import { ActivityDetailsComponent } from './pages/activity-details/activity-details.component';
 
@@ -16,18 +17,28 @@ const routes: Routes = [
       { path: '', component: HomeComponent },
       { path: 'about', component: AboutComponent },
       { path: 'services', component: ServicesComponent },
-      { path: 'activities', component: ActivityComponent},
-      {path:'details/:id', component: ActivityDetailsComponent}
+      { path: 'activities', component: ActivityComponent },
+      { path: 'details/:id', component: ActivityDetailsComponent },
+      {
+        path: 'reservation',
+        loadChildren: () =>
+          import('./features/reservation/reservation.module').then(m => m.ReservationModule)
+      },
+      {
+        path: 'packs',
+        loadChildren: () => import('./features/pack/pack.module').then(m => m.PackModule)
+      }
     ]
   },
   {
-    path: 'admin',  // This will load admin dashboard
+    path: 'admin',
     loadChildren: () =>
-      import('./features/dashboard/dashboard.module').then(
-        (m) => m.DashboardModule
-      )
+      import('./features/dashboard/dashboard.module').then(m => m.DashboardModule)
   },
-  { path: 'activity', loadChildren: () => import('./features/activity/activity.module').then(m => m.ActivityModule) },
+  {
+    path: 'activity',
+    loadChildren: () => import('./features/activity/activity.module').then(m => m.ActivityModule)
+  },
   { path: '**', component: NotFoundComponent }
 ];
 
