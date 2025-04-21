@@ -9,10 +9,14 @@ import { Activity } from '../../core/models/activity.model';
 })
 export class ActivityComponent implements OnInit {
   activities: Activity[] = [];
-  recommendedActivities: Activity[] = [];
+  filteredActivities: Activity[] = [];
+  isLoading = false;
+  isRecommendationMode = false;
+  recommendationError: string | null = null;
 
-  showRecommendationForm: boolean = false;
-  moodInput: string = '';
+  // Recommendation form
+  showRecommendationForm = false;
+  moodInput = '';
 
   constructor(private activityService: ActivityService) { }
 
@@ -21,44 +25,100 @@ export class ActivityComponent implements OnInit {
   }
 
   loadActivities(): void {
+    this.isLoading = true;
     this.activityService.getAllActivities().subscribe({
-      next: (data: Activity[]) => {
-        this.activities = data.map(activity => ({
-          ...activity,
-          imageUrls: activity.imageUrls?.length ?
-            activity.imageUrls :
-            ['assets/img/bg-hero.jpg']
-        }));
+      next: (data) => {
+        this.activities = this.processActivities(data);
+        this.filteredActivities = [...this.activities];
+        this.isLoading = false;
       },
-      error: (err) => console.error('Error loading activities:', err)
+      error: (err) => {
+        console.error('Error loading activities:', err);
+        this.isLoading = false;
+      }
     });
   }
 
   getRecommendations(): void {
-    if (!this.moodInput.trim()) return;
+    if (!this.moodInput.trim()) {
+      this.recommendationError = 'Please describe what you\'re looking for';
+      return;
+    }
   
-    this.activityService.recommendActivitiesWithData(this.moodInput, this.activities).subscribe({
-      next: (result: any) => {
-        try {
-          console.log("✅ Raw recommendation result:", result);
-
-          const parsed = typeof result === 'string' ? JSON.parse(result) : result;
-          this.activities = parsed.map((activity: any) => ({
-            ...activity,
-            imageUrls: activity.imageUrls?.length
-              ? activity.imageUrls
-              : ['assets/img/bg-hero.jpg']
-          }));
-          this.showRecommendationForm = false; // optionally hide the form
-        } catch (e) {
-          console.error("⚠️ Failed to parse recommendations", e);
-        }
+    this.isLoading = true;
+    this.recommendationError = null;
+  
+    this.activityService.recommendFromAllActivities(this.moodInput).subscribe({
+      next: (recommendations) => {
+        // Merge recommendation scores with full activity data
+        this.filteredActivities = recommendations.map(recommendation => {
+          // Find the full activity in your original list
+          const fullActivity = this.activities.find(a => a.id === recommendation.id) || recommendation;
+          
+          return {
+            ...fullActivity, // This contains all the original fields
+            similarity: recommendation.similarity // Add the new similarity score
+          };
+        });
+        
+        this.isRecommendationMode = true;
+        this.isLoading = false;
       },
       error: (err) => {
-        console.error("❌ Recommendation failed", err);
+        console.error('Recommendation failed:', err);
+        this.recommendationError = 'Could not get recommendations. Please try again.';
+        this.isLoading = false;
       }
     });
   }
+
+  resetRecommendations(): void {
+    this.filteredActivities = [...this.activities];
+    this.isRecommendationMode = false;
+    this.moodInput = '';
+    this.showRecommendationForm = false;
+    this.recommendationError = null;
+  }
+
+  private processActivities(activities: any[]): Activity[] {
+    console.log('🔧 Processing activities data...');
+    
+    return activities.map(activity => {
+      console.groupCollapsed(`Processing activity: ${activity.name}`);
+      
+      const processField = (field: any, fieldName: string) => {
+        console.log(`Processing ${fieldName}:`, field);
+        
+        if (Array.isArray(field)) {
+          console.log(`✅ ${fieldName} is already an array`);
+          return field;
+        }
+        if (typeof field === 'string' && field.includes(',')) {
+          const result = field.split(',').map(item => item.trim());
+          console.log(`🔄 Converted ${fieldName} from string to array:`, result);
+          return result;
+        }
+        if (field) {
+          console.log(`⚠️ ${fieldName} is not an array but has value:`, field);
+          return [field];
+        }
+        console.log(`⏩ ${fieldName} is empty, using empty array`);
+        return [];
+      };
   
+      const processedActivity = {
+        ...activity,
+        imageUrls: activity.imageUrls?.length ? 
+          (Array.isArray(activity.imageUrls) ? activity.imageUrls : [activity.imageUrls]) : 
+          ['assets/img/bg-hero.jpg'],
+        mood: processField(activity.mood, 'mood'),
+        tags: processField(activity.tags, 'tags'),
+        requiredEquipment: processField(activity.requiredEquipment, 'requiredEquipment')
+      };
   
+      console.log('Processed activity:', processedActivity);
+      console.groupEnd();
+      return processedActivity;
+    });
+  }
 }

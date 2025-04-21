@@ -3,6 +3,18 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Activity } from '../models/activity.model';
 
+interface RecommendationRequest {
+  mood_input: string;
+  activities: Activity[];
+}
+
+interface RecommendationResponse {
+  recommendations: Activity[];
+  status: string;
+  model?: string;
+  error?: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -76,6 +88,48 @@ export class ActivityService {
     return this.http.post<any>(`${this.baseUrl}/recommend`, {
       mood_input: moodInput,
       activities: activities
+    });
+  }
+  recommendActivities(moodInput: string, activities: Activity[]): Observable<RecommendationResponse> {
+    if (!moodInput || !activities || activities.length === 0) {
+      throw new Error('Mood input and activities list are required');
+    }
+
+    // Prepare the request payload
+    const requestPayload: RecommendationRequest = {
+      mood_input: moodInput,
+      activities: activities.map(activity => ({
+        ...activity,
+        // Ensure arrays are properly formatted
+        mood: activity.mood || [],
+        tags: activity.tags || [],
+        imageUrls: activity.imageUrls || []
+      }))
+    };
+
+    return this.http.post<RecommendationResponse>(
+      `${this.baseUrl}/recommend`, 
+      requestPayload
+    );
+  }
+  
+  recommendFromAllActivities(moodInput: string): Observable<Activity[]> {
+    return new Observable(observer => {
+      this.getAllActivities().subscribe({
+        next: (activities) => {
+          this.recommendActivities(moodInput, activities).subscribe({
+            next: (response) => {
+              if (response.status === 'success') {
+                observer.next(response.recommendations);
+              } else {
+                observer.error(response.error || 'Unknown error');
+              }
+            },
+            error: (err) => observer.error(err)
+          });
+        },
+        error: (err) => observer.error(err)
+      });
     });
   }
   

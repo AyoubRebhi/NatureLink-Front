@@ -14,4 +14,6 @@ export interface Activity {
     type: string; // e.g., "Adventure", "Relaxation", "Cultural"
     mood: string[]; // e.g., ["exciting", "thrilling"]
     tags: string[]; // e.g., ["nature", "family-friendly"]
+    similarity?: number; // Only present in recommendations
+
 }
