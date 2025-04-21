@@ -47,10 +47,10 @@
   color: #2a3f8f;
   margin: 0;
   background: linear-gradient(to right, #2a3f8f, #4a6bff);
+  background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
-
 .agency-controls {
   display: flex;
   gap: 1rem;
