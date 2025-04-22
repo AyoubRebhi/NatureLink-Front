@@ -13,8 +13,6 @@ import { SharedModule } from 'src/app/shared/shared.module';
   declarations: [
     DashboardComponent,
     DashboardLayoutComponent,
-    SidebarDashComponent,
-    HeaderDashComponent
   ],
   imports: [
     CommonModule,
