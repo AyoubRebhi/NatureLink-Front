@@ -1,21 +1,44 @@
 <div class="main-content">
   <!-- Notification Button -->
-<button class="btn btn-warning mb-3" (click)="showNotif = !showNotif">
-  🔔 Notifications ({{ notifications.length }})
-</button>
+  <button class="btn btn-warning mb-3" (click)="showNotif = !showNotif">
+    🔔 Notifications ({{ notifications.length }})
+  </button>
 
-<!-- Popup/Dropdown for Notifications -->
-<div *ngIf="showNotif" class="notification-popup">
-  <div *ngIf="notifications.length > 0; else noNotifs">
-    <div *ngFor="let notif of notifications" class="notif-card">
-      <strong>{{ notif.titre }}</strong><br />
-      <span>{{ notif.location }}</span>
+  <!-- Popup/Dropdown for Notifications -->
+  <div *ngIf="showNotif" class="notification-popup">
+    <div *ngIf="notifications.length > 0; else noNotifs">
+      <div *ngFor="let notif of notifications" class="notif-card">
+        <strong>{{ notif.titre }}</strong><br />
+        <span>{{ notif.location }}</span>
+      </div>
     </div>
+    <ng-template #noNotifs>
+      <p>No nearby new logements.</p>
+    </ng-template>
   </div>
-  <ng-template #noNotifs>
-    <p>No nearby new logements.</p>
-  </ng-template>
+
+  <!-- Image Search Upload -->
+<div class="image-search-upload">
+  <!-- Custom File Input Button -->
+  <label class="btn btn-info mt-2">
+    📷image
+    <input type="file" (change)="onImageUpload($event)" />
+  </label>
+  
+  <button *ngIf="uploadedImage" class="btn btn-info mt-2" (click)="searchByImage(uploadedImage)">
+    Search
+  </button>
 </div>
+
+<!-- Image Display -->
+<div *ngIf="imagePreviews.length > 0" class="mt-2 d-flex flex-wrap">
+  <div *ngFor="let preview of imagePreviews; let i = index" class="position-relative m-2">
+    <img [src]="preview" alt="Image Preview" class="image-preview">
+    
+  </div>
+</div>
+
+
   <div class="search-filters">
     <input
       type="text"

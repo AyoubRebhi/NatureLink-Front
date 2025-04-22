@@ -208,3 +208,84 @@ ul {
     bottom: 20px;
   }
 }
+.image-search-upload {
+  background-color: #ffffff;
+  padding: 16px;
+  margin-bottom: 24px;
+  border-radius: 12px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.upload-label {
+  display: inline-block;
+  background-color: #007bff;
+  color: white;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.upload-label:hover {
+  background-color: #0056b3;
+}
+
+.preview-container {
+  margin-top: 16px;
+  text-align: center;
+}
+
+.preview-image {
+  width: auto;
+  max-width: 100%;
+  max-height: 240px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  margin-top: 10px;
+}
+/* Style for image preview - smaller size */
+.image-preview {
+  max-width: 100px; /* Control the max size */
+  max-height: 100px; /* Control the max size */
+  object-fit: cover; /* Ensure the image does not stretch */
+  border-radius: 8px; /* Optional: Add rounded corners */
+  margin: 5px; /* Add some spacing */
+}
+
+/* Style for the file input button */
+input[type="file"] {
+  display: none; /* Hide the default file input */
+}
+
+.custom-file-upload {
+  display: inline-block;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  background-color: #007bff; /* Blue background */
+  color: white;
+  border-radius: 5px;
+  border: none;
+  transition: background-color 0.3s ease;
+}
+
+.custom-file-upload:hover {
+  background-color: #0056b3; /* Darker blue on hover */
+}
+
+/* Style the search button */
+.btn-info {
+  font-size: 14px;
+  padding: 8px 15px;
+  background-color: #17a2b8;
+  border: none;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn-info:hover {
+  background-color: #138496;
+}
