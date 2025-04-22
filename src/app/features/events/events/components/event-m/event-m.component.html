@@ -74,7 +74,8 @@
           </div>
         </div>
       </div>
-     
+      <button class="event-btn book" (click)="deleteEvent(event.id)">Book now</button>
+
       
     </div>
     <button (click)="generatePDF()" class="btn btn-primary" *ngIf="isAdminView">
