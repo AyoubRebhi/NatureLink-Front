@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-
+import { HttpHeaders } from '@angular/common/http';
 
 const BASIC_URl=["http://localhost:8081"]
 
@@ -36,6 +36,21 @@ export class EventServiceService {
     return this.http.get(`${BASIC_URl}/event/export/pdf`, {
       responseType: 'blob'
     });
+  }
+  recommendEvents(userInput: string, events: any[]) {
+    const payload = {
+      user_input: userInput ||'',
+      events: events || [],
+      top_n: 3
+    };
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+        'Accept': 'application/json'
+    });
+    console.log('Payload envoyé:', JSON.stringify(payload));
+
+    return this.http.post<any[]>(`${BASIC_URl}/event/recommend`, payload, { headers,withCredentials: true,  // If using session cookies
+      responseType: 'json' });
   }
   
 }

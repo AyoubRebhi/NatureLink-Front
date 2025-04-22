@@ -91,8 +91,8 @@ export class BoutiqueInfoComponent implements OnInit {
   }
 
   geocodeAdresseAndDisplayMap(adresse: string): void {
-    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(adresse)}&countrycodes=tn`;
-    console.log("URL being queried:", url);
+    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(adresse)}`;
+   
 
     this.http.get<any[]>(url).subscribe((data) => {
       if (data.length > 0) {

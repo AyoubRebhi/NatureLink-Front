@@ -14,9 +14,47 @@ export class EventMComponent implements OnInit {
   searchQuery: string = '';  // Store search query
   tabs = this.generateDateTabs(5); 
   selectedTab = this.tabs[0]; // Default to first day
+  currentIndex: number = 0;
 
   isAdminView = false;
-
+  userInput: string = '';
+  showUserInputPopup: boolean = false;
+  recommendedEvents: any[] = [];
+  
+  openUserInputPopup() {
+    this.showUserInputPopup = true;
+  }
+  
+  closeUserInputPopup() {
+    this.showUserInputPopup = false;
+  }
+  
+  submitRecommendation() {
+    if (!this.userInput.trim()) {
+      alert("Veuillez entrer un centre d'intérêt.");
+      return;
+    }
+  
+    this.eventservice.recommendEvents(this.userInput, this.events).subscribe(
+      (res) => {
+        // Trier par similarité décroissante, puis garder les 3 premiers
+        this.recommendedEvents = res
+          .sort((a: any, b: any) => b.similarity - a.similarity)
+          .slice(0, 3);
+  
+        this.closeUserInputPopup();
+        console.log('Top 3 recommended events:', this.recommendedEvents);
+      },
+      (err) => {
+        console.error('Erreur de recommandation :', err);
+        alert('Échec de la recommandation.');
+      }
+    );
+  
+    console.log('this.userInput:', this.userInput);
+  }
+  
+  
   constructor(private route: ActivatedRoute, private router: Router, private eventservice: EventServiceService) {}
   private generateDateTabs(count: number): { label: string, date: string }[] {
     const tabs = [];
@@ -40,6 +78,9 @@ export class EventMComponent implements OnInit {
     });
     this.getAllEvents();
     this.updateFilteredEvents();
+    this.openUserInputPopup();
+    setInterval(() => this.next(), 3000);
+
   }
 
   // Fetch all events from the service
@@ -167,5 +208,11 @@ generatePDF() {
   addEventToPDF();
 }
 
+next() {
+  this.currentIndex = (this.currentIndex + 1) % this.events.length;
+}
 
+prev() {
+  this.currentIndex = (this.currentIndex - 1 + this.events.length) % this.events.length;
+}
 }
