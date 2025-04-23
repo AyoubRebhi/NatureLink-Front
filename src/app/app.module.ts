@@ -86,7 +86,7 @@ import { JwtInterceptor } from './core/services/jwt.interceptor';
 @NgModule({
   declarations: [
     AppComponent,
-    HeaderComponent,
+    //HeaderComponent,
     FooterComponent,
     AboutComponent,
     ServicesComponent,
@@ -129,7 +129,7 @@ import { JwtInterceptor } from './core/services/jwt.interceptor';
     FormsModule,
     ReactiveFormsModule,
     CommonModule,
-    NgbModule, // <-- This is the correct import (from @ng-bootstrap/ng-bootstrap)
+    //NgbModule, // <-- This is the correct import (from @ng-bootstrap/ng-bootstrap)
     PickerModule,
 
     // Angular Material
