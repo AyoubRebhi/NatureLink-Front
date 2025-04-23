@@ -1,0 +1,159 @@
+<div class="auth-wrapper">
+  <div class="auth-container">
+    <!-- Illustration Panel -->
+    <div class="auth-illustration">
+      <div class="illustration-overlay">
+        <h2>Join NatureLink Community</h2>
+        <p>Discover amazing outdoor experiences and connect with nature enthusiasts</p>
+      </div>
+    </div>
+
+    <!-- Auth Form Content -->
+    <div class="auth-content">
+      <div class="auth-card animated fadeInUp">
+        <!-- Logo -->
+        <div class="brand-logo">
+          <!-- Add logo image here if available -->
+          <!-- <img src="assets/images/logo.png" alt="NatureLink Logo"> -->
+        </div>
+
+        <h2 class="text-center mb-4">Create Your Account</h2>
+
+        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+          <!-- Username Field -->
+          <div class="form-group">
+            <label class="form-label">
+              <i class="fas fa-user"></i> Username
+            </label>
+            <input
+              type="text"
+              class="form-control form-control-lg"
+              formControlName="username"
+              placeholder="Enter your username"
+              aria-label="Username">
+            <div *ngIf="username?.invalid && username?.touched" class="text-danger small mt-1">
+              <div *ngIf="username?.errors?.['required']">Username is required</div>
+              <div *ngIf="username?.errors?.['minlength']">Minimum 3 characters</div>
+              <div *ngIf="username?.errors?.['pattern']">Only letters, numbers, and underscores allowed</div>
+            </div>
+          </div>
+
+          <!-- Email Field -->
+          <div class="form-group">
+            <label class="form-label">
+              <i class="fas fa-envelope"></i> Email Address
+            </label>
+            <input
+              type="email"
+              class="form-control form-control-lg"
+              formControlName="email"
+              placeholder="Enter your email"
+              aria-label="Email Address">
+            <div *ngIf="email?.invalid && email?.touched" class="text-danger small mt-1">
+              Valid email is required
+            </div>
+          </div>
+
+          <!-- Password Field -->
+          <div class="form-group">
+            <label class="form-label">
+              <i class="fas fa-lock"></i> Password
+            </label>
+            <input
+              type="password"
+              class="form-control form-control-lg"
+              formControlName="password"
+              placeholder="Enter your password"
+              aria-label="Password">
+            <div *ngIf="password?.invalid && password?.touched" class="text-danger small mt-1">
+              Password must be at least 6 characters
+            </div>
+          </div>
+
+          <!-- Role Field -->
+          <div class="form-group">
+            <label class="form-label">
+              <i class="fas fa-user-tag"></i> Role
+            </label>
+            <select
+              class="form-control form-control-lg"
+              formControlName="role"
+              aria-label="Role">
+              <option value="" disabled selected>Select your role</option>
+              <option value="USER">User</option>
+              <option value="AGENCE">Agency</option>
+              <option value="MONUMENT">Monument</option>
+              <option value="PROVIDER">Provider</option>
+            </select>
+            <div *ngIf="role?.invalid && role?.touched" class="text-danger small mt-1">
+              Role is required
+            </div>
+          </div>
+
+          <!-- Proof Document Field (Conditional) -->
+          <div class="form-group" *ngIf="role?.value && role?.value !== 'USER'">
+            <label class="form-label">
+              <i class="fas fa-file-alt"></i> Proof Document
+            </label>
+            <input
+              type="text"
+              class="form-control form-control-lg"
+              formControlName="proofDocument"
+              placeholder="Enter proof document URL or description"
+              aria-label="Proof Document">
+            <div *ngIf="proofDocument?.invalid && proofDocument?.touched" class="text-danger small mt-1">
+              Proof document is required for this role
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <button
+            type="submit"
+            class="btn btn-primary btn-lg w-100 mb-3"
+            [disabled]="registerForm.invalid || isLoading">
+            <span *ngIf="!isLoading">Create Account</span>
+            <span *ngIf="isLoading">
+              <i class="fas fa-spinner fa-spin"></i> Processing...
+            </span>
+          </button>
+
+          <!-- Error Message -->
+          <div *ngIf="errorMessage" class="error-message text-center text-danger mb-2">
+            ⚠️ {{ errorMessage }}
+          </div>
+
+          <!-- Divider -->
+          <div class="auth-divider">
+            <span>OR</span>
+          </div>
+
+          <!-- Social Login -->
+          <div class="social-auth d-flex flex-column gap-2">
+            <!-- Uncomment if social login is implemented -->
+            <!--
+            <button type="button" class="btn btn-google">
+              <i class="fab fa-google"></i> Continue with Google
+            </button>
+            <button type="button" class="btn btn-facebook">
+              <i class="fab fa-facebook"></i> Continue with Facebook
+            </button>
+            -->
+          </div>
+
+          <!-- Terms and Login Link -->
+          <div class="text-center mt-4">
+            <p class="agree-terms">
+              By creating an account, you agree to our
+              <a href="#">Terms of Service</a> and
+              <a href="#">Privacy Policy</a>
+            </p>
+            <p class="login-link">
+              Already have an account?
+              <a routerLink="/auth/login" class="text-primary">Sign In</a>
+            </p>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

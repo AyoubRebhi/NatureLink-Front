@@ -1,0 +1,66 @@
+<div class="auth-dialog-container">
+    <h2 mat-dialog-title class="text-center mb-4">
+      {{ isLogin ? 'Welcome Back!' : 'Create Account' }}
+    </h2>
+    
+    <mat-dialog-content>
+      <form [formGroup]="authForm" (ngSubmit)="onSubmit()">
+        <mat-form-field appearance="outline" class="w-100 mb-3">
+          <mat-label>Email</mat-label>
+          <input matInput formControlName="email" required>
+          <mat-icon matPrefix>mail</mat-icon>
+          <mat-error *ngIf="authForm.get('email')?.hasError('required')">
+            Email is required
+          </mat-error>
+          <mat-error *ngIf="authForm.get('email')?.hasError('email')">
+            Invalid email format
+          </mat-error>
+        </mat-form-field>
+  
+        <mat-form-field appearance="outline" class="w-100 mb-3">
+          <mat-label>Password</mat-label>
+          <input matInput type="password" formControlName="password" required>
+          <mat-icon matPrefix>lock</mat-icon>
+          <mat-error *ngIf="authForm.get('password')?.hasError('required')">
+            Password is required
+          </mat-error>
+          <mat-error *ngIf="authForm.get('password')?.hasError('minlength')">
+            Minimum 6 characters
+          </mat-error>
+        </mat-form-field>
+  
+        <div *ngIf="!isLogin" class="mb-4">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Username</mat-label>
+            <input matInput formControlName="username" required>
+            <mat-icon matPrefix>person</mat-icon>
+            <mat-error *ngIf="authForm.get('username')?.hasError('required')">
+              Username is required
+            </mat-error>
+          </mat-form-field>
+        </div>
+  
+        <div *ngIf="errorMessage" class="alert alert-danger mt-2">
+          {{ errorMessage }}
+        </div>
+  
+        <div class="text-center">
+          <button 
+            mat-raised-button 
+            color="primary" 
+            type="submit"
+            [disabled]="authForm.invalid || isLoading"
+            class="w-100 py-2">
+            <span *ngIf="!isLoading">{{ isLogin ? 'Sign In' : 'Sign Up' }}</span>
+            <mat-spinner *ngIf="isLoading" diameter="24"></mat-spinner>
+          </button>
+        </div>
+      </form>
+  
+      <div class="text-center mt-4">
+        <button mat-button color="primary" (click)="toggleForm()">
+          {{ isLogin ? 'Create new account' : 'Already have an account? Sign In' }}
+        </button>
+      </div>
+    </mat-dialog-content>
+  </div>

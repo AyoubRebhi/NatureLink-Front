@@ -5,7 +5,10 @@ import { ServicesComponent } from './pages/services/services.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { MainLayoutComponent } from './layouts/main-layout/main-layout.component';
 import { HomeComponent } from './pages/home/home.component';
-import { FrontListComponent } from './features/pack/components/pack-list-f/pack-list-f.component';
+import { AuthGuard } from './core/guards/auth.guard';
+import { ProfileComponent } from './pages/profile/profile.component';
+import { Role } from './core/models/user.model';
+import { PaymentsComponent } from './pages/payments/payments/payments.component';
 import { ActivityComponent } from './pages/activity/activity.component';
 import { ActivityDetailsComponent } from './pages/activity-details/activity-details.component';
 
@@ -19,6 +22,11 @@ const routes: Routes = [
       { path: 'services', component: ServicesComponent },
       { path: 'activities', component: ActivityComponent },
       { path: 'details/:id', component: ActivityDetailsComponent },
+      { 
+        path: 'profile', 
+        component: ProfileComponent,
+        canActivate: [AuthGuard]
+      },
       {
         path: 'reservation',
         loadChildren: () =>
@@ -30,10 +38,23 @@ const routes: Routes = [
       }
     ]
   },
+  { 
+    path: 'auth',
+    loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule) 
+  },
   {
     path: 'admin',
-    loadChildren: () =>
-      import('./features/dashboard/dashboard.module').then(m => m.DashboardModule)
+    loadChildren: () => 
+      import('./features/dashboard/dashboard.module').then(m => m.DashboardModule),
+    canActivate: [AuthGuard],
+    data: {
+      roles: [Role.ADMIN] // Specify required role
+    }
+  },
+  { 
+    path: 'payments', 
+    component: PaymentsComponent,
+    canActivate: [AuthGuard] 
   },
   {
     path: 'activity',
