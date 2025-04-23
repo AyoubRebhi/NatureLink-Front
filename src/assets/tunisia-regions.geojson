@@ -1,0 +1,197 @@
+{
+    "type": "FeatureCollection",
+    "features": [
+      {
+        "type": "Feature",
+        "properties": {"name": "Ariana", "code": "12"},
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [[[10, 36.9], [10.2, 36.85], [10.25, 36.95], [10.1, 37], [10, 36.9]]]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {"name": "Béja", "code": "21"},
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [[[9, 36.7], [9.3, 36.6], [9.4, 36.8], [9.1, 36.9], [9, 36.7]]]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {"name": "Ben Arous", "code": "13"},
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [[[10.2, 36.7], [10.3, 36.65], [10.4, 36.75], [10.25, 36.8], [10.2, 36.7]]]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {"name": "Bizerte", "code": "11"},
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [[[9.5, 37.2], [9.8, 37.1], [9.9, 37.3], [9.6, 37.4], [9.5, 37.2]]]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {"name": "Gabès", "code": "51"},
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [[[10, 33.8], [10.2, 33.7], [10.3, 33.9], [10.1, 34], [10, 33.8]]]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {"name": "Gafsa", "code": "61"},
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [[[8.5, 34.3], [8.8, 34.2], [9, 34.4], [8.7, 34.5], [8.5, 34.3]]]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {"name": "Jendouba", "code": "22"},
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [[[8.5, 36.5], [8.8, 36.4], [9, 36.6], [8.7, 36.7], [8.5, 36.5]]]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {"name": "Kairouan", "code": "41"},
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [[[9.8, 35.6], [10, 35.5], [10.2, 35.7], [10, 35.8], [9.8, 35.6]]]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {"name": "Kasserine", "code": "42"},
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [[[8.5, 35.1], [8.8, 35], [9, 35.2], [8.7, 35.3], [8.5, 35.1]]]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {"name": "Kébili", "code": "73"},
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [[[8.8, 33.6], [9.1, 33.5], [9.3, 33.7], [9, 33.8], [8.8, 33.6]]]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {"name": "Le Kef", "code": "31"},
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [[[8.5, 36.1], [8.8, 36], [9, 36.2], [8.7, 36.3], [8.5, 36.1]]]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {"name": "Mahdia", "code": "53"},
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [[[10.5, 35.5], [10.7, 35.4], [10.9, 35.6], [10.7, 35.7], [10.5, 35.5]]]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {"name": "La Manouba", "code": "14"},
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [[[10, 36.8], [10.1, 36.75], [10.2, 36.85], [10.1, 36.9], [10, 36.8]]]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {"name": "Médenine", "code": "82"},
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [[[10.5, 33.3], [10.8, 33.2], [11, 33.4], [10.7, 33.5], [10.5, 33.3]]]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {"name": "Monastir", "code": "52"},
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [[[10.6, 35.7], [10.8, 35.6], [11, 35.8], [10.8, 35.9], [10.6, 35.7]]]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {"name": "Nabeul", "code": "15"},
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [[[10.5, 36.5], [10.8, 36.4], [11, 36.6], [10.7, 36.7], [10.5, 36.5]]]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {"name": "Sfax", "code": "32"},
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [[[10.6, 34.7], [10.9, 34.6], [11.1, 34.8], [10.8, 34.9], [10.6, 34.7]]]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {"name": "Sidi Bouzid", "code": "43"},
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [[[9.2, 35], [9.5, 34.9], [9.7, 35.1], [9.4, 35.2], [9.2, 35]]]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {"name": "Siliana", "code": "23"},
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [[[9.2, 36], [9.5, 35.9], [9.7, 36.1], [9.4, 36.2], [9.2, 36]]]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {"name": "Sousse", "code": "33"},
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [[[10.4, 35.8], [10.7, 35.7], [10.9, 35.9], [10.6, 36], [10.4, 35.8]]]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {"name": "Tataouine", "code": "83"},
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [[[10, 32.8], [10.3, 32.7], [10.5, 32.9], [10.2, 33], [10, 32.8]]]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {"name": "Tozeur", "code": "72"},
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [[[8, 34], [8.3, 33.9], [8.5, 34.1], [8.2, 34.2], [8, 34]]]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {"name": "Tunis", "code": "10"},
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [[[10.1, 36.8], [10.2, 36.75], [10.3, 36.85], [10.2, 36.9], [10.1, 36.8]]]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {"name": "Zaghouan", "code": "24"},
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [[[10, 36.3], [10.3, 36.2], [10.5, 36.4], [10.2, 36.5], [10, 36.3]]]
+        }
+      }
+    ]
+  }

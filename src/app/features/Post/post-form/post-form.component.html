@@ -1,0 +1,93 @@
+<div class="fb-post-form-container">
+  <div class="fb-post-form-card">
+    <!-- Header -->
+    <div class="fb-post-form-header">
+      <img [src]="'http://localhost:9000/uploads/img.PNG'" class="fb-post-user-avatar" alt="Profile picture">
+      <div class="fb-post-user-info">
+        <h5>user</h5>
+        <div class="fb-post-privacy">
+          <i class="fas fa-globe-europe"></i>
+          <span>Public</span>
+          <i class="fas fa-caret-down"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="fb-post-content-area">
+      <textarea #postTextarea
+                [(ngModel)]="newPostContent" 
+                class="fb-post-textarea"
+                placeholder="Quoi de neuf ?"
+                [disabled]="isSubmitting"></textarea>
+      
+      <!-- Image Preview -->
+      <div class="fb-image-preview" *ngIf="imagePreview">
+        <img [src]="imagePreview" class="fb-preview-image">
+        <button class="fb-remove-image-btn" (click)="removeImage()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="fb-emoji-picker-container" *ngIf="showEmojiPicker">
+        <emoji-mart
+          set="facebook"
+          [perLine]="8"
+          [emojiSize]="24"
+          (emojiClick)="addEmoji($event)"
+          i18n="{
+            search: 'Rechercher...',
+            categories: {
+              recent: 'Récents',
+              people: 'Visages',
+              nature: 'Nature',
+              foods: 'Nourriture',
+              activity: 'Activités',
+              places: 'Voyage',
+              objects: 'Objets',
+              symbols: 'Symboles',
+              flags: 'Drapeaux'
+            }
+          }">
+        </emoji-mart>
+      </div>
+
+      <!-- Add to your post -->
+      <div class="fb-add-to-post">
+        <div class="fb-add-to-post-label">Ajouter à votre publication</div>
+        <div class="fb-add-to-post-options">
+          <button class="fb-add-option" (click)="fileInput.click()" [disabled]="isSubmitting">
+            <i class="fas fa-images"></i>
+          </button>
+         
+          <button class="fb-add-option" (click)="toggleEmojiPicker()" [disabled]="isSubmitting">
+            <i class="fas fa-smile"></i>
+          </button>
+          <button class="fb-add-option" (click)="toggleVoiceRecognition()" [disabled]="isSubmitting">
+            <i class="fas fa-microphone" [class.recording]="isListening"></i>
+          </button>
+        
+         
+        </div>
+        <input type="file" #fileInput 
+              (change)="onFileSelected($event)"
+              accept="image/*"
+              class="d-none"
+              [disabled]="isSubmitting">
+      </div>
+
+      <!-- Post Button -->
+      <div class="fb-post-button-container">
+        <button class="fb-post-button" 
+                (click)="createPost()" 
+                [disabled]="(!newPostContent.trim() && !selectedFile) || isSubmitting">
+          <span *ngIf="!isSubmitting">Publier</span>
+          <span *ngIf="isSubmitting">
+            <i class="fas fa-spinner fa-spin me-2"></i>
+            Publication...
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

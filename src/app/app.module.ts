@@ -8,7 +8,7 @@ import { CommonModule } from '@angular/common';
 
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { GoogleMapsModule } from '@angular/google-maps';
-//import { NgChartsModule } from 'ng2-charts';
+import { PickerModule } from '@ctrl/ngx-emoji-mart';
 
 // Angular Material Modules
 import { MatButtonModule } from '@angular/material/button';
@@ -37,8 +37,8 @@ import { DashboardModule } from './features/dashboard/dashboard.module';
 
 // Components
 import { AppComponent } from './app.component';
+import { HeaderComponent } from './layouts/main-layout/header/header.component';
 import { FooterComponent } from './layouts/main-layout/footer/footer.component';
-//import { HeaderComponent } from './layouts/main-layout/header/header.component';
 import { MainLayoutComponent } from './layouts/main-layout/main-layout.component';
 import { TestimonialComponent } from './layouts/main-layout/testimonial/testimonial.component';
 import { ServiceComponent } from './layouts/main-layout/service/service.component';
@@ -62,6 +62,22 @@ import { LogementListFrontComponent } from './features/logement/components/logem
 import { LogementDetailComponent } from './features/logement/components/logement-detail/logement-detail.component';
 import { LogementStatsComponent } from './features/logement-stats/logement-stats.component';
 
+// Post, Food, Clothing Components
+import { PostFormComponent } from './features/Post/post-form/post-form.component';
+import { PostListComponent } from './features/Post/post-list/post-list.component';
+import { AddFoodComponent } from './features/Food/add-food/add-food.component';
+import { AddClothingComponent } from './features/Clothing/add-clothing/add-clothing.component';
+import { AddDestinationComponent } from './features/Destination/add-destination/add-destination.component';
+import { ClothingListComponent } from './features/Clothing/clothing-list/clothing-list.component';
+import { ListFoodComponent } from './features/Food/list-food/list-food.component';
+import { UpdateFoodComponent } from './features/Food/update-food/update-food.component';
+import { ListFoodClothingfrontComponent } from './features/Food/list-food-clothingfront/list-food-clothingfront.component';
+import { UpdateClothingComponent } from './features/Clothing/update-clothing/update-clothing.component';
+import { PostUserComponent } from './features/Post/post-user/post-user.component';
+import { CarbonCalculatorComponent } from './features/CarbonCalculator/carbon-calculator/carbon-calculator.component';
+import { SpeechComponent } from './speech/speech.component';
+import { TraveComponent } from './features/travel/trave/trave.component';
+
 // Services and Guards
 import { AuthService } from './core/services/auth.service';
 import { AuthGuard } from './core/guards/auth.guard';
@@ -70,8 +86,8 @@ import { JwtInterceptor } from './core/services/jwt.interceptor';
 @NgModule({
   declarations: [
     AppComponent,
+    HeaderComponent,
     FooterComponent,
-    //HeaderComponent,
     AboutComponent,
     ServicesComponent,
     NotFoundComponent,
@@ -86,11 +102,23 @@ import { JwtInterceptor } from './core/services/jwt.interceptor';
     AuthDialogComponent,
     ProfileComponent,
     PaymentsComponent,
-    //LoginComponent,
-    //RegisterComponent,
     LogementListFrontComponent,
     LogementDetailComponent,
     LogementStatsComponent,
+    PostFormComponent,
+    PostListComponent,
+    AddFoodComponent,
+    AddClothingComponent,
+    AddDestinationComponent,
+    ClothingListComponent,
+    ListFoodComponent,
+    UpdateFoodComponent,
+    ListFoodClothingfrontComponent,
+    UpdateClothingComponent,
+    PostUserComponent,
+    CarbonCalculatorComponent,
+    SpeechComponent,
+    TraveComponent
   ],
   imports: [
     BrowserModule,
@@ -101,8 +129,9 @@ import { JwtInterceptor } from './core/services/jwt.interceptor';
     FormsModule,
     ReactiveFormsModule,
     CommonModule,
-    GoogleMapsModule,
-    //NgChartsModule,
+    NgbModule, // <-- This is the correct import (from @ng-bootstrap/ng-bootstrap)
+    PickerModule,
+
     // Angular Material
     MatButtonModule,
     MatDialogModule,
@@ -126,7 +155,6 @@ import { JwtInterceptor } from './core/services/jwt.interceptor';
     PackModule,
     SharedModule,
     DashboardModule,
-    //NgbModule,
   ],
   providers: [
     AuthService,
@@ -138,6 +166,5 @@ import { JwtInterceptor } from './core/services/jwt.interceptor';
     },
   ],
   schemas: [NO_ERRORS_SCHEMA],
-  bootstrap: [AppComponent],
-})
-export class AppModule {}
+  bootstrap: [AppComponent]
+})export class AppModule { }
