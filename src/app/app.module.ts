@@ -26,10 +26,10 @@ import { ToastrModule } from 'ngx-toastr';
 import { ReservationModule } from './features/reservation/reservation.module';
 import { PackModule } from './features/pack/pack.module';
 import { SharedModule } from './shared/shared.module';
+import { DashboardModule } from './features/dashboard/dashboard.module';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { HeaderComponent } from './layouts/main-layout/header/header.component';
 import { FooterComponent } from './layouts/main-layout/footer/footer.component';
 import { AboutComponent } from './pages/about/about.component';
 import { ServicesComponent } from './pages/services/services.component';
@@ -47,7 +47,6 @@ import { LoginComponent } from './auth/login/login.component';
 import { RegisterComponent } from './auth/register/register.component';
 import { ProfileComponent } from './pages/profile/profile.component';
 import { PaymentsComponent } from './pages/payments/payments/payments.component';
-import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { JwtInterceptor } from './core/services/jwt.interceptor';
 import { AuthService } from './core/services/auth.service';
 import { AuthGuard } from './core/guards/auth.guard';
@@ -56,7 +55,6 @@ import { CommonModule } from '@angular/common';
 @NgModule({
   declarations: [
     AppComponent,
-    HeaderComponent,
     FooterComponent,
     AboutComponent,
     ServicesComponent,
@@ -74,7 +72,6 @@ import { CommonModule } from '@angular/common';
     RegisterComponent,
     ProfileComponent,
     PaymentsComponent,
-    DashboardComponent,
   ],
   imports: [
     BrowserModule,
@@ -108,6 +105,7 @@ import { CommonModule } from '@angular/common';
     ReservationModule,
     PackModule,
     SharedModule,
+    DashboardModule,
   ],
   providers: [
     AuthService,
