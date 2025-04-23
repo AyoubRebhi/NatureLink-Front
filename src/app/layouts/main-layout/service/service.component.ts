@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-service',
@@ -6,6 +7,7 @@ import { Component } from '@angular/core';
   styleUrls: ['./service.component.scss']
 })
 export class ServiceComponent {
+  constructor(private router: Router) {}
   services = [
     {
       icon: 'fa-user',
@@ -28,4 +30,9 @@ export class ServiceComponent {
       description: 'Expert local guides and curated itineraries for unforgettable experiences.',
     }
   ];
+  navigateToService(service: any) {
+    if (service.title === 'Event Management') {
+      this.router.navigate(['/events/management']);
+    }
+  }
 }

@@ -27,12 +27,16 @@ import { PackAddComponent } from '../pack/components/pack-add/pack-add.component
 import { PackListAComponent } from '../pack/components/pack-list-a/pack-list-a.component';
 import { PackUpdateComponent } from '../pack/components/pack-update/pack-update.component';
 
+// Events
+import { EventMComponent } from '../events/events/components/event-m/event-m.component';
+
 const routes: Routes = [
   {
     path: '',
     component: DashboardLayoutComponent,
     children: [
       { path: 'dashboard', component: DashboardComponent },
+      { path: 'events', component: EventMComponent },
 
       // Logement routes
       { path: 'logement/list', component: LogementListComponent },
