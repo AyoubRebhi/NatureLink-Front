@@ -1,3 +1,4 @@
+// reservation-create.component.ts
 import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { ReservationService } from 'src/app/core/services/reservation.service';
 import { Reservation } from 'src/app/core/models/reservation.model';
@@ -6,6 +7,7 @@ import { TypeReservation } from 'src/app/core/models/type-reservation.model';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
+import { AuthService } from 'src/app/core/services/auth.service';
 
 @Component({
   selector: 'app-reservation-create',
@@ -21,7 +23,6 @@ export class ReservationCreateComponent implements OnInit, OnDestroy {
   selectedStatut: StatutReservation = StatutReservation.EN_ATTENTE;
   statutOptions: StatutReservation[] = Object.values(StatutReservation);
   numRooms: number = 1;
-  clientId: number = 8;
   selectedType: TypeReservation = TypeReservation.ACTIVITE;
   typeSpecificId: number = 1;
 
@@ -35,7 +36,8 @@ export class ReservationCreateComponent implements OnInit, OnDestroy {
   constructor(
     private reservationService: ReservationService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private authService: AuthService
   ) {
     this.today = new Date().toISOString().split('T')[0];
     const cachedStatutOptions = localStorage.getItem('statutOptions');
@@ -47,6 +49,14 @@ export class ReservationCreateComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    // Check if user is authenticated
+    if (!this.authService.isAuthenticated()) {
+      this.router.navigate(['/login'], {
+        queryParams: { returnUrl: this.router.url }
+      });
+      return;
+    }
+
     // Subscribe to route query parameters to get type and ID
     this.routeSubscription = this.route.queryParams.subscribe(params => {
       const type = params['type'] as TypeReservation;
@@ -99,6 +109,16 @@ export class ReservationCreateComponent implements OnInit, OnDestroy {
   createReservation(): void {
     this.errorMessage = null;
 
+    // Get the current user's ID
+    const userId = this.authService.getCurrentUserId();
+    if (!userId) {
+      this.errorMessage = 'Utilisateur non connecté. Veuillez vous reconnecter.';
+      this.router.navigate(['/login'], {
+        queryParams: { returnUrl: this.router.url }
+      });
+      return;
+    }
+
     // Validations
     if (this.dateFin < this.dateDebut) {
       this.errorMessage = 'La date de fin doit être postérieure à la date de début.';
@@ -112,10 +132,6 @@ export class ReservationCreateComponent implements OnInit, OnDestroy {
       this.errorMessage = 'Veuillez entrer un nombre valide de chambres.';
       return;
     }
-    if (!this.clientId || this.clientId <= 0) {
-      this.errorMessage = 'Veuillez entrer un ID de client valide.';
-      return;
-    }
     if (!this.typeSpecificId || this.typeSpecificId <= 0) {
       this.errorMessage = 'Veuillez entrer un ID valide pour le type de réservation.';
       return;
@@ -123,7 +139,7 @@ export class ReservationCreateComponent implements OnInit, OnDestroy {
 
     // Build reservation object dynamically
     const reservation: Reservation = {
-      userId: this.clientId,
+      userId: userId,
       dateDebut: new Date(this.dateDebut),
       dateFin: new Date(this.dateFin),
       statut: this.selectedStatut,
@@ -173,7 +189,6 @@ export class ReservationCreateComponent implements OnInit, OnDestroy {
     this.dateFin = new Date();
     this.selectedStatut = StatutReservation.EN_ATTENTE;
     this.numRooms = 1;
-    this.clientId = 8;
     this.selectedType = TypeReservation.ACTIVITE;
     this.typeSpecificId = 1;
     this.errorMessage = null;
@@ -182,4 +197,4 @@ export class ReservationCreateComponent implements OnInit, OnDestroy {
   goBackToList(): void {
     this.router.navigate(['/reservation/reservation-list']);
   }
-}
+} 

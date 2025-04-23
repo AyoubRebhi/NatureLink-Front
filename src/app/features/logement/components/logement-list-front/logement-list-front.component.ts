@@ -1,3 +1,4 @@
+// logement-list-front.component.ts
 import { Component, OnInit } from '@angular/core';
 import { LogementService } from '../../../../core/services/logement.service';
 import { Logement } from '../../../../core/models/logement.model';
@@ -5,7 +6,8 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { LogementType } from '../../../../core/models/logement.model';
 import { environment } from 'src/environments/environment';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { WebsocketService } from 'src/app/core/services/websocket.service';
+import { AuthService } from 'src/app/core/services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-logement-list-front',
@@ -15,7 +17,7 @@ import { WebsocketService } from 'src/app/core/services/websocket.service';
 export class LogementListFrontComponent implements OnInit {
   logements: Logement[] = [];
   filteredLogements: Logement[] = [];
-  currentImageIndex: { [logementId: number]: number } = {}; // To track current image for each logement
+  currentImageIndex: { [logementId: number]: number } = {};
   selectedLogementForMap: Logement | null = null;
   mapUrl: SafeResourceUrl | null = null;
   searchQuery: string = '';
@@ -25,24 +27,34 @@ export class LogementListFrontComponent implements OnInit {
   userLongitude: number | null = null;
   showNotif: boolean = true;
   notifications: Logement[] = [];
-  logementTypes = Object.values(LogementType); 
+  logementTypes = Object.values(LogementType);
   uploadedImage: File | null = null;
   searchResults: Logement[] = [];
-  imageFiles: File[] = [];  // Store multiple images
-  imagePreviews: string[] = []; 
+  imageFiles: File[] = [];
+  imagePreviews: string[] = [];
+
   constructor(
     private logementService: LogementService,
     private sanitizer: DomSanitizer,
-    private http: HttpClient
+    private http: HttpClient,
+    private authService: AuthService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
-    this.loadLogements();
+    // Check if user is authenticated
+    if (!this.authService.isAuthenticated()) {
+      this.router.navigate(['/login'], {
+        queryParams: { returnUrl: this.router.url }
+      });
+      return;
+    }
+
     navigator.geolocation.getCurrentPosition(
       (position) => {
         this.userLatitude = position.coords.latitude;
         this.userLongitude = position.coords.longitude;
-        this.loadLogements(); // Load only after we have location
+        this.loadLogements();
       },
       (error) => {
         console.error('Geolocation error:', error);
@@ -110,14 +122,26 @@ export class LogementListFrontComponent implements OnInit {
     });
   }
 
+  bookLogement(logementId: number): void {
+    const userId = this.authService.getCurrentUserId();
+    if (!userId) {
+      this.router.navigate(['/login'], {
+        queryParams: { returnUrl: this.router.url }
+      });
+      return;
+    }
+
+    this.router.navigate(['/reservation/create'], {
+      queryParams: { type: 'LOGEMENT', id: logementId }
+    });
+  }
 
   onImagesSelected(event: any) {
     const files: FileList = event.target.files;
     if (files.length > 0) {
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
-        this.imageFiles.push(file);  // Add to existing list
-  
+        this.imageFiles.push(file);
         const reader = new FileReader();
         reader.onload = () => {
           this.imagePreviews.push(reader.result as string);
@@ -126,43 +150,33 @@ export class LogementListFrontComponent implements OnInit {
       }
     }
   }
-  
-  // Method for handling image upload
+
   onImageUpload(event: any): void {
     const file = event.target.files[0];
     if (file) {
       this.uploadedImage = file;
-  
-      // Generate preview
       const reader = new FileReader();
       reader.onload = () => {
-        this.imagePreviews = [reader.result as string]; // only show this one preview
+        this.imagePreviews = [reader.result as string];
       };
       reader.readAsDataURL(file);
-  
-      // Trigger the search
       this.searchByImage(file);
     }
   }
-  
+
   searchByImage(file: File): void {
     const formData = new FormData();
     formData.append('image', file, file.name);
-  
+
     this.http.post<any>('http://localhost:5000/search', formData).subscribe({
       next: (response) => {
         console.log('Image search response:', response);
-  
         if (response.matches && response.matches.length > 0) {
           const imageNames: string[] = response.matches.map((match: any) => match.image_name);
-  
-          // Create HttpParams and append each imageName
           let params = new HttpParams();
           imageNames.forEach(name => {
             params = params.append('imageNames', name);
           });
-  
-          // Send GET request with multiple imageNames
           this.http.get<Logement[]>(
             'http://localhost:9000/logements/searchByImages',
             { params }
@@ -175,7 +189,6 @@ export class LogementListFrontComponent implements OnInit {
               console.error('Error fetching logements by images:', err);
             }
           });
-  
         } else {
           console.error('No matches found!');
           this.filteredLogements = [];
@@ -186,10 +199,9 @@ export class LogementListFrontComponent implements OnInit {
       },
     });
   }
-  
 
   getDistanceFromLatLonInKm(lat1: number, lon1: number, lat2: number, lon2: number): number {
-    const R = 6371; // Radius of the Earth in km
+    const R = 6371;
     const dLat = this.deg2rad(lat2 - lat1);
     const dLon = this.deg2rad(lon2 - lon1);
     const a =

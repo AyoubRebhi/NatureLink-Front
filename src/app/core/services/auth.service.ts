@@ -123,7 +123,7 @@ export class AuthService {
 
   private setSession(token: string, user: User) {
     localStorage.setItem('auth_token', token);
-    localStorage.setItem('current_user', JSON.stringify(user));
+    localStorage.setItem('current_user', JSON.stringify(user)); 
     this.currentUserSubject.next(user);
   }
 

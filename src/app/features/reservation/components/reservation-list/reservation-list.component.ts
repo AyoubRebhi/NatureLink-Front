@@ -1,8 +1,10 @@
+// reservation-list.component.ts
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ReservationService } from 'src/app/core/services/reservation.service';
 import { Reservation } from 'src/app/core/models/reservation.model';
 import { TypeReservation } from 'src/app/core/models/type-reservation.model';
+import { AuthService } from 'src/app/core/services/auth.service';
 
 interface ReservationStats {
   totalReservations: number;
@@ -34,7 +36,6 @@ export class ReservationListComponent implements OnInit {
     mostFrequentType: ''
   };
   selectedReservation?: Reservation;
-  userId = 8; // Replace with actual user ID (e.g., from auth service)
   searchQuery: string = '';
   selectedType: TypeReservation | '' = '';
   showModal: boolean = false;
@@ -44,17 +45,34 @@ export class ReservationListComponent implements OnInit {
 
   constructor(
     private reservationService: ReservationService,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
+    // Check if user is authenticated
+    if (!this.authService.isAuthenticated()) {
+      this.router.navigate(['/login'], {
+        queryParams: { returnUrl: this.router.url }
+      });
+      return;
+    }
     this.loadReservations();
   }
 
   loadReservations(): void {
+    // Get the current user's ID
+    const userId = this.authService.getCurrentUserId();
+    if (!userId) {
+      this.router.navigate(['/login'], {
+        queryParams: { returnUrl: this.router.url }
+      });
+      return;
+    }
+
     const serviceCall = this.showUpcoming
-      ? this.reservationService.getUpcomingReservationsByUserId(this.userId)
-      : this.reservationService.getReservationsByUserId(this.userId);
+      ? this.reservationService.getUpcomingReservationsByUserId(userId)
+      : this.reservationService.getReservationsByUserId(userId);
 
     serviceCall.subscribe({
       next: (data) => {

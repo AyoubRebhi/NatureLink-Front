@@ -18,7 +18,7 @@ export class PackAddComponent {
     activities: [],
     transports: [],
     evenements: [],
-    userId: 4  // Static user
+    userId: 8 // Static user
   };
 
   loading = false;
