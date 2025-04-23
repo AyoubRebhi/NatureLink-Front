@@ -3,7 +3,7 @@ import { ReservationService } from 'src/app/core/services/reservation.service';
 import { Reservation } from 'src/app/core/models/reservation.model';
 import { StatutReservation } from 'src/app/core/models/statut-reservation.model';
 import { TypeReservation } from 'src/app/core/models/type-reservation.model';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 
@@ -22,18 +22,21 @@ export class ReservationCreateComponent implements OnInit, OnDestroy {
   statutOptions: StatutReservation[] = Object.values(StatutReservation);
   numRooms: number = 1;
   clientId: number = 8;
-
-  // Fields for static reservation type testing
-  selectedType: TypeReservation = TypeReservation.RESTAURANT; // Default to TRANSPORT
-  typeSpecificId: number = 8; // ID for the selected type (e.g., transportId = 2)
+  selectedType: TypeReservation = TypeReservation.ACTIVITE;
+  typeSpecificId: number = 1;
 
   today: string;
   isLoading: boolean = false;
   errorMessage: string | null = null;
   private numClientsSubject = new Subject<number>();
   private subscription?: Subscription;
+  private routeSubscription?: Subscription;
 
-  constructor(private reservationService: ReservationService, private router: Router) {
+  constructor(
+    private reservationService: ReservationService,
+    private router: Router,
+    private route: ActivatedRoute
+  ) {
     this.today = new Date().toISOString().split('T')[0];
     const cachedStatutOptions = localStorage.getItem('statutOptions');
     if (cachedStatutOptions) {
@@ -44,6 +47,19 @@ export class ReservationCreateComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    // Subscribe to route query parameters to get type and ID
+    this.routeSubscription = this.route.queryParams.subscribe(params => {
+      const type = params['type'] as TypeReservation;
+      const id = parseInt(params['id'], 10);
+
+      if (type && Object.values(TypeReservation).includes(type)) {
+        this.selectedType = type;
+      }
+      if (id && !isNaN(id)) {
+        this.typeSpecificId = id;
+      }
+    });
+
     this.generateClientInputs();
     this.subscription = this.numClientsSubject.pipe(debounceTime(300)).subscribe(() => {
       this.generateClientInputs();
@@ -53,6 +69,9 @@ export class ReservationCreateComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe();
+    }
+    if (this.routeSubscription) {
+      this.routeSubscription.unsubscribe();
     }
   }
 
@@ -155,8 +174,8 @@ export class ReservationCreateComponent implements OnInit, OnDestroy {
     this.selectedStatut = StatutReservation.EN_ATTENTE;
     this.numRooms = 1;
     this.clientId = 8;
-    this.selectedType = TypeReservation.TRANSPORT;
-    this.typeSpecificId = 2;
+    this.selectedType = TypeReservation.ACTIVITE;
+    this.typeSpecificId = 1;
     this.errorMessage = null;
   }
 

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivityService } from '../../core/services/activity.service';
 import { Activity } from '../../core/models/activity.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-activity',
@@ -18,7 +19,7 @@ export class ActivityComponent implements OnInit {
   showRecommendationForm = false;
   moodInput = '';
 
-  constructor(private activityService: ActivityService) { }
+  constructor(private activityService: ActivityService, private router: Router) { }
 
   ngOnInit(): void {
     this.loadActivities();
@@ -50,14 +51,11 @@ export class ActivityComponent implements OnInit {
   
     this.activityService.recommendFromAllActivities(this.moodInput).subscribe({
       next: (recommendations) => {
-        // Merge recommendation scores with full activity data
         this.filteredActivities = recommendations.map(recommendation => {
-          // Find the full activity in your original list
           const fullActivity = this.activities.find(a => a.id === recommendation.id) || recommendation;
-          
           return {
-            ...fullActivity, // This contains all the original fields
-            similarity: recommendation.similarity // Add the new similarity score
+            ...fullActivity,
+            similarity: recommendation.similarity
           };
         });
         
@@ -78,6 +76,13 @@ export class ActivityComponent implements OnInit {
     this.moodInput = '';
     this.showRecommendationForm = false;
     this.recommendationError = null;
+  }
+
+  bookActivity(activityId: number): void {
+    // Navigate to reservation create with activity ID and type
+    this.router.navigate(['/reservation/create'], {
+      queryParams: { type: 'ACTIVITE', id: activityId }
+    });
   }
 
   private processActivities(activities: any[]): Activity[] {

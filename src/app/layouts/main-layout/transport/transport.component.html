@@ -1,109 +1,187 @@
 <!-- transport.component.html -->
 <div class="container-xxl py-5">
-    <div class="container">
-      <div class="text-center mb-5">
-        <h6 class="section-title bg-white text-center text-primary px-3">Transports</h6>
-        <h1 class="mb-3">Available Vehicles</h1>
-        <p class="text-muted">Browse and choose from our premium selection</p>
-      </div>
-  
-      <!-- Filters -->
-      <div class="row mb-4">
-        <div class="col-md-6 mb-2">
-          <div class="input-group">
-            <input type="text" class="form-control" placeholder="Search by type or capacity..." [(ngModel)]="searchTerm" (input)="filterTransports()">
-            <span class="input-group-text"><i class="fa fa-search"></i></span>
-          </div>
-        </div>
-        <div class="col-md-6 mb-2">
-          <select class="form-select" [(ngModel)]="capacityFilter" (change)="filterTransports()">
-            <option value="">All Capacities</option>
-            <option *ngFor="let cap of capacityOptions" [value]="cap">{{cap}} persons</option>
-          </select>
-        </div>
-      </div>
-  
-      <!-- Transport Cards -->
-      <div class="row g-4 justify-content-center">
-        <div *ngFor="let transport of filteredTransports; let i = index" class="col-lg-4 col-md-6" [attr.data-wow-delay]="'0.' + (i+1) + 's'">
-          <div class="package-item border rounded overflow-hidden">
-            <div class="overflow-hidden position-relative">
-              <img class="img-fluid w-100" style="height: 250px; object-fit: cover;" [src]="transport.imgUrl || 'assets/images/default-transport.jpg'" [alt]="transport.type">
-              <span class="badge bg-{{ transport.available ? 'success' : 'danger' }} position-absolute top-0 end-0 m-2">
-                {{ transport.available ? 'Available' : 'Unavailable' }}
-              </span>
-            </div>
-            <div class="d-flex border-bottom">
-              <small class="flex-fill text-center border-end py-2">
-                <i class="fa fa-car-side text-primary me-2"></i>{{ transport.type }}
-              </small>
-              <small class="flex-fill text-center border-end py-2">
-                <i class="fa fa-user-friends text-primary me-2"></i>{{ transport.capacity }} persons
-              </small>
-              <small class="flex-fill text-center py-2">
-                <i class="fa fa-money-bill text-primary me-2"></i>{{ transport.pricePerKm }} TND/km
-              </small>
-            </div>
-            <div class="text-center p-4">
-              <div class="mb-2">
-                <small *ngFor="let star of [1,2,3,4,5]" class="fa fa-star" 
-                  [class.text-warning]="star <= averageRatings[transport.id!]" 
-                  [class.text-muted]="star > averageRatings[transport.id!]">
-                </small>
-                <small class="text-muted ms-2">({{ ratingCounts[transport.id!] || 0 }} ratings)</small>
-              </div>
-              <p class="text-muted mb-2">{{ transport.description || 'Comfortable and reliable transportation option' }}</p>
-              <div class="d-flex justify-content-center">
-                <button class="btn btn-primary px-3" [disabled]="!transport.available" (click)="openRatingModal(transport)">
-                  <i class="fa fa-star me-2"></i> Rate
-                </button>
-              </div>
-            </div>
-          </div>
+  <div class="container">
+    <div class="text-center mb-5">
+      <h6 class="section-title bg-white text-center text-primary px-3">Transports</h6>
+      <h1 class="mb-3">Available Vehicles</h1>
+      <p class="text-muted">Browse and choose from our premium selection</p>
+    </div>
+
+    <!-- Filters -->
+    <div class="row mb-4">
+      <div class="col-md-6 mb-2">
+        <div class="input-group">
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Search by type or capacity..."
+            [(ngModel)]="searchTerm"
+            (input)="filterTransports()"
+          />
+          <span class="input-group-text"><i class="fa fa-search"></i></span>
         </div>
       </div>
-  
-      <!-- Empty State -->
-      <div *ngIf="filteredTransports.length === 0" class="text-center py-5">
-        <img src="assets/images/no-results.svg" alt="No transports found" class="img-fluid mb-3" style="max-height: 200px;">
-        <h4 class="text-muted">No transports match your criteria</h4>
-        <button class="btn btn-outline-primary mt-3" (click)="resetFilters()">Reset Filters</button>
+      <div class="col-md-6 mb-2">
+        <select
+          class="form-select"
+          [(ngModel)]="capacityFilter"
+          (change)="filterTransports()"
+        >
+          <option value="">All Capacities</option>
+          <option *ngFor="let cap of capacityOptions" [value]="cap">
+            {{ cap }} persons
+          </option>
+        </select>
       </div>
     </div>
-  
-    <!-- Rating Modal -->
-    <div class="modal fade" id="ratingModal" tabindex="-1" aria-labelledby="ratingModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="ratingModalLabel">Rate {{ selectedTransport?.type }}</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+    <!-- Transport Cards -->
+    <div class="row g-4 justify-content-center">
+      <div
+        *ngFor="let transport of filteredTransports; let i = index"
+        class="col-lg-4 col-md-6"
+        [attr.data-wow-delay]="'0.' + (i + 1) + 's'"
+      >
+        <div class="package-item border rounded overflow-hidden">
+          <div class="overflow-hidden position-relative">
+            <img
+              class="img-fluid w-100"
+              style="height: 250px; object-fit: cover;"
+              [src]="transport.imgUrl || 'assets/images/default-transport.jpg'"
+              [alt]="transport.type"
+            />
+            <span
+              class="badge bg-{{ transport.available ? 'success' : 'danger' }} position-absolute top-0 end-0 m-2"
+            >
+              {{ transport.available ? 'Available' : 'Unavailable' }}
+            </span>
           </div>
-          <div class="modal-body">
-            <p><strong>Price per Km:</strong> {{ selectedTransport?.pricePerKm }} TND</p>
-            <p><strong>Capacity:</strong> {{ selectedTransport?.capacity }} persons</p>
-            <div class="mb-3 text-center">
-                <strong>Your Rating:</strong>
-                <div>
-                  <i *ngFor="let star of [1,2,3,4,5]"
-                     class="fa fa-star"
-                     [class.text-warning]="star <= userRating"
-                     [class.text-muted]="star > userRating"
-                     (click)="setUserRating(star)"
-                     style="cursor: pointer; font-size: 1.5rem;"></i>
-                </div>
-              </div>
-              
+          <div class="d-flex border-bottom">
+            <small class="flex-fill text-center border-end py-2">
+              <i class="fa fa-car-side text-primary me-2"></i>{{ transport.type }}
+            </small>
+            <small class="flex-fill text-center border-end py-2">
+              <i class="fa fa-user-friends text-primary me-2"></i>{{ transport.capacity }} persons
+            </small>
+            <small class="flex-fill text-center py-2">
+              <i class="fa fa-money-bill text-primary me-2"></i>{{ transport.pricePerKm }} TND/km
+            </small>
+          </div>
+          <div class="text-center p-4">
             <div class="mb-2">
-              <label for="reviewComment">Comment:</label>
-              <textarea class="form-control" id="reviewComment" [(ngModel)]="userComment" rows="3"></textarea>
+              <small
+                *ngFor="let star of [1, 2, 3, 4, 5]"
+                class="fa fa-star"
+                [class.text-warning]="star <= averageRatings[transport.id!]"
+                [class.text-muted]="star > averageRatings[transport.id!]"
+              ></small>
+              <small class="text-muted ms-2">({{ ratingCounts[transport.id!] || 0 }} ratings)</small>
+            </div>
+            <p class="text-muted mb-2">
+              {{ transport.description || 'Comfortable and reliable transportation option' }}
+            </p>
+            <div class="d-flex justify-content-center">
+              <button
+                class="btn btn-primary px-3 me-2"
+                [disabled]="!transport.available"
+                (click)="openRatingModal(transport)"
+              >
+                <i class="fa fa-star me-2"></i> Rate
+              </button>
+              <button
+                *ngIf="transport.id"
+                class="btn btn-primary px-3"
+                [disabled]="!transport.available"
+                (click)="bookTransport(transport.id)"
+              >
+                <i class="fa fa-book me-2"></i> Book Now
+              </button>
             </div>
           </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-            <button type="button" class="btn btn-primary" (click)="submitRating()">Save</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="filteredTransports.length === 0" class="text-center py-5">
+      <img
+        src="assets/images/no-results.svg"
+        alt="No transports found"
+        class="img-fluid mb-3"
+        style="max-height: 200px;"
+      />
+      <h4 class="text-muted">No transports match your criteria</h4>
+      <button class="btn btn-outline-primary mt-3" (click)="resetFilters()">
+        Reset Filters
+      </button>
+    </div>
+  </div>
+
+  <!-- Rating Modal -->
+  <div
+    class="modal fade"
+    id="ratingModal"
+    tabindex="-1"
+    aria-labelledby="ratingModalLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="ratingModalLabel">
+            Rate {{ selectedTransport?.type }}
+          </h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <p><strong>Price per Km:</strong> {{ selectedTransport?.pricePerKm }} TND</p>
+          <p><strong>Capacity:</strong> {{ selectedTransport?.capacity }} persons</p>
+          <div class="mb-3 text-center">
+            <strong>Your Rating:</strong>
+            <div>
+              <i
+                *ngFor="let star of [1, 2, 3, 4, 5]"
+                class="fa fa-star"
+                [class.text-warning]="star <= userRating"
+                [class.text-muted]="star > userRating"
+                (click)="setUserRating(star)"
+                style="cursor: pointer; font-size: 1.5rem;"
+              ></i>
+            </div>
           </div>
+          <div class="mb-2">
+            <label for="reviewComment">Comment:</label>
+            <textarea
+              class="form-control"
+              id="reviewComment"
+              [(ngModel)]="userComment"
+              rows="3"
+            ></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary"
+            (click)="submitRating()"
+            [disabled]="userRating === 0"
+          >
+            Save
+          </button>
         </div>
       </div>
     </div>
   </div>
+</div>

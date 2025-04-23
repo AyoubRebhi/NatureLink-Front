@@ -1,8 +1,10 @@
+// transport.component.ts
 import { Component, OnInit } from '@angular/core';
 import { Transport } from 'src/app/core/models/transport.model';
 import { TransportService } from 'src/app/core/services/transport.service';
 import { TransportRatingService } from 'src/app/core/services/transport-rating.service';
 import { TransportRating } from 'src/app/core/models/transport-rating.model';
+import { Router } from '@angular/router';
 
 declare var bootstrap: any; // Required to use Bootstrap JS modal API
 
@@ -27,7 +29,8 @@ export class TransportComponent implements OnInit {
 
   constructor(
     private transportService: TransportService,
-    private ratingService: TransportRatingService
+    private ratingService: TransportRatingService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -37,9 +40,10 @@ export class TransportComponent implements OnInit {
   loadTransports(): void {
     this.transportService.getAllTransports().subscribe({
       next: (data) => {
-        this.transports = data;
-        this.filteredTransports = [...data];
-        this.capacityOptions = [...new Set(data.map(t => t.capacity))].sort((a, b) => a - b);
+        // Filter out transports with undefined IDs as a precaution
+        this.transports = data.filter(t => t.id !== undefined);
+        this.filteredTransports = [...this.transports];
+        this.capacityOptions = [...new Set(this.transports.map(t => t.capacity))].sort((a, b) => a - b);
 
         this.transports.forEach(t => {
           this.ratingService.getAverageRating(t.id!).subscribe(avg => {
@@ -90,7 +94,7 @@ export class TransportComponent implements OnInit {
     if (!this.selectedTransport || this.userRating === 0) return;
 
     const rating: TransportRating = {
-      userId: 1, // You can replace this with the actual user ID when auth is implemented
+      userId: 1, // Replace with actual user ID when auth is implemented
       rating: this.userRating,
       comment: this.userComment,
       transportId: this.selectedTransport.id
@@ -104,6 +108,12 @@ export class TransportComponent implements OnInit {
         this.loadTransports();
       },
       error: () => alert('Error submitting your rating')
+    });
+  }
+
+  bookTransport(transportId: number): void {
+    this.router.navigate(['/reservation/create'], {
+      queryParams: { type: 'TRANSPORT', id: transportId }
     });
   }
 }
