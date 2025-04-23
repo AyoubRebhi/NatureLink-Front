@@ -49,7 +49,7 @@ export interface ItineraryResponse {
   providedIn: 'root'
 })
 export class TravelService {
-  private apiUrl = 'http://localhost:5000/api';
+  private apiUrl = 'http://localhost:5010/api';
 
   constructor(private http: HttpClient) { }
 
