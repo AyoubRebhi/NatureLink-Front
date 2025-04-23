@@ -8,6 +8,9 @@ import { HomeComponent } from './pages/home/home.component';
 import { FrontListComponent } from './features/pack/components/pack-list-f/pack-list-f.component';
 import { ActivityComponent } from './pages/activity/activity.component';
 import { ActivityDetailsComponent } from './pages/activity-details/activity-details.component';
+import { PaymentsComponent } from './pages/payments/payments/payments.component';
+import { AuthGuard } from './core/guards/auth.guard';
+import { Role } from './core/models/user.model';
 
 const routes: Routes = [
   {
@@ -35,6 +38,22 @@ const routes: Routes = [
     loadChildren: () =>
       import('./features/dashboard/dashboard.module').then(m => m.DashboardModule)
   },
+  { path: 'auth',
+    loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule) } ,
+ {
+   path: 'admin',
+   loadChildren: () => 
+     import('./features/dashboard/dashboard.module').then(m => m.DashboardModule),
+   canActivate: [AuthGuard],
+   data: {
+     roles: [Role.ADMIN] // Specify required role
+   }
+ },
+ { 
+   path: 'payments', 
+   component: PaymentsComponent,
+   canActivate: [AuthGuard] 
+ },
   {
     path: 'activity',
     loadChildren: () => import('./features/activity/activity.module').then(m => m.ActivityModule)

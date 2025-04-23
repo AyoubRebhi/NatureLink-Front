@@ -68,8 +68,6 @@ import { CommonModule } from '@angular/common';
     ActivityComponent,
     ActivityDetailsComponent,
     AuthDialogComponent,
-    LoginComponent,
-    RegisterComponent,
     ProfileComponent,
     PaymentsComponent,
   ],
