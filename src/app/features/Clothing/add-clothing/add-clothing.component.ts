@@ -12,6 +12,8 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
   styleUrls: ['./add-clothing.component.scss']
 })
 export class AddClothingComponent implements OnInit {
+  errorMessage: string | null = null;
+  successMessage: string | null = null;
 onCancel() {
   this.router.navigate(['/admin/ClothingList']);
 }
@@ -111,9 +113,11 @@ onCancel() {
       formData.image
     ).subscribe({
       next: () => {
-        this.router.navigate(['/admin/ClothingList']);
+        setTimeout(() => this.router.navigate(['/admin/ClothingList']), 5000);
+
       },
       error: (err) => {
+        this.errorMessage = 'Erreur lors de l\'ajout du vêtement';
         console.error('Erreur lors de l\'ajout du vêtement:', err);
         this.isLoading = false;
       }

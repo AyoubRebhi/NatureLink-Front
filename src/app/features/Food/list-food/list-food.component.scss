@@ -2,6 +2,7 @@
     max-width: 1200px;
     margin: 2rem auto;
     padding: 0 1rem;
+    
   
     .header {
       display: flex;
@@ -20,6 +21,8 @@
         display: flex;
         gap: 1rem;
         align-items: center;
+        gap: 0.5rem; // 👈 ajoute cette ligne pour espacer les boutons
+
       }
     }
   
@@ -80,6 +83,14 @@
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       }
     }
+    .btn-edit {
+      background-color: #3498db; // Changé pour bleu
+      color: white;
+  
+      &:hover {
+        background-color: #2980b9;
+      }
+    }
   
     .food-image {
       height: 180px;
@@ -135,6 +146,7 @@
       padding: 0 1rem 1rem 1rem;
       display: flex;
       justify-content: flex-end;
+      gap: 0.5rem;
     }
   
     .delete-btn {

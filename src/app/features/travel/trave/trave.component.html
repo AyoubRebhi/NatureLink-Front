@@ -26,6 +26,9 @@
       <div class="map-instructions">
         <p>Click on the map to select a destination or search for an address above</p>
       </div>
+      <button type="button" class="clear-btn" (click)="resetForm()" [disabled]="isLoading">
+        Reset Map
+      </button>
     </div>
 
     <!-- Days Input -->
@@ -67,9 +70,7 @@
         <span *ngIf="isLoading">Generating...</span>
       </button>
       
-      <button type="button" class="clear-btn" (click)="resetForm()" [disabled]="isLoading">
-        Reset Map
-      </button>
+      
     </div>
   </form>
 

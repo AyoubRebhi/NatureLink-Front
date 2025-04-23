@@ -281,9 +281,8 @@ saveFootprint(): void {
       next: () => {
         this.successMessage = 'Empreinte carbone enregistrée avec succès !';
         // Afficher une alerte
-        alert('Empreinte carbone enregistrée avec succès !');
         // Ou utiliser un toast/snackbar selon votre framework
-        setTimeout(() => this.successMessage = null, 4000)//orrection du timeout à 3000ms (3 secondes)
+        // setTimeout(() => this.successMessage = null, 200)//orrection du timeout à 3000ms (3 secondes)
       },
       error: (err) => {
         console.error('Erreur détaillée:', err);

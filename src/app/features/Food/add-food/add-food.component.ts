@@ -95,12 +95,12 @@ export class AddFoodComponent implements OnInit {
       this.selectedFile
     ).subscribe({
       next: (food) => {
-        this.successMessage = 'Nourriture ajoutée avec succès!';
+        this.successMessage = 'food added sucessufully';
         setTimeout(() => this.router.navigate(['/admin/FoodList']), 2000);
       },
       error: (err) => {
         console.error('Erreur lors de l\'ajout:', err);
-        this.errorMessage = 'Erreur lors de l\'ajout de la nourriture';
+        this.errorMessage = 'Erreur in adding';
         this.isSubmitting = false;
       },
       complete: () => {

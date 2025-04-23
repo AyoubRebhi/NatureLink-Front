@@ -1,7 +1,15 @@
 <div class="container">
   <h2>Add New Clothing Item</h2>
+  <div *ngIf="errorMessage" class="alert error">
+    {{ errorMessage }}
+  </div>
+  <div *ngIf="successMessage" class="alert success">
+    {{ successMessage }}
+  </div>
   
   <form [formGroup]="clothingForm" (ngSubmit)="onSubmit()" enctype="multipart/form-data" *ngIf="!isLoading;">
+   
+    
     <!-- Name -->
     <div class="form-group">
       <label for="name">Name *</label>
