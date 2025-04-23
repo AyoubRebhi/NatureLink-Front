@@ -1,0 +1,129 @@
+<!-- profile.component.html -->
+<div class="profile-container" *ngIf="user; else noUser">
+  <h2>Your Profile</h2>
+  
+  <!-- Profile Picture Section -->
+  <div class="profile-pic-section">
+      <div class="image-container">
+          <img [src]="user?.profilePic ? (authService.apiUrl + '/uploads/' + user.profilePic) : 'assets/img/default-avatar.png'" 
+               alt="Profile Picture" 
+               class="profile-pic">
+          <div class="upload-controls" *ngIf="isEditing">
+              <input type="file" accept="image/*" (change)="onFileSelected($event)" hidden #fileInput>
+              <button type="button" class="file-upload-btn" (click)="fileInput.click()">
+                  Choose New Photo
+              </button>
+              <div *ngIf="previewUrl" class="preview">
+                  <img [src]="previewUrl" alt="Preview">
+                  <div class="upload-confirm">
+                      <button type="button" class="btn-save" (click)="onUpload()">Upload</button>
+                      <button type="button" class="btn-cancel" (click)="previewUrl = null">Cancel</button>
+                  </div>
+              </div>
+          </div>
+      </div>
+      <div class="result-section" *ngIf="faceDetectionMessage">
+        <p id="face-detection-results" [class.valid]="faceDetectionMessage.includes('verified')"
+                                       [class.invalid]="faceDetectionMessage.includes('No face')">
+          {{ faceDetectionMessage }}
+        </p>
+      </div>
+  </div>
+   
+
+  <!-- Profile Info Display -->
+  <div *ngIf="!isEditing" class="profile-info">
+      <div class="field">
+          <label>Username:</label>
+          <p>{{ user?.username }}</p>
+      </div>
+      <div class="field">
+          <label>Email:</label>
+          <p>{{ user?.email }}</p>
+      </div>
+
+      <!-- NLP Suggestions Section -->
+      <div class="bio-analysis">
+          <h3>Bio Enhancement Suggestions</h3>
+          <div class="bio-input">
+              <textarea [(ngModel)]="bioText" 
+                        placeholder="Enter your bio text to get improvement suggestions..."
+                        rows="4"></textarea>
+              <button class="btn-analyze" 
+                      (click)="getSuggestions()"
+                      [disabled]="!bioText || loadingSuggestions">
+                  {{ loadingSuggestions ? 'Analyzing...' : 'Get Suggestions' }}
+              </button>
+          </div>
+
+          <div *ngIf="suggestionsError" class="error-message">
+              {{ suggestionsError }}
+          </div>
+
+          <div *ngIf="suggestions.length" class="suggestions-box">
+              <h4>Recommendations:</h4>
+              <ul>
+                  <li *ngFor="let suggestion of suggestions" class="suggestion-item">
+                      <span class="suggestion-icon">💡</span>
+                      {{ suggestion }}
+                  </li>
+              </ul>
+          </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="actions">
+          <button (click)="toggleEdit()" class="btn-edit">Edit Profile</button>
+          
+      </div>
+  </div>
+
+  <!-- Edit Form -->
+  <form *ngIf="isEditing" [formGroup]="editForm" (ngSubmit)="onSubmit()" class="edit-form">
+      <div class="form-group">
+          <label for="username">Username:</label>
+          <input type="text" id="username" formControlName="username" required>
+          <div *ngIf="editForm.get('username')?.invalid && editForm.get('username')?.touched" class="error">
+              Username is required
+          </div>
+      </div>
+
+      <div class="form-group">
+          <label for="email">Email:</label>
+          <input type="email" id="email" formControlName="email" required>
+          <div *ngIf="editForm.get('email')?.invalid && editForm.get('email')?.touched" class="error">
+              Valid email is required
+          </div>
+      </div>
+
+      <div class="form-group">
+          <label for="password">New Password (optional):</label>
+          <input type="password" id="password" formControlName="password">
+      </div>
+
+      <div class="form-actions">
+          <button type="submit" [disabled]="editForm.invalid" class="btn-save">Save Changes</button>
+          <button type="button" (click)="toggleEdit()" class="btn-cancel">Cancel</button>
+      </div>
+  </form>
+
+  <!-- Danger Zone -->
+  <div class="danger-zone">
+      <h3>Danger Zone</h3>
+      <p>Permanent actions that cannot be undone</p>
+      <button (click)="onDelete()" class="btn-delete">
+          <i class="warning-icon">⚠️</i>
+          Delete Account Permanently
+      </button>
+  </div>
+
+  <div *ngIf="errorMessage" class="error-message">
+      {{ errorMessage }}
+  </div>
+</div>
+
+<ng-template #noUser>
+  <div class="no-user">
+      <p>No user logged in. Please sign in to view your profile.</p>
+  </div>
+</ng-template>
