@@ -5,7 +5,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
+
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { GoogleMapsModule } from '@angular/google-maps';
+//import { NgChartsModule } from 'ng2-charts';
 
 // Angular Material Modules
 import { MatButtonModule } from '@angular/material/button';
@@ -34,32 +37,30 @@ import { DashboardModule } from './features/dashboard/dashboard.module';
 
 // Components
 import { AppComponent } from './app.component';
-import { HeaderComponent } from './layouts/main-layout/header/header.component';
 import { FooterComponent } from './layouts/main-layout/footer/footer.component';
-import { AboutComponent } from './pages/about/about.component';
-import { ServicesComponent } from './pages/services/services.component';
-import { NotFoundComponent } from './pages/not-found/not-found.component';
+//import { HeaderComponent } from './layouts/main-layout/header/header.component';
 import { MainLayoutComponent } from './layouts/main-layout/main-layout.component';
-import { HomeComponent } from './pages/home/home.component';
 import { TestimonialComponent } from './layouts/main-layout/testimonial/testimonial.component';
 import { ServiceComponent } from './layouts/main-layout/service/service.component';
 import { GuidesComponent } from './layouts/main-layout/guides/guides.component';
 import { TransportComponent } from './layouts/main-layout/transport/transport.component';
+
+import { AboutComponent } from './pages/about/about.component';
+import { ServicesComponent } from './pages/services/services.component';
+import { NotFoundComponent } from './pages/not-found/not-found.component';
+import { HomeComponent } from './pages/home/home.component';
 import { ActivityComponent } from './pages/activity/activity.component';
 import { ActivityDetailsComponent } from './pages/activity-details/activity-details.component';
 import { ProfileComponent } from './pages/profile/profile.component';
 import { PaymentsComponent } from './pages/payments/payments/payments.component';
+
 import { AuthDialogComponent } from './auth-dialog/auth-dialog.component';
 import { LoginComponent } from './auth/login/login.component';
 import { RegisterComponent } from './auth/register/register.component';
+
 import { LogementListFrontComponent } from './features/logement/components/logement-list-front/logement-list-front.component';
 import { LogementDetailComponent } from './features/logement/components/logement-detail/logement-detail.component';
 import { LogementStatsComponent } from './features/logement-stats/logement-stats.component';
-
-// Pipes
-import { FilterPipe } from './filter.pipe';
-import { FilterByTitlePipe } from './shared/pipes/filter-by-title.pipe';
-import { FilterByDatePipe } from './shared/pipes/filter-by-date.pipe';
 
 // Services and Guards
 import { AuthService } from './core/services/auth.service';
@@ -69,8 +70,8 @@ import { JwtInterceptor } from './core/services/jwt.interceptor';
 @NgModule({
   declarations: [
     AppComponent,
-    HeaderComponent,
     FooterComponent,
+    //HeaderComponent,
     AboutComponent,
     ServicesComponent,
     NotFoundComponent,
@@ -82,28 +83,26 @@ import { JwtInterceptor } from './core/services/jwt.interceptor';
     TransportComponent,
     ActivityComponent,
     ActivityDetailsComponent,
+    AuthDialogComponent,
     ProfileComponent,
     PaymentsComponent,
-    AuthDialogComponent,
-    LoginComponent,
-    RegisterComponent,
+    //LoginComponent,
+    //RegisterComponent,
     LogementListFrontComponent,
     LogementDetailComponent,
     LogementStatsComponent,
-    FilterPipe,
-    FilterByTitlePipe,
-    FilterByDatePipe,
   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
-    CommonModule,
+    AppRoutingModule,
+    RouterModule,
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
-    RouterModule,
-    AppRoutingModule,
+    CommonModule,
     GoogleMapsModule,
+    //NgChartsModule,
     // Angular Material
     MatButtonModule,
     MatDialogModule,
@@ -127,6 +126,7 @@ import { JwtInterceptor } from './core/services/jwt.interceptor';
     PackModule,
     SharedModule,
     DashboardModule,
+    //NgbModule,
   ],
   providers: [
     AuthService,

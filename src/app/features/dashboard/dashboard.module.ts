@@ -17,8 +17,6 @@ import { SharedModule } from 'src/app/shared/shared.module';
   declarations: [
     DashboardComponent,
     DashboardLayoutComponent,
-    SidebarDashComponent,
-    HeaderDashComponent
   ],
   imports: [
     CommonModule,
@@ -30,7 +28,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
     //NgChartsModule,
   ],
   exports: [
-    DashboardLayoutComponent
+    DashboardLayoutComponent,
   ]
 })
 export class DashboardModule {}

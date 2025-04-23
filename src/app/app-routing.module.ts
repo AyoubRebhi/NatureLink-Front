@@ -5,18 +5,17 @@ import { AboutComponent } from './pages/about/about.component';
 import { ServicesComponent } from './pages/services/services.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { MainLayoutComponent } from './layouts/main-layout/main-layout.component';
-import { DashboardLayoutComponent } from './layouts/dashboard/dashboard-layout/dashboard-layout.component';
 import { HomeComponent } from './pages/home/home.component';
 import { ActivityComponent } from './pages/activity/activity.component';
 import { ActivityDetailsComponent } from './pages/activity-details/activity-details.component';
 import { PaymentsComponent } from './pages/payments/payments/payments.component';
 import { LogementListFrontComponent } from './features/logement/components/logement-list-front/logement-list-front.component';
 import { LogementDetailComponent } from './features/logement/components/logement-detail/logement-detail.component';
+import { FrontListComponent } from './features/pack/components/pack-list-f/pack-list-f.component';
 import { AuthGuard } from './core/guards/auth.guard';
 import { Role } from './core/models/user.model';
 
 const routes: Routes = [
-  // Main Layout for general content
   {
     path: '',
     component: MainLayoutComponent,
@@ -29,95 +28,61 @@ const routes: Routes = [
       { path: 'logementsFront', component: LogementListFrontComponent },
       { path: 'logement/detail/:id', component: LogementDetailComponent },
       {
-        path: 'events',
-        data: { adminView: false },
-        loadChildren: () =>
-          import('./features/events/events.module').then(m => m.EventsModule),
-      },
-      {
-        path: 'boutiques',
-        data: { adminView: false },
-        loadChildren: () =>
-          import('./features/boutiques/boutiques.module').then(m => m.BoutiquesModule),
-      },
-      {
         path: 'reservation',
         loadChildren: () =>
-          import('./features/reservation/reservation.module').then(m => m.ReservationModule),
+          import('./features/reservation/reservation.module').then(m => m.ReservationModule)
       },
       {
         path: 'packs',
         loadChildren: () =>
-          import('./features/pack/pack.module').then(m => m.PackModule),
-      },
-      {
-        path: 'activity',
-        loadChildren: () =>
-          import('./features/activity/activity.module').then(m => m.ActivityModule),
-      },
-    ],
+          import('./features/pack/pack.module').then(m => m.PackModule)
+      }
+    ]
   },
-
-  // Dashboard Layout for admin-related pages
   {
     path: 'admin',
-    component: DashboardLayoutComponent,
+    loadChildren: () =>
+      import('./features/dashboard/dashboard.module').then(m => m.DashboardModule),
     canActivate: [AuthGuard],
-    data: { roles: [Role.ADMIN] },
-    children: [
-      {
-        path: '',
-        loadChildren: () =>
-          import('./features/dashboard/dashboard.module').then(m => m.DashboardModule),
-      },
-      {
-        path: 'events',
-        data: { adminView: true },
-        loadChildren: () =>
-          import('./features/events/events.module').then(m => m.EventsModule),
-      },
-      {
-        path: 'boutiques',
-        data: { adminView: true },
-        loadChildren: () =>
-          import('./features/boutiques/boutiques.module').then(m => m.BoutiquesModule),
-      },
-      {
-        path: 'equipements',
-        loadChildren: () =>
-          import('./features/equipement/equipement/equipement.module').then(m => m.EquipementModule),
-      },
-    ],
+    data: {
+      roles: [Role.ADMIN]
+    }
   },
-
-  // Other top-level routes
   {
     path: 'logement',
     loadChildren: () =>
-      import('./features/logement/logement/logement.module').then(m => m.LogementModule),
+      import('./features/logement/logement/logement.module').then(m => m.LogementModule)
+  },
+  {
+    path: 'admin/equipements',
+    loadChildren: () =>
+      import('./features/equipement/equipement/equipement.module').then(m => m.EquipementModule)
   },
   {
     path: 'dashboardUser',
     loadChildren: () =>
-      import('./features/dashboard-user/dashboard-user.module').then(m => m.DashboardUserModule),
+      import('./features/dashboard-user/dashboard-user.module').then(m => m.DashboardUserModule)
   },
   {
     path: 'auth',
     loadChildren: () =>
-      import('./auth/auth.module').then(m => m.AuthModule),
+      import('./auth/auth.module').then(m => m.AuthModule)
+  },
+  {
+    path: 'activity',
+    loadChildren: () =>
+      import('./features/activity/activity.module').then(m => m.ActivityModule)
   },
   {
     path: 'payments',
     component: PaymentsComponent,
-    canActivate: [AuthGuard],
+    canActivate: [AuthGuard]
   },
-
-  // Wildcard route for 404
-  { path: '**', component: NotFoundComponent },
+  { path: '**', component: NotFoundComponent }
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule],
+  exports: [RouterModule]
 })
 export class AppRoutingModule {}
