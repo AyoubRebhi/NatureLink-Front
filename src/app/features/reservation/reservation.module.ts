@@ -27,7 +27,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
     ReactiveFormsModule,
     RouterModule,
     ReservationRoutingModule, 
-    NgbModule,
+    //NgbModule,
     
     SharedModule // Import the SharedModule here
     // Only import the routing module specific to this feature

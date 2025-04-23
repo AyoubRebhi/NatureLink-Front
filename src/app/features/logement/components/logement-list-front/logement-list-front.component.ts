@@ -1,0 +1,247 @@
+import { Component, OnInit } from '@angular/core';
+import { LogementService } from '../../../../core/services/logement.service';
+import { Logement } from '../../../../core/models/logement.model';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { LogementType } from '../../../../core/models/logement.model';
+import { environment } from 'src/environments/environment';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { WebsocketService } from 'src/app/core/services/websocket.service';
+
+@Component({
+  selector: 'app-logement-list-front',
+  templateUrl: './logement-list-front.component.html',
+  styleUrls: ['./logement-list-front.component.scss']
+})
+export class LogementListFrontComponent implements OnInit {
+  logements: Logement[] = [];
+  filteredLogements: Logement[] = [];
+  currentImageIndex: { [logementId: number]: number } = {}; // To track current image for each logement
+  selectedLogementForMap: Logement | null = null;
+  mapUrl: SafeResourceUrl | null = null;
+  searchQuery: string = '';
+  selectedType: string = '';
+  notificationDistanceLimit = 100; // 5 km
+  userLatitude: number | null = null;
+  userLongitude: number | null = null;
+  showNotif: boolean = true;
+  notifications: Logement[] = [];
+  logementTypes = Object.values(LogementType); 
+  uploadedImage: File | null = null;
+  searchResults: Logement[] = [];
+  imageFiles: File[] = [];  // Store multiple images
+  imagePreviews: string[] = []; 
+  constructor(
+    private logementService: LogementService,
+    private sanitizer: DomSanitizer,
+    private http: HttpClient
+  ) {}
+
+  ngOnInit(): void {
+    this.loadLogements();
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        this.userLatitude = position.coords.latitude;
+        this.userLongitude = position.coords.longitude;
+        this.loadLogements(); // Load only after we have location
+      },
+      (error) => {
+        console.error('Geolocation error:', error);
+        this.loadLogements(); // Fallback if location fails
+      }
+    );
+  }
+
+  loadLogements(): void {
+    this.logementService.getAllLogements().subscribe({
+      next: async (data) => {
+        this.logements = data;
+        // Update logements with missing lat/lng
+        for (const logement of this.logements) {
+          if (!logement.latitude || !logement.longitude) {
+            const coords = await this.getCoordinatesFromLocation(logement.location || '');
+            if (coords) {
+              logement.latitude = coords.lat;
+              logement.longitude = coords.lng;
+            }
+            console.log('Geocoded coords for logement', logement.titre, coords);
+          }
+        }
+        // Distance-based notifications
+        this.notifications = this.logements.filter((logement) => {
+          if (
+            logement.latitude != null &&
+            logement.longitude != null &&
+            this.userLatitude != null &&
+            this.userLongitude != null
+          ) {
+            const distance = this.getDistanceFromLatLonInKm(
+              this.userLatitude,
+              this.userLongitude,
+              logement.latitude,
+              logement.longitude
+            );
+            return distance <= this.notificationDistanceLimit;
+          }
+          return false;
+        });
+
+        this.filteredLogements = [...this.logements];
+        // Init image indices
+        this.logements.forEach((logement) => {
+          if (logement.id !== undefined && logement.images?.length) {
+            this.currentImageIndex[logement.id] = 0;
+          }
+        });
+      },
+      error: (err) => console.error('Error loading logements:', err),
+    });
+  }
+
+  applyFilters(): void {
+    const query = this.searchQuery.toLowerCase();
+    this.filteredLogements = this.logements.filter((logement) => {
+      const matchesQuery =
+        logement.titre?.toLowerCase().includes(query) ||
+        logement.location?.toLowerCase().includes(query);
+      const matchesType =
+        !this.selectedType || logement.type === this.selectedType;
+
+      return matchesQuery && matchesType;
+    });
+  }
+
+
+  onImagesSelected(event: any) {
+    const files: FileList = event.target.files;
+    if (files.length > 0) {
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        this.imageFiles.push(file);  // Add to existing list
+  
+        const reader = new FileReader();
+        reader.onload = () => {
+          this.imagePreviews.push(reader.result as string);
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+  }
+  
+  // Method for handling image upload
+  onImageUpload(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      this.uploadedImage = file;
+  
+      // Generate preview
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.imagePreviews = [reader.result as string]; // only show this one preview
+      };
+      reader.readAsDataURL(file);
+  
+      // Trigger the search
+      this.searchByImage(file);
+    }
+  }
+  
+  searchByImage(file: File): void {
+    const formData = new FormData();
+    formData.append('image', file, file.name);
+  
+    this.http.post<any>('http://localhost:5000/search', formData).subscribe({
+      next: (response) => {
+        console.log('Image search response:', response);
+  
+        if (response.matches && response.matches.length > 0) {
+          const imageNames: string[] = response.matches.map((match: any) => match.image_name);
+  
+          // Create HttpParams and append each imageName
+          let params = new HttpParams();
+          imageNames.forEach(name => {
+            params = params.append('imageNames', name);
+          });
+  
+          // Send GET request with multiple imageNames
+          this.http.get<Logement[]>(
+            'http://localhost:9000/logements/searchByImages',
+            { params }
+          ).subscribe({
+            next: (logements) => {
+              console.log('Filtered logements from image search:', logements);
+              this.filteredLogements = logements;
+            },
+            error: (err) => {
+              console.error('Error fetching logements by images:', err);
+            }
+          });
+  
+        } else {
+          console.error('No matches found!');
+          this.filteredLogements = [];
+        }
+      },
+      error: (err) => {
+        console.error('Error searching for similar images:', err);
+      },
+    });
+  }
+  
+
+  getDistanceFromLatLonInKm(lat1: number, lon1: number, lat2: number, lon2: number): number {
+    const R = 6371; // Radius of the Earth in km
+    const dLat = this.deg2rad(lat2 - lat1);
+    const dLon = this.deg2rad(lon2 - lon1);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(this.deg2rad(lat1)) * Math.cos(this.deg2rad(lat2)) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  }
+
+  deg2rad(deg: number): number {
+    return deg * (Math.PI / 180);
+  }
+
+  getCoordinatesFromLocation(location: string): Promise<{ lat: number, lng: number } | null> {
+    const encodedLocation = encodeURIComponent(location);
+    const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodedLocation}&key=${environment.googleMapsApiKey}`;
+
+    return this.http.get<any>(url).toPromise().then(response => {
+      if (response.status === 'OK' && response.results.length > 0) {
+        const coords = response.results[0].geometry.location;
+        return { lat: coords.lat, lng: coords.lng };
+      }
+      return null;
+    }).catch(() => null);
+  }
+
+  showLocationMap(logement: Logement): void {
+    const locationQuery = encodeURIComponent(logement.location || '');
+    const url = `https://www.google.com/maps/embed/v1/place?key=${environment.googleMapsApiKey}&q=${locationQuery}`;
+    this.mapUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+    this.selectedLogementForMap = logement;
+  }
+
+  closeMapPopup(): void {
+    this.selectedLogementForMap = null;
+    this.mapUrl = null;
+  }
+
+  prevSlide(logementId: number, totalImages: number): void {
+    if (this.currentImageIndex[logementId] > 0) {
+      this.currentImageIndex[logementId]--;
+    } else {
+      this.currentImageIndex[logementId] = totalImages - 1;
+    }
+  }
+
+  nextSlide(logementId: number, totalImages: number): void {
+    if (this.currentImageIndex[logementId] < totalImages - 1) {
+      this.currentImageIndex[logementId]++;
+    } else {
+      this.currentImageIndex[logementId] = 0;
+    }
+  }
+}

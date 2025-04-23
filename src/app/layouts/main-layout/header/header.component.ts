@@ -14,7 +14,8 @@ export class HeaderComponent implements OnInit {
     { path: '/about', label: 'About' },
     { path: '/services', label: 'Services' },
     { path: '/packages', label: 'Packages' },
-    { path: '/contact', label: 'Contact' }
+    { path: '/contact', label: 'Contact' },
+    { path: '/reservation/create', label: 'Create Reservation' }
   ];
 
   currentRoute = '';
@@ -34,8 +35,8 @@ export class HeaderComponent implements OnInit {
   }
 
   // Dynamically updates the page title based on the current route
-  private updatePageTitle(route: string) {
-    const routeTitles: any = {
+  private updatePageTitle(route: string): void {
+    const routeTitles: { [key: string]: string } = {
       '/': 'Home',
       '/about': 'About',
       '/services': 'Services',
@@ -44,6 +45,7 @@ export class HeaderComponent implements OnInit {
       '/reservation/create': 'Create Reservation',
     };
 
+    // Check if the current route matches any predefined path
     const routeObj = this.navLinks.find(link => route.includes(link.path));
     this.pageTitle = routeTitles[route] || (routeObj ? routeObj.label : 'Page');
   }

@@ -1,0 +1,140 @@
+<div class="logement-form">
+  <h2>Add New Logement</h2>
+  <form (ngSubmit)="onSubmit()" #logementForm="ngForm">
+    
+    <!-- Title Field -->
+    <div class="form-group">
+      <label for="titre">Title</label>
+      <input
+      type="text"
+      id="titre"
+      class="form-control"
+      [(ngModel)]="logement.titre"
+      name="titre"
+      required
+      pattern="^[a-zA-ZÀ-ÿ\s\-']+$"
+      #titreRef="ngModel"
+      title="Title must not contain numbers or special characters" />
+    
+    <!-- Error Messages -->
+    <div *ngIf="titreRef.invalid && titreRef.touched" class="text-danger">
+      <div *ngIf="titreRef.errors?.['required']">Title is required.</div>
+      <div *ngIf="titreRef.errors?.['pattern']">Title must not contain numbers or special characters.</div>
+    </div>
+    </div>
+
+    <!-- Description Field -->
+    <div class="form-group">
+      <label for="description">Description</label>
+      <textarea id="description" class="form-control" [(ngModel)]="logement.description" name="description" required #descriptionRef="ngModel"></textarea>
+      <div *ngIf="descriptionRef.invalid && descriptionRef.touched" class="text-danger">Description is required.</div>
+    </div>
+
+    <!-- Location Field -->
+    <div class="form-group">
+      <label for="location">Location</label>
+      <input type="text" id="location" class="form-control" [(ngModel)]="logement.location" name="location" required #locationRef="ngModel">
+      <div *ngIf="locationRef.invalid && locationRef.touched" class="text-danger">Location is required.</div>
+    </div>
+
+    <!-- Price Field -->
+    <div class="form-group">
+      <label for="price">Price (DT)</label>
+      <input type="number" id="price" class="form-control" [(ngModel)]="logement.price" name="price" required min="1" #priceRef="ngModel">
+      <div *ngIf="priceRef.invalid && priceRef.touched" class="text-danger">Price must be at least 1.</div>
+    </div>
+
+    <!-- Image Upload -->
+    <div class="form-group">
+      <label for="images">Upload Images</label>
+      <input type="file" id="images" class="form-control" (change)="onImagesSelected($event)" multiple accept="image/*">
+    </div>
+
+    <!-- Image Previews -->
+    <div *ngIf="imagePreviews.length > 0" class="mt-2 d-flex flex-wrap">
+      <div *ngFor="let preview of imagePreviews; let i = index" class="position-relative m-2">
+        <img [src]="preview" alt="Image Preview">
+        <button type="button" (click)="removeImage(i)">×</button>
+      </div>
+    </div>
+
+    <!-- Phone -->
+    <div class="form-group">
+      <label for="phone">Phone</label>
+      <input type="text" id="phone" class="form-control" [(ngModel)]="logement.phone" name="phone" pattern="^[0-9]{8}$" #phoneRef="ngModel">
+      <div *ngIf="phoneRef.invalid && phoneRef.touched" class="text-danger">Phone must be exactly 8 digits.</div>
+    </div>
+
+    <!-- Email -->
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input type="email" id="email" class="form-control" [(ngModel)]="logement.email" name="email" required pattern="^[a-zA-Z0-9._%+-]+@gmail\.com$" #emailRef="ngModel">
+      <div *ngIf="emailRef.invalid && emailRef.touched" class="text-danger">Only Gmail addresses allowed.</div>
+    </div>
+
+    <!-- Social Media -->
+    <div class="form-group">
+      <label for="socialMedia">Social Media Link</label>
+      <input type="text" id="socialMedia" class="form-control" [(ngModel)]="logement.socialMedia" name="socialMedia">
+    </div>
+
+    <!-- Capacity -->
+    <div class="form-group">
+      <label for="capacity">Capacity</label>
+      <input type="number" id="capacity" class="form-control" [(ngModel)]="logement.capacity" name="capacity" required min="1" #capacityRef="ngModel">
+      <div *ngIf="capacityRef.invalid && capacityRef.touched" class="text-danger">Capacity must be at least 1.</div>
+    </div>
+
+    <!-- Type -->
+    <div class="form-group">
+      <label for="type">Type</label>
+      <select id="type" class="form-control" [(ngModel)]="logement.type" name="type" required #typeRef="ngModel">
+        <option value="">Select a type</option>
+        <option value="HOUSE">House</option>
+        <option value="CABIN">Cabin</option>
+        <option value="TENT">Tent</option>
+        <option value="MAISON_DHOTE">Maison d’hôte</option>
+      </select>
+      <div *ngIf="typeRef.invalid && typeRef.touched" class="text-danger">Type is required.</div>
+    </div>
+
+    <!-- Room Fields -->
+    <div *ngIf="showRoomFields()" class="form-group">
+      <label for="singleRooms">Single Rooms</label>
+      <input type="number" id="singleRooms" class="form-control" [(ngModel)]="logement.singleRooms" name="singleRooms" min="0">
+    </div>
+
+    <div *ngIf="showRoomFields()" class="form-group">
+      <label for="doubleRooms">Double Rooms</label>
+      <input type="number" id="doubleRooms" class="form-control" [(ngModel)]="logement.doubleRooms" name="doubleRooms" min="0">
+    </div>
+
+    <!-- Equipement -->
+    <label for="equipementIds">Existing Equipements</label>
+    <div *ngFor="let eq of equipements">
+      <label class="d-block" *ngIf="eq.id !== undefined">
+        <input type="checkbox" [value]="eq.id" (change)="onEquipementChange(eq.id!, $event)" [checked]="logement.equipementIds.includes(eq.id!)"> {{ eq.name }}
+      </label>
+    </div>
+
+    <!-- New Equipement -->
+    <div class="form-group mt-3">
+      <label for="newEquipement">Add New Equipement</label>
+      <input type="text" id="newEquipement" class="form-control" [(ngModel)]="newEquipementName" name="newEquipementName" pattern="^[^0-9]+$" #newEquipementRef="ngModel">
+      <div *ngIf="newEquipementRef.invalid && newEquipementRef.touched" class="text-danger">Equipement name should not contain numbers.</div>
+      <button type="button" class="btn btn-primary mt-2" (click)="addNewEquipement()">Add</button>
+    </div>
+
+    <div *ngIf="newEquipementList.length > 0">
+      <ul class="list-group mt-2">
+        <li *ngFor="let eq of newEquipementList; let i = index" class="list-group-item d-flex justify-content-between align-items-center">
+          {{ eq }}
+          <button type="button" class="btn btn-danger btn-sm" (click)="removeNewEquipement(i)">Remove</button>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Submit -->
+    <button type="submit" class="btn btn-success mt-4" [disabled]="!logementForm.form.valid">Submit</button>
+  </form>
+</div>

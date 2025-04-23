@@ -1,0 +1,94 @@
+<div class="container mt-4">
+  <h2>Update Logement</h2>
+  <form [formGroup]="logementForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="titre">Titre</label>
+      <input id="titre" formControlName="titre" class="form-control" />
+      <div *ngIf="logementForm.get('titre')?.invalid && logementForm.get('titre')?.touched" class="text-danger">
+        <small *ngIf="logementForm.get('titre')?.errors?.['required']">Titre is required.</small>
+        <small *ngIf="logementForm.get('titre')?.errors?.['pattern']">Titre can only contain letters and spaces.</small>
+      </div>
+    </div>
+
+    <div class="form-group mb-2">
+      <label>Description</label>
+      <textarea formControlName="description" class="form-control"></textarea>
+      <div *ngIf="logementForm.get('description')?.invalid && logementForm.get('description')?.touched" class="text-danger">
+        <small *ngIf="logementForm.get('description')?.errors?.['required']">Description is required.</small>
+      </div>
+    </div>
+
+    <div class="form-group mb-2">
+      <label>Location</label>
+      <input formControlName="location" class="form-control" />
+      <div *ngIf="logementForm.get('location')?.invalid && logementForm.get('location')?.touched" class="text-danger">
+        <small *ngIf="logementForm.get('location')?.errors?.['required']">Location is required.</small>
+      </div>
+    </div>
+
+    <div class="form-group mb-2">
+      <label>Capacity</label>
+      <input formControlName="capacity" class="form-control" />
+      <div *ngIf="logementForm.get('capacity')?.invalid && logementForm.get('capacity')?.touched" class="text-danger">
+        <small *ngIf="logementForm.get('capacity')?.errors?.['required']">Capacity is required.</small>
+      </div>
+    </div>
+
+    
+    <div class="form-group mb-2">
+      <label>Price</label>
+      <input type="number" formControlName="price" class="form-control" />
+      <div *ngIf="logementForm.get('price')?.invalid && logementForm.get('price')?.touched" class="text-danger">
+        <small *ngIf="logementForm.get('price')?.errors?.['required']">Price is required.</small>
+      </div>
+    </div>
+
+    <div class="form-group mb-2">
+      <label>Phone</label>
+      <input formControlName="phone" class="form-control" />
+      <div *ngIf="logementForm.get('phone')?.invalid && logementForm.get('phone')?.touched" class="text-danger">
+        <small *ngIf="logementForm.get('phone')?.errors?.['required']">Phone is required.</small>
+        <small *ngIf="logementForm.get('phone')?.errors?.['pattern']">Phone must be exactly 8 digits.</small>
+      </div>
+    </div>
+
+    <div class="form-group mb-2">
+      <label>Email</label>
+      <input formControlName="email" class="form-control" />
+      <div *ngIf="logementForm.get('email')?.invalid && logementForm.get('email')?.touched" class="text-danger">
+        <small *ngIf="logementForm.get('email')?.errors?.['required']">Email is required.</small>
+        <small *ngIf="logementForm.get('email')?.errors?.['email']">Please enter a valid email.</small>
+      </div>
+    </div>
+
+    <div class="form-group mb-2">
+      <label>Social Media</label>
+      <input formControlName="socialMedia" class="form-control" />
+    </div>
+
+    <div class="form-group mb-2">
+      <label>Single Rooms</label>
+      <input type="number" formControlName="singleRooms" class="form-control" />
+    </div>
+
+    <div class="form-group mb-2">
+      <label>Double Rooms</label>
+      <input type="number" formControlName="doubleRooms" class="form-control" />
+    </div>
+
+    <div class="form-group mb-3">
+      <label>Equipements</label>
+      <div *ngFor="let equipement of allEquipements">
+        <input
+          type="checkbox"
+          [value]="equipement.id"
+          [checked]="logementForm.get('equipements')?.value?.includes(equipement.id)"
+          (change)="onEquipementToggle($event)"
+        />
+        {{ equipement.name }}
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary" [disabled]="logementForm.invalid">Update Logement</button>
+  </form>
+</div>

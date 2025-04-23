@@ -10,5 +10,9 @@
     "secure": false,
     "changeOrigin": true,
     "logLevel": "debug"
+  },
+    "/api": {
+      "target": "http://localhost:9000",
+      "secure": false
+    }
   }
-}
