@@ -1,26 +1,6 @@
 import { NgModule, NO_ERRORS_SCHEMA } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
-import { CommonModule } from '@angular/common';
-import { ToastrModule } from 'ngx-toastr';
-
-// Angular Material imports
-import { MatButtonModule } from '@angular/material/button';
-import { MatDialogModule } from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatIconModule } from '@angular/material/icon';
-import { MatCardModule } from '@angular/material/card';
-import { MatListModule } from '@angular/material/list';
-import { MatGridListModule } from '@angular/material/grid-list';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatChipsModule } from '@angular/material/chips';
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './layouts/main-layout/header/header.component';
@@ -33,18 +13,20 @@ import { HomeComponent } from './pages/home/home.component';
 import { TestimonialComponent } from './layouts/main-layout/testimonial/testimonial.component';
 import { ServiceComponent } from './layouts/main-layout/service/service.component';
 import { GuidesComponent } from './layouts/main-layout/guides/guides.component';
-import { AuthDialogComponent } from './auth-dialog/auth-dialog.component';
-import { LoginComponent } from './auth/login/login.component';
-import { RegisterComponent } from './auth/register/register.component';
-import { ProfileComponent } from './pages/profile/profile.component';
-import { PaymentsComponent } from './pages/payments/payments/payments.component';
 import { TransportComponent } from './layouts/main-layout/transport/transport.component';
 import { ActivityComponent } from './pages/activity/activity.component';
 import { ActivityDetailsComponent } from './pages/activity-details/activity-details.component';
-
-import { JwtInterceptor } from './core/services/jwt.interceptor';
-import { AuthService } from './core/services/auth.service';
-import { AuthGuard } from './core/guards/auth.guard';
+import { HttpClientModule } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatChipsModule } from '@angular/material/chips';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ToastrModule } from 'ngx-toastr';
 import { ReservationModule } from './features/reservation/reservation.module';
 import { PackModule } from './features/pack/pack.module';
 import { SharedModule } from './shared/shared.module';
@@ -52,7 +34,6 @@ import { SharedModule } from './shared/shared.module';
 @NgModule({
   declarations: [
     AppComponent,
-    HeaderComponent,
     FooterComponent,
     AboutComponent,
     ServicesComponent,
@@ -62,55 +43,35 @@ import { SharedModule } from './shared/shared.module';
     TestimonialComponent,
     ServiceComponent,
     GuidesComponent,
-    AuthDialogComponent,
-    LoginComponent,
-    RegisterComponent,
-    ProfileComponent,
-    PaymentsComponent,
     TransportComponent,
     ActivityComponent,
-    ActivityDetailsComponent
+    ActivityDetailsComponent,
   ],
   imports: [
     BrowserModule,
-    BrowserAnimationsModule,
     AppRoutingModule,
-    RouterModule,
     NgbModule,
     HttpClientModule,
     FormsModule,
-    ReactiveFormsModule,
-    CommonModule,
-    MatButtonModule,
-    MatDialogModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatProgressSpinnerModule,
-    MatIconModule,
     MatCardModule,
+    MatButtonModule,
+    MatIconModule,
     MatListModule,
     MatGridListModule,
     MatDividerModule,
     MatChipsModule,
+    BrowserAnimationsModule, // required for toastr
     ToastrModule.forRoot({
       timeOut: 3000,
       positionClass: 'toast-top-right',
-      preventDuplicates: true
+      preventDuplicates: true,
     }),
-    ReservationModule,
+    ReservationModule, 
     PackModule,
-    SharedModule
+    SharedModule // ✅ Add this if missing
   ],
-  providers: [
-    AuthService,
-    AuthGuard,
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: JwtInterceptor,
-      multi: true
-    }
-  ],
-  schemas: [NO_ERRORS_SCHEMA],
+  providers: [],
+  schemas: [NO_ERRORS_SCHEMA],  // Ensures that Angular doesn't throw errors for unknown elements
   bootstrap: [AppComponent]
 })
-export class AppModule {}
+export class AppModule { }

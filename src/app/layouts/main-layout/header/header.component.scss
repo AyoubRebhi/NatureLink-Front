@@ -24,44 +24,10 @@ html, body {
     justify-content: center;
     text-align: center;
 }
-// Custom dialog backdrop
-.mat-mdc-dialog-container .mdc-dialog__surface {
-    border-radius: 16px !important;
-  }
-  
-  .mat-mdc-dialog-container {
-    --mdc-dialog-container-color: transparent !important;
-    --mdc-dialog-with-divider-divider-color: transparent !important;
-  }
-  
-  // Animation
-  @keyframes slideIn {
-    from { transform: translateY(-20px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-  }
-  
-  .custom-dialog-container {
-    animation: slideIn 0.3s ease-out;
-  }
-  /* header.component.scss */
-.btn-icon {
-  position: relative;
-  color: var(--primary);
-  font-size: 1.5rem;
-  
-  .badge {
-    position: absolute;
-    top: -5px;
-    right: -5px;
-    font-size: 0.7rem;
-    padding: 0.25em 0.4em;
-  }
+.navbar-brand::before, .navbar-brand::after {
+    content: none;
+}
+.hero-header {
+    margin-top: 0px; /* Adjust this to push the hero section lower */
 }
 
-.fa-shopping-cart {
-  transition: transform 0.3s ease;
-  
-  &:hover {
-    transform: scale(1.1);
-  }
-}

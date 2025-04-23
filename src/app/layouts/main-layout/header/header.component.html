@@ -1,9 +1,6 @@
 <div class="container-fluid position-relative p-0">
   <nav class="navbar navbar-expand-lg navbar-light px-4 px-lg-5 py-3 py-lg-0">
     <a routerLink="/" class="navbar-brand p-0">
-      <span *ngIf="isAuthenticated" class="welcome-text">
-        Welcome, {{ currentUser?.username }}
-      </span>
       <h1 class="text-primary m-0">NatureLink</h1>
     </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
@@ -11,27 +8,17 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarCollapse">
       <div class="navbar-nav ms-auto py-0">
-        <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-item nav-link">Home</a>
+        <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-item nav-link">
+          Home 
+        </a>
         <a routerLink="/about" routerLinkActive="active" class="nav-item nav-link">About</a>
         <a routerLink="/services" routerLinkActive="active" class="nav-item nav-link">Services</a>
-        <a routerLink="/packages" routerLinkActive="active" class="nav-item nav-link">Packages</a>
         <a routerLink="/activities" routerLinkActive="active" class="nav-item nav-link">Activities</a>
-        <a routerLink="/contact" routerLinkActive="active" class="nav-item nav-link">Contact</a>
-        <a *ngIf="isAuthenticated" routerLink="/profile" routerLinkActive="active" class="nav-item nav-link">Profile</a>
-        <a *ngIf="isAuthenticated" routerLink="/payments" class="btn btn-icon me-3" title="View Payments">
-          <i class="fas fa-shopping-cart"></i>
-          <span *ngIf="paymentService.hasPendingPayments$ | async" class="badge bg-danger">!</span>
-        </a>
-      </div>
-      <div class="d-flex align-items-center ms-lg-4">
-        <div *ngIf="!isAuthenticated" class="auth-buttons">
-          <a routerLink="/auth/login" class="btn btn-outline-primary me-2">Login</a>
-          <a routerLink="/auth/register" class="btn btn-primary rounded-pill py-2 px-4">Register</a>
+        <div class="nav-item dropdown">
         </div>
-        <div *ngIf="isAuthenticated" class="logged-in-section">
-          <button (click)="logout()" class="btn btn-danger">Logout</button>
-        </div>
+        <a routerLink="/contact" class="nav-item nav-link">Contact</a>
       </div>
+      <a routerLink="/register" class="btn btn-primary rounded-pill py-2 px-4 ms-lg-3">Register</a>
     </div>
   </nav>
 
@@ -39,13 +26,17 @@
   <div *ngIf="currentRoute === '/'" class="container-fluid hero-header">
     <div class="container">
       <div class="hero-content">
-        <h1 class="display-3 text-white mb-3 animated slideInDown">Enjoy Your Vacation With Us</h1>
+        <h1 class="display-3 text-white mb-3 animated slideInDown">
+          Enjoy Your Vacation With Us
+        </h1>
         <p class="fs-4 text-white mb-4 animated slideInDown">
           Tempor erat elitr rebum at clita diam amet diam et eos erat ipsum lorem sit
         </p>
         <div class="search-container position-relative w-75 mx-auto animated slideInDown">
           <input class="form-control border-0 rounded-pill w-100 py-3 ps-4 pe-5" type="text" placeholder="Eg: Thailand">
-          <button type="button" class="btn btn-primary rounded-pill py-2 px-4">Search</button>
+          <button type="button" class="btn btn-primary rounded-pill py-2 px-4">
+            Search
+          </button>
         </div>
       </div>
     </div>

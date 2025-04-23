@@ -1,6 +1,4 @@
 import { Component } from '@angular/core';
-import { AuthService } from '../../../../core/services/auth.service';
-import { User } from '../../../../core/models/user.model';
 
 @Component({
   selector: 'app-sidebar-dash',
@@ -9,16 +7,10 @@ import { User } from '../../../../core/models/user.model';
 })
 export class SidebarDashComponent {
   submenus = {
-    activities: false,
-    packs: false
+    activities: false
+    // Add more submenus here as needed
   };
-  currentUser: User | null;
 
-  constructor(private authService: AuthService) {
-    this.currentUser = this.authService.currentUserValue || null;
-  }
-
-  toggleSubmenu(menu: 'activities' | 'packs') {
+  toggleSubmenu(menu: 'activities') {
     this.submenus[menu] = !this.submenus[menu];
-  }
-}
+  }}
