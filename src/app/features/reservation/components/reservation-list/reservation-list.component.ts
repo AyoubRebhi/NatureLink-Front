@@ -1,4 +1,3 @@
-// reservation-list.component.ts
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ReservationService } from 'src/app/core/services/reservation.service';
@@ -39,9 +38,10 @@ export class ReservationListComponent implements OnInit {
   searchQuery: string = '';
   selectedType: TypeReservation | '' = '';
   showModal: boolean = false;
-  showUpcoming: boolean = true; // Default to upcoming reservations
-
+  showReservationTypePopup: boolean = false;
+  showUpcoming: boolean = true;
   typeReservations = Object.values(TypeReservation);
+  TypeReservation = TypeReservation; // Expose enum to template
 
   constructor(
     private reservationService: ReservationService,
@@ -50,7 +50,6 @@ export class ReservationListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Check if user is authenticated
     if (!this.authService.isAuthenticated()) {
       this.router.navigate(['/login'], {
         queryParams: { returnUrl: this.router.url }
@@ -61,7 +60,6 @@ export class ReservationListComponent implements OnInit {
   }
 
   loadReservations(): void {
-    // Get the current user's ID
     const userId = this.authService.getCurrentUserId();
     if (!userId) {
       this.router.navigate(['/login'], {
@@ -88,9 +86,8 @@ export class ReservationListComponent implements OnInit {
         this.reservations = data
           .filter(reservation => {
             if (this.showUpcoming) {
-              return true; // Already filtered by backend
+              return true;
             } else {
-              // Filter for past reservations (dateFin < today)
               return new Date(reservation.dateFin) < new Date();
             }
           })
@@ -139,7 +136,6 @@ export class ReservationListComponent implements OnInit {
   }
 
   updateStatistics(): void {
-    // Reset stats
     this.reservationStats = {
       totalReservations: this.reservations.length,
       byType: {
@@ -154,14 +150,11 @@ export class ReservationListComponent implements OnInit {
       mostFrequentType: ''
     };
 
-    // Compute stats
     this.reservations.forEach(reservation => {
-      // By type
       if (reservation.typeres) {
         this.reservationStats.byType[reservation.typeres]++;
       }
 
-      // By status
       if (reservation.statut) {
         const status = reservation.statut.toLowerCase();
         if (status.includes('confirm')) {
@@ -173,13 +166,11 @@ export class ReservationListComponent implements OnInit {
         }
       }
 
-      // Total clients
       if (reservation.numClients) {
         this.reservationStats.totalClients += reservation.numClients;
       }
     });
 
-    // Find most frequent type
     const typeCounts = Object.entries(this.reservationStats.byType) as [TypeReservation, number][];
     const mostFrequent = typeCounts.reduce((max, [type, count]) => 
       count > max.count ? { type, count } : max, 
@@ -220,7 +211,37 @@ export class ReservationListComponent implements OnInit {
   }
 
   goToAdd(): void {
-    this.router.navigate(['/reservation/create']);
+    if (!this.authService.isAuthenticated()) {
+      this.router.navigate(['/login'], {
+        queryParams: { returnUrl: this.router.url }
+      });
+      return;
+    }
+    this.showReservationTypePopup = true;
+  }
+
+  selectReservationType(type: TypeReservation): void {
+    if (!this.authService.isAuthenticated()) {
+      this.router.navigate(['/login'], {
+        queryParams: { returnUrl: this.router.url }
+      });
+      return;
+    }
+
+    const routes: { [key in TypeReservation]: string } = {
+      [TypeReservation.LOGEMENT]: '/logementsFront',
+      [TypeReservation.EVENT]: '/events/management',
+      [TypeReservation.ACTIVITE]: '/activities',
+      [TypeReservation.TRANSPORT]: '/',
+      [TypeReservation.RESTAURANT]: '/restaurants'
+    };
+
+    this.router.navigate([routes[type]]);
+    this.showReservationTypePopup = false;
+  }
+
+  closeReservationTypePopup(): void {
+    this.showReservationTypePopup = false;
   }
 
   goToUpdate(id?: number): void {

@@ -75,3 +75,5 @@ export class RestaurantService {
     return throwError(() => new Error(errorMessage));
   }
 }
+
+export { Restaurant };

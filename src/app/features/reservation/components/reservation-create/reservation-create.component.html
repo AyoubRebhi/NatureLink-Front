@@ -72,22 +72,7 @@
       </div>
     </div>
 
-    <!-- Statut (Status) -->
-    <div class="form-group mb-3">
-      <label for="statut">Statut:</label>
-      <select
-        id="statut"
-        [(ngModel)]="selectedStatut"
-        name="statut"
-        class="form-control"
-        required
-      >
-        <option *ngFor="let statut of statutOptions" [ngValue]="statut">{{ statut }}</option>
-      </select>
-      <div *ngIf="reservationForm.controls['statut']?.invalid && reservationForm.controls['statut']?.touched" class="text-danger">
-        Please select a status.
-      </div>
-    </div>
+   
 
     <!-- Number of Rooms (only for logement) -->
     <!-- Number of Rooms (only for logement) -->

@@ -111,6 +111,42 @@
     </div>
   </ng-template>
 
+  <!-- Reservation Type Popup -->
+  <div class="travel-modal" [class.active]="showReservationTypePopup" (click)="closeReservationTypePopup()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <button class="modal-close" (click)="closeReservationTypePopup()">
+        <i class="fas fa-times"></i>
+      </button>
+      <div class="modal-header">
+        <h2>Select Reservation Type</h2>
+      </div>
+      <div class="modal-body">
+        <div class="reservation-type-options">
+          <button class="reservation-type-btn" (click)="selectReservationType(TypeReservation.LOGEMENT)">
+            <i class="fas fa-hotel"></i> Accommodation
+          </button>
+          <button class="reservation-type-btn" (click)="selectReservationType(TypeReservation.EVENT)">
+            <i class="fas fa-calendar-check"></i> Event
+          </button>
+          <button class="reservation-type-btn" (click)="selectReservationType(TypeReservation.ACTIVITE)">
+            <i class="fas fa-hiking"></i> Activity
+          </button>
+          <button class="reservation-type-btn" (click)="selectReservationType(TypeReservation.TRANSPORT)">
+            <i class="fas fa-bus"></i> Transport
+          </button>
+          <button class="reservation-type-btn" (click)="selectReservationType(TypeReservation.RESTAURANT)">
+            <i class="fas fa-utensils"></i> Dining
+          </button>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="modal-btn secondary" (click)="closeReservationTypePopup()">
+          <i class="fas fa-times"></i> Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Reservation Detail Modal -->
   <div class="travel-modal" [class.active]="showModal" (click)="closeModal()">
     <div class="modal-content" (click)="$event.stopPropagation()">
@@ -193,3 +229,175 @@
     </div>
   </div>
 </div>
+<style>
+/* Modal Backdrop */
+  .travel-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black backdrop */
+    display: none;
+    z-index: 1000;
+    overflow: auto;
+  
+    &.active {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+  
+  /* Modal Content */
+  .modal-content {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    max-width: 600px;
+    width: 90%;
+    padding: 20px;
+    position: relative;
+    animation: slideIn 0.3s ease-out;
+  
+    @media (max-width: 576px) {
+      width: 95%;
+      padding: 15px;
+    }
+  }
+  
+  /* Modal Animation */
+  @keyframes slideIn {
+    from {
+      transform: translateY(-50px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  
+  /* Modal Close Button */
+  .modal-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: #333;
+    cursor: pointer;
+    transition: color 0.3s;
+  
+    &:hover {
+      color: #007bff;
+    }
+  
+    i {
+      font-size: 18px;
+    }
+  }
+  
+  /* Modal Header */
+  .modal-header {
+    text-align: center;
+    margin-bottom: 20px;
+  
+    h2 {
+      font-size: 24px;
+      color: #333;
+      margin: 0;
+  
+      @media (max-width: 576px) {
+        font-size: 20px;
+      }
+    }
+  }
+  
+  /* Modal Body */
+  .modal-body {
+    padding: 10px 0;
+  }
+  
+  /* Reservation Type Options */
+  .reservation-type-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+  }
+  
+  /* Reservation Type Buttons */
+  .reservation-type-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 24px;
+    background-color: #007bff; /* Matches btn-primary */
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    min-width: 200px; /* Ensures consistent button width */
+    text-align: left;
+  
+    &:hover {
+      background-color: #0056b3; /* Darker blue on hover */
+      transform: translateY(-2px);
+    }
+  
+    &:active {
+      transform: translateY(0);
+    }
+  
+    i {
+      font-size: 20px;
+    }
+  
+    @media (max-width: 576px) {
+      min-width: 150px;
+      padding: 10px 16px;
+      font-size: 14px;
+  
+      i {
+        font-size: 18px;
+      }
+    }
+  }
+  
+  /* Modal Footer */
+  .modal-footer {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  
+  /* Modal Buttons (Cancel) */
+  .modal-btn.secondary {
+    padding: 10px 20px;
+    background-color: #6c757d; /* Matches btn-secondary */
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  
+    &:hover {
+      background-color: #5a6268; /* Darker gray on hover */
+    }
+  
+    i {
+      margin-right: 8px;
+    }
+  
+    @media (max-width: 576px) {
+      padding: 8px 16px;
+      font-size: 14px;
+    }
+  }
+  </style>

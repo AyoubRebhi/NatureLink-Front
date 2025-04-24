@@ -39,3 +39,5 @@ export class TransportService {
   }
   
 }
+
+export { Transport };

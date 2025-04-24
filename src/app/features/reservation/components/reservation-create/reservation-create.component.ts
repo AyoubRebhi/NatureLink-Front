@@ -1,4 +1,3 @@
-// reservation-create.component.ts
 import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { ReservationService } from 'src/app/core/services/reservation.service';
 import { Reservation } from 'src/app/core/models/reservation.model';
@@ -197,4 +196,4 @@ export class ReservationCreateComponent implements OnInit, OnDestroy {
   goBackToList(): void {
     this.router.navigate(['/reservation/reservation-list']);
   }
-} 
+}

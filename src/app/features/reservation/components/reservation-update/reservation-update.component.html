@@ -46,18 +46,7 @@
       />
     </div>
 
-    <!-- Statut -->
-    <div class="form-group mb-3">
-      <label for="statut" class="form-label">Statut:</label>
-      <select 
-        id="statut" 
-        [(ngModel)]="selectedStatut" 
-        name="statut" 
-        class="form-control" 
-        required>
-        <option *ngFor="let statut of statutOptions" [ngValue]="statut">{{ statut }}</option>
-      </select>
-    </div>
+   
 
     <!-- Number of Rooms (only for logement) -->
     <div *ngIf="logementId" class="form-group mb-3">

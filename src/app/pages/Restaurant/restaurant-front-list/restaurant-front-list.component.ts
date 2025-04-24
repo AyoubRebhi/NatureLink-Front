@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { RestaurantService } from 'src/app/core/services/restaurant.service';
 import { Restaurant } from 'src/app/core/models/restaurant';
+import { AuthService } from 'src/app/core/services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-restaurant-front-list',
@@ -14,7 +16,11 @@ export class RestaurantFrontListComponent implements OnInit {
   isLoading = true;
   searchTerm = '';
 
-  constructor(private restaurantService: RestaurantService) {}
+  constructor(
+    private restaurantService: RestaurantService,
+    private authService: AuthService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.loadRestaurants();
@@ -68,5 +74,21 @@ export class RestaurantFrontListComponent implements OnInit {
 
   getImage(filename: string | undefined): string {
     return filename ? this.restaurantService.getImage(filename) : 'assets/images/default.jpg';
+  }
+
+  bookRestaurant(restaurantId: number): void {
+    if (!this.isAuthenticated()) {
+      this.router.navigate(['/login'], {
+        queryParams: { returnUrl: this.router.url }
+      });
+      return;
+    }
+    this.router.navigate(['/reservation/create'], {
+      queryParams: { type: 'RESTAURANT', id: restaurantId }
+    });
+  }
+
+  isAuthenticated(): boolean {
+    return this.authService.isAuthenticated();
   }
 }
