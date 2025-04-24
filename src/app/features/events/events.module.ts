@@ -8,8 +8,8 @@ import { EventAddComponent } from './events/components/event-add/event-add.compo
 import { EevntformComponent } from './events/components/eevntform/eevntform.component';
 import { EventUserlistComponent } from './events/components/event-userlist/event-userlist.component';
 import { EventUpdateComponent } from './events/components/event-update/event-update.component';
-import { FilterByTitlePipe } from 'src/app/shared/pipes/filter-by-title.pipe';
-import { FilterByDatePipe } from 'src/app/shared/pipes/filter-by-date.pipe';
+import { FilterByTitlePipe } from 'src/app/shared01/pipes/filter-by-title.pipe';
+import { FilterByDatePipe } from 'src/app/shared01/pipes/filter-by-date.pipe';
 
 @NgModule({
   declarations: [

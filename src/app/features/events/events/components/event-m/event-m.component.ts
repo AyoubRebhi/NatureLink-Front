@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { EventServiceService } from 'src/app/event-service.service';
-import { FilterByTitlePipe } from 'src/app/shared/pipes/filter-by-title.pipe';
+import { EventServiceService } from 'src/app/core/services/event-service.service';
+
+import { FilterByTitlePipe } from 'src/app/shared01/pipes/filter-by-title.pipe';
 import { jsPDF } from 'jspdf';
 @Component({
   selector: 'app-event-m',

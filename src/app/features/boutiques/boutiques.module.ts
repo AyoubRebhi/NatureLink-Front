@@ -8,7 +8,7 @@ import { BoutiqueAddComponent } from './components/boutique-add/boutique-add.com
 import { BoutiqueProductAddComponent } from './components/boutique-product-add/boutique-product-add.component';
 import { BoutiqueUpdateComponent } from './components/boutique-update/boutique-update.component';
 import { BoutiqueDeleteComponent } from './components/boutique-delete/boutique-delete.component';
-import { FilterbPipe } from 'src/app/shared/filterb.pipe';
+import { FilterbPipe } from 'src/app/shared01/filterb.pipe';
 import { FormsModule } from '@angular/forms';
 @NgModule({
   declarations: [

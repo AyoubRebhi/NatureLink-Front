@@ -15,8 +15,8 @@ import { ServiceComponent } from './layouts/main-layout/service/service.componen
 import { GuidesComponent } from './layouts/main-layout/guides/guides.component';
 import { CommonModule } from '@angular/common';
 import { FilterPipe } from './filter.pipe';
-import { FilterByTitlePipe } from './shared/pipes/filter-by-title.pipe';
-import { FilterByDatePipe } from './shared/pipes/filter-by-date.pipe';
+import { FilterByTitlePipe } from './shared01/pipes/filter-by-title.pipe';
+import { FilterByDatePipe } from './shared01/pipes/filter-by-date.pipe';
 
 @NgModule({
   declarations: [

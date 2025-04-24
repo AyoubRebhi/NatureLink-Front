@@ -1,6 +1,6 @@
 declare const google: any;
 import { Component, OnInit } from '@angular/core';
-import { BoutiqueService } from 'src/app/services/boutique.service';
+import { BoutiqueService } from 'src/app/core/services/boutique.service';
 import { Produit } from 'src/app/core/models/produit.module';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';

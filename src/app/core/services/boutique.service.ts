@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Boutique} from '../core/models/boutique.module';
-import { Produit } from '../core/models/produit.module';
+import { Boutique} from 'src/app/core/models/boutique.module';
+import { Produit } from 'src/app/core/models/produit.module';
 
 
 

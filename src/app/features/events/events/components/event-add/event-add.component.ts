@@ -1,5 +1,5 @@
 import { Component,OnInit } from '@angular/core';
-import { EventServiceService } from 'src/app/event-service.service';
+import { EventServiceService } from 'src/app/core/services/event-service.service';
 import { FormBuilder,FormGroup, Validators } from '@angular/forms';
 import { Event } from 'src/app/core/models/event.module';
 import { Router } from '@angular/router';

@@ -1,5 +1,5 @@
 import { Component,OnInit } from '@angular/core';
-import { BoutiqueService } from 'src/app/services/boutique.service';
+import { BoutiqueService } from 'src/app/core/services/boutique.service';
 import { ActivatedRoute } from '@angular/router';
 @Component({
   selector: 'app-list-boutiques',

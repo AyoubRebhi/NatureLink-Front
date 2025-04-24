@@ -3,7 +3,7 @@ declare const google: any;
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Boutique } from 'src/app/core/models/boutique.module';
-import { BoutiqueService } from 'src/app/services/boutique.service';
+import { BoutiqueService } from 'src/app/core/services/boutique.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 

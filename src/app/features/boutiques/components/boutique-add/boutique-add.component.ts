@@ -4,7 +4,7 @@ import { Component, OnInit,AfterViewInit } from '@angular/core';
 import { FormBuilder,FormGroup, Validators } from '@angular/forms';
 import { Boutique } from 'src/app/core/models/boutique.module';
 import { Produit } from 'src/app/core/models/produit.module';
-import { BoutiqueService } from 'src/app/services/boutique.service';
+import { BoutiqueService } from 'src/app/core/services/boutique.service';
 import { Router } from '@angular/router';
 @Component({
   selector: 'app-boutique-add',
