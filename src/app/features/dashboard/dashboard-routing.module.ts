@@ -37,7 +37,57 @@ const routes: Routes = [
     path: '',
     component: DashboardLayoutComponent,
     children: [
+      { path: '', redirectTo: 'restaurants', pathMatch: 'full' },
       { path: 'dashboard', component: DashboardComponent },
+
+      // Restaurant routes
+      {
+        path: 'restaurants',
+        loadChildren: () => import('./restaurant/restaurant.module').then(m => m.RestaurantModule)
+      },
+      {
+        path: 'restaurants/details/:restaurantId/menus',
+        loadChildren: () => import('./menu/menu.module').then(m => m.MenuModule)
+      },
+
+      // Monument routes
+      {
+        path: 'monument',
+        loadChildren: () => import('./monument/monument.module').then(m => m.MonumentModule)
+      },
+      {
+        path: 'monument/details/:monumentId',
+        children: [
+          { path: 'edit', loadChildren: () => import('./monument/monument.module').then(m => m.MonumentModule) },
+          { path: 'add', loadChildren: () => import('./monument/monument.module').then(m => m.MonumentModule) }
+        ]
+      },
+
+      // Guide routes
+      {
+        path: 'guides',
+        loadChildren: () => import('./guide/guide.module').then(m => m.GuideModule)
+      },
+      {
+        path: 'guides/details/:guideId',
+        children: [
+          { path: 'edit', loadChildren: () => import('./guide/guide.module').then(m => m.GuideModule) },
+          { path: 'add', loadChildren: () => import('./guide/guide.module').then(m => m.GuideModule) }
+        ]
+      },
+
+      // Visit routes
+      {
+        path: 'visit',
+        loadChildren: () => import('./visit/visit.module').then(m => m.VisitModule)
+      },
+      {
+        path: 'visit/details/:visitId',
+        children: [
+          { path: 'edit', loadChildren: () => import('./visit/visit.module').then(m => m.VisitModule) },
+          { path: 'add', loadChildren: () => import('./visit/visit.module').then(m => m.VisitModule) }
+        ]
+      },
 
       // Clothing and Food routes
       { path: 'addclothing', component: AddClothingComponent },
@@ -68,23 +118,21 @@ const routes: Routes = [
       { path: 'list-admin', component: PackListAComponent },
       { path: 'update/:id', component: PackUpdateComponent },
 
-      // Lazy-loaded routes
+      // Lazy-loaded routes from both files
       {
         path: 'transport',
-        loadChildren: () =>
-          import('../transport/transport.module').then((m) => m.TransportModule),
+        loadChildren: () => import('../transport/transport.module').then(m => m.TransportModule)
       },
       {
         path: 'activity',
-        loadChildren: () =>
-          import('../activity/activity.module').then((m) => m.ActivityModule),
-      },
-    ],
-  },
+        loadChildren: () => import('../activity/activity.module').then(m => m.ActivityModule)
+      }
+    ]
+  }
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule],
+  exports: [RouterModule]
 })
 export class DashboardRoutingModule {}

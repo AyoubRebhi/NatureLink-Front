@@ -10,7 +10,7 @@ import { SidebarDashComponent } from '../../layouts/dashboard/dashboard-layout/s
 
 import { DashboardRoutingModule } from './dashboard-routing.module';
 import { LogementModule } from '../logement/logement/logement.module';
-import { SharedModule } from 'src/app/shared/shared.module';
+import { SharedModule } from '../../shared/shared.module';
 //import { NgChartsModule } from 'ng2-charts';
 
 @NgModule({

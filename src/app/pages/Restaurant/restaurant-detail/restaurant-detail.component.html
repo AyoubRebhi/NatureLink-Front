@@ -1,0 +1,96 @@
+<div class="container py-5 bg-light">
+  <div class="row justify-content-center">
+    <div class="col-lg-10">
+
+      <!-- Informations du Restaurant -->
+      <div class="card shadow-sm border-0 rounded-4 mb-4">
+        <img
+          [src]="getImage(restaurant?.image)"
+          (error)="onImageError($event)"
+          [alt]="'Image of ' + restaurant?.nom"
+          class="card-img-top rounded-top-4"
+          style="height: 280px; object-fit: cover;"
+        />
+        <div class="card-body">
+          <h3 class="fw-bold text-primary mb-3">{{ restaurant?.nom }}</h3>
+
+          <p class="mb-2">
+            <i class="bi bi-geo-alt-fill text-danger me-2"></i>
+            <strong>Localisation:</strong> {{ restaurant?.localisation }}
+          </p>
+
+          <p class="mb-2">
+            <i class="bi bi-utensils text-primary me-2"></i>
+            <strong>Type de cuisine:</strong> {{ restaurant?.typeCuisine }}
+          </p>
+
+          <p class="mb-2">
+            <i class="bi bi-clock text-info me-2"></i>
+            <strong>Horaires d'ouverture:</strong> {{ restaurant?.horairesOuverture }}
+          </p>
+
+
+
+          <hr />
+          <p class="fst-italic text-muted">{{ restaurant?.description }}</p>
+        </div>
+      </div>
+
+      <!-- Menus proposés -->
+      <div class="card shadow-sm border-0 rounded-4">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center rounded-top-4">
+          <h5 class="mb-0">
+            <i class="bi bi-menu-button-wide me-2"></i>Menus proposés
+          </h5>
+          <button class="btn btn-outline-light btn-sm" (click)="openAllergenChatbot()">
+            <i class="bi bi-shield-check me-1"></i> Vérifier les allergènes
+          </button>
+        </div>
+
+        <div class="card-body">
+
+          <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+
+          <div class="table-responsive">
+            <table class="table align-middle table-hover text-center">
+              <thead class="table-light">
+                <tr>
+                  <th></th>
+                  <th>Plats</th>
+                  <th>Prix (€)</th>
+                  <th>Ingrédients</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let menu of filteredMenus">
+                  <td>
+                    <img
+                    [src]="getMenuImageUrl(menu.image)"
+                    (error)="onImageError($event)"
+                    [alt]="'Image of ' + menu.plats"
+                    class="rounded shadow-sm"
+                    style="width: 60px; height: 60px; object-fit: cover;" />
+                  </td>
+                  <td class="fw-semibold">{{ menu.plats }}</td>
+                  <td>{{ menu.prixMoyen | number:'1.2-2' }}</td>
+                  <td class="text-muted small">{{ menu.ingredientsDetails }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div *ngIf="filteredMenus.length === 0 && !isLoading" class="text-center py-4 text-muted">
+            <p>Aucun menu trouvé{{ isFiltered ? ' pour cet allergène' : '' }}.</p>
+          </div>
+
+          <div *ngIf="isLoading" class="text-center py-4">
+            <div class="spinner-border text-primary" role="status"></div>
+            <p class="mt-2 text-muted">Chargement des menus...</p>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

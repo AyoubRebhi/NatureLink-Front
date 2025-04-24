@@ -1,0 +1,46 @@
+<!-- Allergen Chatbot Window - Theme-consistent styling -->
+<div class="card shadow-sm border-0 rounded-4 mt-4">
+  <div class="card-header bg-primary text-white rounded-top-4 d-flex align-items-center">
+    <i class="bi bi-shield-check me-2 fs-5"></i>
+    <h5 class="mb-0">Allergen Assistant</h5>
+  </div>
+  <div class="card-body bg-light">
+    <div class="mb-3">
+      <label for="question" class="form-label fw-semibold text-secondary">
+        Ask about menu items
+      </label>
+      <input
+        type="text"
+        class="form-control"
+        id="question"
+        [(ngModel)]="question"
+        placeholder="Example: gluten-free options"
+        [disabled]="isLoading"
+        (keyup.enter)="submitQuestion()"
+      />
+    </div>
+
+    <button
+      class="btn btn-primary"
+      (click)="submitQuestion()"
+      [disabled]="isLoading || !question"
+    >
+      <i class="bi bi-send me-1"></i>
+      {{ isLoading ? 'Sending...' : 'Submit' }}
+    </button>
+
+    <div *ngIf="error" class="alert alert-danger mt-3">
+      <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ error }}
+    </div>
+
+    <div *ngIf="response" class="alert alert-primary mt-3">
+      <div class="d-flex align-items-start">
+        <i class="bi bi-info-circle-fill me-2 mt-1"></i>
+        <div>
+          <strong>Response:</strong>
+          <div class="mt-1">{{ response }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

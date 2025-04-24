@@ -1,0 +1,39 @@
+.menu-image {
+  transition: opacity 0.3s ease;
+}
+
+.menu-image.error {
+  opacity: 0.5;
+  background-color: #f8f9fa;
+}
+
+.alert {
+  margin-bottom: 1.5rem;
+}
+
+.spinner-border {
+  margin: 2rem auto;
+}
+
+.card {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.table {
+  margin-bottom: 0;
+
+  .text-truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.btn {
+  transition: background-color 0.3s ease;
+}
+
+.text-primary {
+  cursor: pointer;
+  text-decoration: underline;
+}

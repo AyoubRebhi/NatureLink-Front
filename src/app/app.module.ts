@@ -78,6 +78,11 @@ import { PostUserComponent } from './features/Post/post-user/post-user.component
 import { CarbonCalculatorComponent } from './features/CarbonCalculator/carbon-calculator/carbon-calculator.component';
 import { SpeechComponent } from './speech/speech.component';
 import { TraveComponent } from './features/travel/trave/trave.component';
+//feten
+import { RestaurantModule } from './features/dashboard/restaurant/restaurant.module';
+import { VisitModule } from './features/dashboard/visit/visit.module';
+import { MenuModule } from './features/dashboard/menu/menu.module';
+import { MonumentFrontComponent } from './pages/Monument/monument-front/monument-front.component';
 
 // Services and Guards
 import { AuthService } from './core/services/auth.service';
@@ -157,6 +162,10 @@ import { SharedModule } from './shared/shared.module';
     PackModule,
     SharedModule,
     DashboardModule,
+    RestaurantModule,
+    VisitModule,
+    MenuModule,
+    
   ],
   providers: [
     AuthService,

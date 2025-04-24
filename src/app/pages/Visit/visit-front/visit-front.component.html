@@ -1,0 +1,83 @@
+<div class="container py-4">
+  <div class="visit-header mb-4">
+    <h1 class="visit-title mb-3">Upcoming Guided Visits</h1>
+
+  </div>
+
+  <!-- Loading Indicator -->
+  <div *ngIf="isLoading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-2">Loading visits...</p>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show">
+    {{ errorMessage }}
+    <button type="button" class="btn-close" (click)="errorMessage = ''"></button>
+  </div>
+
+  <!-- No Results -->
+  <div *ngIf="!isLoading && filteredVisits.length === 0" class="text-center py-5">
+    <i class="bi bi-calendar-x display-4 text-muted mb-3"></i>
+    <h4>No visits found</h4>
+    <p class="text-muted">Try adjusting your search criteria</p>
+  </div>
+
+  <!-- Visits Table -->
+  <div *ngIf="!isLoading && filteredVisits.length > 0">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle">
+        <thead class="table-light">
+          <tr>
+            <th (click)="sortVisits('date')" class="sortable">
+              Date <i [class]="getSortIcon('date')"></i>
+            </th>
+            <th (click)="sortVisits('time')" class="sortable">
+              Time <i [class]="getSortIcon('time')"></i>
+            </th>
+
+            <th>Price</th>
+            <th>Duration</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let visit of paginatedVisits">
+            <td>{{ formatDate(visit.date) }}</td>
+            <td>{{ visit.time }}</td>
+            <td>{{ visit.price  }}</td>
+            <td>{{ visit.duration }}</td>
+            <td>
+              <button (click)="viewDetails()" class="btn btn-sm btn-outline-primary">
+                <i class="bi bi-eye"></i> View
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <nav *ngIf="totalPages > 1" aria-label="Page navigation" class="mt-4">
+      <ul class="pagination justify-content-center">
+        <li class="page-item" [class.disabled]="currentPage === 1">
+          <a class="page-link" (click)="changePage(currentPage - 1)" aria-label="Previous">
+            <span aria-hidden="true">&laquo;</span>
+          </a>
+        </li>
+
+        <li *ngFor="let page of getPages()" class="page-item" [class.active]="page === currentPage">
+          <a class="page-link" (click)="changePage(page)">{{ page }}</a>
+        </li>
+
+        <li class="page-item" [class.disabled]="currentPage === totalPages">
+          <a class="page-link" (click)="changePage(currentPage + 1)" aria-label="Next">
+            <span aria-hidden="true">&raquo;</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</div>

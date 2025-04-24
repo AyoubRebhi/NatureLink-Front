@@ -20,6 +20,10 @@ import { SpeechComponent } from './speech/speech.component';
 import { TraveComponent } from './features/travel/trave/trave.component';
 import { AuthGuard } from './core/guards/auth.guard';
 import { Role } from './core/models/user.model';
+import { MonumentFrontComponent } from './pages/Monument/monument-front/monument-front.component';
+import { RestaurantDetailComponent } from './pages/Restaurant/restaurant-detail/restaurant-detail.component';
+import { RestaurantFrontListComponent } from './pages/Restaurant/restaurant-front-list/restaurant-front-list.component';
+import { VisitFrontComponent } from './pages/Visit/visit-front/visit-front.component';
 
 const routes: Routes = [
   {
@@ -40,6 +44,10 @@ const routes: Routes = [
       { path: 'carbonPrint', component: CarbonCalculatorComponent },
       { path: 'test', component: SpeechComponent },
       { path: 'recommandation', component: TraveComponent },
+      { path: 'monuments', component: MonumentFrontComponent },
+      { path: 'visit', component:VisitFrontComponent  },
+      { path: 'restaurants', component: RestaurantFrontListComponent },
+      { path: 'restaurants/:id', component: RestaurantDetailComponent },
      
       // Lazy-loaded modules for frontend
       {
