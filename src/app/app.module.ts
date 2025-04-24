@@ -28,8 +28,6 @@ import { ToastrModule } from 'ngx-toastr';
 
 // Core and Shared Modules
 import { AppRoutingModule } from './app-routing.module';
-import { SharedModule } from './shared/shared.module';
-
 // Feature Modules
 import { ReservationModule } from './features/reservation/reservation.module';
 import { PackModule } from './features/pack/pack.module';
@@ -61,6 +59,9 @@ import { RegisterComponent } from './auth/register/register.component';
 import { LogementListFrontComponent } from './features/logement/components/logement-list-front/logement-list-front.component';
 import { LogementDetailComponent } from './features/logement/components/logement-detail/logement-detail.component';
 import { LogementStatsComponent } from './features/logement-stats/logement-stats.component';
+//iheb
+import { FilterByTitlePipe } from './shared01/pipes/filter-by-title.pipe';
+import { FilterByDatePipe } from './shared01/pipes/filter-by-date.pipe';
 
 // Post, Food, Clothing Components
 import { PostFormComponent } from './features/Post/post-form/post-form.component';
@@ -153,7 +154,7 @@ import { JwtInterceptor } from './core/services/jwt.interceptor';
     // Feature Modules
     ReservationModule,
     PackModule,
-    SharedModule,
+    //SharedModule,
     DashboardModule,
   ],
   providers: [
