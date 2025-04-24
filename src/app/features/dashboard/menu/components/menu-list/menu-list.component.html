@@ -1,29 +1,21 @@
-<div id="menuList">
-  <!-- Section de recherche et bouton d'ajout -->
-  <div class="row">
+<div id="menuList" class="container my-4">
+  <!-- Search Bar -->
+  <div class="row mb-4">
     <div class="col-lg-12">
       <div class="card">
         <div class="card-body">
           <div class="row g-3 align-items-center">
-            <div class="col-md-8">
+            <div class="col-xxl">
               <div class="search-box position-relative">
                 <input
                   type="text"
-                  class="form-control ps-5"
+                  class="form-control"
                   [(ngModel)]="searchTerm"
-                  (input)="onSearchChange()"
+                  (ngModelChange)="onSearchChange()"
                   placeholder="Rechercher un menu..."
-                />
-                <i class="ri-search-line search-icon position-absolute start-0 top-50 translate-middle-y ms-3"></i>
+                  aria-label="Rechercher un menu" />
+                <i class="ri-search-line search-icon position-absolute top-50 end-0 translate-middle-y me-3"></i>
               </div>
-            </div>
-            <div class="col-md-4 text-end">
-              <button
-                class="btn btn-primary"
-                [routerLink]="['/admin/restaurants/details', restaurantId, 'menus', 'new']"
-              >
-                <i class="bi bi-plus-circle me-1"></i> Ajouter un Menu
-              </button>
             </div>
           </div>
         </div>
@@ -31,65 +23,116 @@
     </div>
   </div>
 
-  <!-- Tableau des menus -->
-  <div class="row mt-4">
+
+  <!-- All Menus Table -->
+  <div class="row">
     <div class="col-lg-12">
       <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
           <h5 class="card-title mb-0">
-            Menus <span class="badge bg-primary ms-2">{{ filteredMenus.length }}</span>
+            Menus
+            <span class="badge bg-dark ms-1">{{ filteredMenus.length }}</span>
           </h5>
-          <span *ngIf="isLoading" class="spinner-border spinner-border-sm"></span>
-        </div>
-
-        <div class="card-body">
-          <!-- Message d'erreur -->
-          <div *ngIf="errorMessage" class="alert alert-danger mb-3">
-            <i class="bi bi-exclamation-triangle me-2"></i> {{ errorMessage }}
+          <div>
+            <button class="btn btn-success btn-sm me-2" (click)="navigateToAddMenu()">
+              <i class="bi bi-plus-circle me-1"></i> Ajouter un menu
+            </button>
+            <button *ngIf="isFiltered" class="btn btn-warning btn-sm me-2" (click)="resetFilter()">
+              <i class="bi bi-arrow-counterclockwise me-1"></i> Réinitialiser le filtre
+            </button>
+            <button class="btn btn-info btn-sm" (click)="openAllergenChatbot()">
+              <i class="bi bi-shield-check me-1"></i> Vérifier les allergènes
+            </button>
           </div>
-
-          <!-- Tableau -->
+        </div>
+        <div class="card-body">
+          <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
           <div class="table-responsive">
-            <table class="table table-hover table-nowrap align-middle">
+            <table class="table table-centered table-nowrap">
               <thead class="table-light">
                 <tr>
-                  <th scope="col" class="w-10">ID</th>
-                  <th scope="col">Plats</th>
-                  <th scope="col" class="text-end">Prix Moyen</th>
-                  <th scope="col" class="text-end">Actions</th>
+                  <th>Image</th>
+                  <th>Plats</th>
+                  <th>Prix Moyen (€)</th>
+                  <th>Ingrédients</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 <tr *ngFor="let menu of filteredMenus">
-                  <td>{{ menu.id }}</td>
-                  <td>{{ menu.plats }}</td>
-                  <td class="text-end">{{ menu.prixMoyen | currency:'EUR':'symbol':'1.2-2' }}</td>
-                  <td class="text-end">
-                    <div class="btn-group" role="group">
-                      <div class="col-md-4 text-end" *ngIf="restaurantId">
-                        <button
-                         class="btn btn-primary"
-                         [routerLink]="['/admin/restaurants/details', restaurantId, 'menus', menu.id, 'edit']"
-                        >
-                        <i class="bi bi-pencil me-1"></i> Modifier
-                       </button>
+                  <td>
+                    <img
+                      [src]="'http://localhost:9000/uploads/images/' + menu.image"
+                      (error)="onImageError($event)"
+                      [alt]="'Image de ' + menu.plats"
+                      style="width: 60px; height: 60px; object-fit: cover;"
+                      class="rounded" />
+                  </td>
 
-                      </div>
-                      <button
-                        class="btn btn-sm btn-danger"
-                        (click)="menu.id ? deleteMenu(menu.id) : null"
-                        [disabled]="isLoading || !menu.id"
-                      >
-                        <i class="bi bi-trash"></i> Supprimer
-                      </button>
-                    </div>
+                  <td class="text-truncate" style="max-width: 200px;">{{ menu.plats }}</td>
+                  <td>{{ menu.prixMoyen | number:'1.2-2' }}</td>
+                  <td class="text-truncate" style="max-width: 250px;">
+                    {{ menu.ingredientsDetails || 'Non spécifié' }}
+                  </td>
+                  <td>
+                    <button
+                      class="btn btn-sm btn-info me-2"
+                      [ngStyle]="{ 'background-color': '#101011', 'color': 'white' }"
+                      [routerLink]="['/admin/restaurants/details', restaurantId, 'menus', menu.id]">
+                      <i class="bi bi-eye"></i> Voir
+                    </button>
+                    <button
+                      class="btn btn-sm btn-warning me-2"
+                      [ngStyle]="{ 'background-color': '#4a87c5', 'color': 'white' }"
+                      [routerLink]="['/admin/restaurants/details', restaurantId, 'menus', menu.id, 'edit']">
+                      <i class="bi bi-pencil"></i> Modifier
+                    </button>
+                    <button
+                      class="btn btn-sm btn-danger"
+                      [ngStyle]="{ 'background-color': '#c92010', 'color': 'white' }"
+                      (click)="openDeleteModal(confirmDeleteModal, menu.id!)">
+                      <i class="bi bi-trash"></i> Supprimer
+                    </button>
                   </td>
                 </tr>
               </tbody>
             </table>
+
+            <div *ngIf="filteredMenus.length === 0 && !isLoading" class="text-center py-4">
+              <p class="text-muted">
+                Aucun menu trouvé{{ isFiltered ? ' pour ce filtre' : '' }}.
+                <a href="javascript:void(0)" (click)="navigateToAddMenu()" class="text-primary">
+                  Ajouter un menu maintenant
+                </a>.
+              </p>
+            </div>
+
+            <div *ngIf="isLoading" class="text-center py-4">
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Chargement...</span>
+              </div>
+              <p class="text-muted mt-2">Chargement des menus...</p>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
+
+  <!-- Deletion Confirmation Modal -->
+  <ng-template #confirmDeleteModal let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title">Confirmer la suppression</h5>
+      <button type="button" class="btn-close" aria-label="Fermer" (click)="modal.dismiss('cancel')"></button>
+    </div>
+    <div class="modal-body">
+      Êtes-vous sûr de vouloir supprimer ce menu ? Cette action est irréversible.
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="modal.dismiss('cancel')">Annuler</button>
+      <button type="button" class="btn btn-danger" (click)="confirmDelete(); modal.close('confirmed')">
+        Confirmer la suppression
+      </button>
+    </div>
+  </ng-template>
 </div>

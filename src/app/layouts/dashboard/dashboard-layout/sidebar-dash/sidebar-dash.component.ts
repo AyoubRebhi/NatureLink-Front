@@ -6,11 +6,15 @@ import { Component } from '@angular/core';
   styleUrls: ['./sidebar-dash.component.scss']
 })
 export class SidebarDashComponent {
-  submenus = {
-    activities: false
-    // Add more submenus here as needed
+  submenus: { [key: string]: boolean } = {
+    activities: false,
+    monuments: false,
+    restaurant: false,
+    visit: false
   };
 
-  toggleSubmenu(menu: 'activities') {
+
+  toggleSubmenu(menu: string) {
     this.submenus[menu] = !this.submenus[menu];
-  }}
+  }
+}

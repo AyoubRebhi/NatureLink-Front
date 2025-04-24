@@ -1,20 +1,21 @@
 <div class="container mt-4">
-  <h2 class="mb-4">Modifier la Visite</h2>
+  <h2 class="mb-4">Modifier une Visite</h2>
 
   <form [formGroup]="visitForm" (ngSubmit)="onSubmit()" class="needs-validation" novalidate>
-    <!-- Messages d'alerte -->
+    <!-- Success Message -->
     <div *ngIf="successMessage" class="alert alert-success alert-dismissible fade show">
       {{ successMessage }}
-      <button type="button" class="btn-close" (click)="successMessage = ''"></button>
+      <button type="button" class="btn-close" (click)="successMessage = ''" aria-label="Close"></button>
     </div>
 
+    <!-- Error Message -->
     <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show">
       {{ errorMessage }}
-      <button type="button" class="btn-close" (click)="errorMessage = ''"></button>
+      <button type="button" class="btn-close" (click)="errorMessage = ''" aria-label="Close"></button>
     </div>
 
     <div class="row">
-      <!-- Champ Date -->
+      <!-- Date Field -->
       <div class="col-md-6 mb-3">
         <label for="date" class="form-label">Date</label>
         <input type="date" id="date" formControlName="date" class="form-control"
@@ -24,19 +25,19 @@
         </div>
       </div>
 
-      <!-- Champ Heure -->
+      <!-- Time Field -->
       <div class="col-md-6 mb-3">
         <label for="time" class="form-label">Heure</label>
         <input type="time" id="time" formControlName="time" class="form-control"
                [class.is-invalid]="visitForm.get('time')?.invalid && (visitForm.get('time')?.touched || visitForm.get('time')?.dirty)">
         <div *ngIf="visitForm.get('time')?.invalid && (visitForm.get('time')?.touched || visitForm.get('time')?.dirty)" class="invalid-feedback">
-          L'heure est obligatoire (format HH:MM).
+          L'heure est obligatoire.
         </div>
       </div>
     </div>
 
     <div class="row">
-      <!-- Champ Prix -->
+      <!-- Price Field -->
       <div class="col-md-6 mb-3">
         <label for="price" class="form-label">Prix (€)</label>
         <div class="input-group">
@@ -45,11 +46,12 @@
           <span class="input-group-text">€</span>
         </div>
         <div *ngIf="visitForm.get('price')?.invalid && (visitForm.get('price')?.touched || visitForm.get('price')?.dirty)" class="invalid-feedback">
-          Le prix doit être un nombre positif.
+          <span *ngIf="visitForm.get('price')?.errors?.['required']">Le prix est obligatoire.</span>
+          <span *ngIf="visitForm.get('price')?.errors?.['min']">Le prix doit être positif.</span>
         </div>
       </div>
 
-      <!-- Champ Durée -->
+      <!-- Duration Field -->
       <div class="col-md-6 mb-3">
         <label for="duration" class="form-label">Durée</label>
         <input type="text" id="duration" formControlName="duration" class="form-control" placeholder="Ex: 2h30"
@@ -61,44 +63,14 @@
     </div>
 
     <div class="row">
-      <!-- Champ Monument -->
+      <!-- Monument Field -->
       <div class="col-md-6 mb-3">
         <label for="monumentId" class="form-label">Monument</label>
         <select id="monumentId" formControlName="monumentId" class="form-select"
                 [class.is-invalid]="visitForm.get('monumentId')?.invalid && (visitForm.get('monumentId')?.touched || visitForm.get('monumentId')?.dirty)">
           <option value="">Sélectionnez un monument</option>
-          <option *ngFor="let monument of monuments" [value]="monument.id">
-            {{ monument.nom }}
+          <option *ngFor="let monument of monuments" [value]="monument.id" [selected]="monument.id === visitForm.value.monumentId">
+            {{ monument.name }}
           </option>
         </select>
         <div *ngIf="visitForm.get('monumentId')?.invalid && (visitForm.get('monumentId')?.touched || visitForm.get('monumentId')?.dirty)" class="invalid-feedback">
-          Veuillez sélectionner un monument.
-        </div>
-      </div>
-
-      <!-- Champ Guide -->
-      <div class="col-md-6 mb-4">
-        <label for="guideId" class="form-label">Guide</label>
-        <select id="guideId" formControlName="guideId" class="form-select"
-                [class.is-invalid]="visitForm.get('guideId')?.invalid && (visitForm.get('guideId')?.touched || visitForm.get('guideId')?.dirty)">
-          <option value="">Sélectionnez un guide</option>
-          <option *ngFor="let guide of guides" [value]="guide.id">
-            {{ guide.firstName }} {{ guide.lastName }}
-          </option>
-        </select>
-        <div *ngIf="visitForm.get('guideId')?.invalid && (visitForm.get('guideId')?.touched || visitForm.get('guideId')?.dirty)" class="invalid-feedback">
-          Veuillez sélectionner un guide.
-        </div>
-      </div>
-    </div>
-
-    <!-- Boutons -->
-    <div class="d-flex justify-content-between mt-4">
-      <button type="button" class="btn btn-outline-secondary" (click)="onCancel()" [disabled]="isLoading">
-        <i class="bi bi-arrow-left me-2"></i>Retour
-      </button>
-      
-      <button type="submit" [disabled]="visitForm.invalid" class="btn btn-primary">Mettre à jour</button>
-    </div>
-  </form>
-</div>

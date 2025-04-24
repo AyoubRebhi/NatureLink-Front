@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import { MonumentService } from 'src/app/core/services/monument.service';
+import { Component, OnInit, TemplateRef } from '@angular/core';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Monument } from 'src/app/core/models/monument';
+import { MonumentService } from 'src/app/core/services/monument.service';
+
 
 @Component({
   selector: 'app-monument-list',
@@ -9,48 +11,76 @@ import { Monument } from 'src/app/core/models/monument';
 })
 export class MonumentListComponent implements OnInit {
   monuments: Monument[] = [];
-  filteredRestaurants: Monument[] = [];
+  filteredMonuments: Monument[] = [];
   searchTerm: string = '';
-  errorMessage: string = '';
+  errorMessage: string | null = null;
+  isLoading = false;
+  private monumentIdToDelete: number | null = null;
 
-  constructor(private monumentService: MonumentService) {}
+  constructor(
+    private monumentService: MonumentService,
+    private modalService: NgbModal
+  ) {}
 
   ngOnInit(): void {
     this.loadMonuments();
   }
 
+  // Load all monuments
   loadMonuments(): void {
+    this.isLoading = true;
+    this.errorMessage = null;
     this.monumentService.getAllMonuments().subscribe({
       next: (data) => {
         this.monuments = data;
-        this.filterRestaurants(); // pour initialiser la liste filtrée
+        this.filteredMonuments = data; // Initialize filtered list
+        this.isLoading = false;
       },
-      error: (err) => {
-        this.errorMessage = "Erreur lors du chargement des monuments.";
-        console.error(err);
+      error: (error) => {
+        this.errorMessage = 'Failed to load monuments. Please try again.';
+        this.isLoading = false;
+        console.error('Error fetching monuments:', error);
       }
     });
   }
 
-  filterRestaurants(): void {
+  // Filter monuments based on search term
+  onSearchChange(): void {
     const term = this.searchTerm.toLowerCase();
-    this.filteredRestaurants = this.monuments.filter(monument =>
-      monument.nom.toLowerCase().includes(term) ||
-      monument.description.toLowerCase().includes(term) ||
-      monument.localisation.toLowerCase().includes(term)
+    this.filteredMonuments = this.monuments.filter(monument =>
+      monument.name?.toLowerCase().includes(term) ||
+      monument.location?.toLowerCase().includes(term)
     );
   }
 
-  deleteMonument(id: number): void {
-    if (confirm('Voulez-vous vraiment supprimer ce monument ?')) {
-      this.monumentService.deleteMonument(id).subscribe({
+  // Open delete confirmation modal
+  openDeleteModal(modal: TemplateRef<any>, id: number): void {
+    this.monumentIdToDelete = id;
+    this.modalService.open(modal, { ariaLabelledBy: 'modal-title' });
+  }
+
+  // Confirm deletion
+  confirmDelete(): void {
+    if (this.monumentIdToDelete !== null) {
+      this.monumentService.deleteMonument(this.monumentIdToDelete).subscribe({
         next: () => {
           this.loadMonuments();
+          this.monumentIdToDelete = null;
         },
-        error: (err) => {
-          console.error('Erreur lors de la suppression du monument', err);
+        error: (error) => {
+          this.errorMessage = 'Failed to delete monument. Please try again.';
+          console.error('Error deleting monument:', error);
         }
       });
     }
+  }
+
+  onImageError(event: Event): void {
+    const imgElement = event.target as HTMLImageElement;
+    imgElement.src = 'assets/images/default.jpg';
+  }
+
+  getImage(filename: string | undefined): string {
+    return filename ? this.monumentService.getImage(filename) : 'assets/images/default.jpg';
   }
 }

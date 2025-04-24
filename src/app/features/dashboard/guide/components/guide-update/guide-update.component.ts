@@ -1,8 +1,11 @@
+// guide-update.component.ts
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+
 import { ActivatedRoute, Router } from '@angular/router';
-import { GuideService } from 'src/app/core/services/guide.service';
 import { Guide } from 'src/app/core/models/guide';
+import { GuideService } from 'src/app/core/services/guide.service';
+
 
 @Component({
   selector: 'app-guide-update',
@@ -12,56 +15,56 @@ import { Guide } from 'src/app/core/models/guide';
 export class GuideUpdateComponent implements OnInit {
   guideForm: FormGroup;
   guideId!: number;
-  successMessage: string = '';
-  errorMessage: string = '';
+  errorMessage = '';
 
   constructor(
-    private route: ActivatedRoute,
-    private guideService: GuideService,
     private fb: FormBuilder,
+    private guideService: GuideService,
+    private route: ActivatedRoute,
     private router: Router
   ) {
     this.guideForm = this.fb.group({
       firstName: ['', Validators.required],
-      lastName: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      phone: ['', Validators.required]
+      lastName: ['', Validators.required]
     });
   }
 
   ngOnInit(): void {
-    this.guideId = Number(this.route.snapshot.paramMap.get('id'));
+    this.guideId = +this.route.snapshot.params['id'];
+    this.loadGuide();
+  }
 
+  loadGuide(): void {
     this.guideService.getGuideById(this.guideId).subscribe({
-      next: (guide: Guide) => {
-        this.guideForm.patchValue(guide);
+      next: (guide) => {
+        this.guideForm.patchValue({
+          firstName: guide.firstName,
+          lastName: guide.lastName
+        });
       },
       error: (err) => {
-        this.errorMessage = 'Erreur lors du chargement du guide.';
+        this.errorMessage = 'Erreur lors du chargement du guide';
         console.error(err);
       }
     });
   }
 
-  updateGuide(): void {
-    if (this.guideForm.invalid) {
-      this.errorMessage = 'Veuillez remplir tous les champs correctement.';
-      return;
+  onSubmit(): void {
+    if (this.guideForm.valid) {
+      const updatedGuide: Guide = {
+        id: this.guideId,
+        ...this.guideForm.value
+      };
+
+      this.guideService.updateGuide(this.guideId, updatedGuide).subscribe({
+        next: () => {
+          this.router.navigate(['/admin/guides']);
+        },
+        error: (err) => {
+          this.errorMessage = 'Erreur lors de la mise à jour du guide';
+          console.error(err);
+        }
+      });
     }
-
-    this.guideService.updateGuide(this.guideId, this.guideForm.value).subscribe({
-      next: () => {
-        this.successMessage = 'Guide mis à jour avec succès !';
-        setTimeout(() => this.router.navigate(['/admin/guides']), 2000);
-      },
-      error: (err) => {
-        this.errorMessage = 'Erreur lors de la mise à jour du guide.';
-        console.error(err);
-      }
-    });
-  }
-
-  goBack(): void {
-    this.router.navigate(['/admin/guides']);
   }
 }

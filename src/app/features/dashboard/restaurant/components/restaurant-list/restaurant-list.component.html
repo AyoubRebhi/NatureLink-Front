@@ -1,18 +1,52 @@
+
 <div id="restaurantList">
-  <!-- Barre de recherche -->
   <div class="row mb-4">
     <div class="col-lg-12">
       <div class="card">
         <div class="card-body">
-          <div class="row g-3">
+          <div class="row g-3 align-items-center">
             <div class="col-xxl">
-              <div class="search-box">
+              <div class="search-box position-relative">
                 <input
                   type="text"
                   class="form-control"
                   [(ngModel)]="searchTerm"
-                  placeholder="Rechercher un restaurant..." />
-                <i class="ri-search-line search-icon"></i>
+                  (ngModelChange)="onSearchChange()"
+                  placeholder="Rechercher un restaurant..."
+                  aria-label="Rechercher un restaurant" />
+                <i class="ri-search-line search-icon position-absolute top-50 end-0 translate-middle-y me-3"></i>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mb-4" *ngIf="openRestaurants && openRestaurants.length > 0">
+    <div class="col-lg-12">
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-success text-white d-flex justify-content-between align-items-center rounded-top">
+          <h5 class="mb-0">
+            <i class="bi bi-door-open me-2"></i> Restaurants actuellement ouverts
+          </h5>
+          <span class="badge bg-light text-success">{{ openRestaurants.length }} ouvert(s)</span>
+        </div>
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-md-6 col-lg-4" *ngFor="let resto of openRestaurants">
+              <div class="border rounded p-3 h-100 shadow-sm bg-light">
+                <h6 class="fw-semibold text-dark mb-2">
+                  <i class="bi bi-shop me-1 text-success"></i> {{ resto.nom }}
+                </h6>
+                <p class="mb-1 text-muted">
+                  <i class="bi bi-geo-alt-fill me-1 text-danger"></i> {{ resto.localisation }}
+                </p>
+                <p class="mb-1 text-muted">
+                  <i class="bi bi-people-fill me-1 text-primary"></i> Capacité: {{ resto.capacite }} places
+                </p>
+                <span class="badge bg-success-subtle text-success">Ouvert</span>
               </div>
             </div>
           </div>
@@ -21,64 +55,103 @@
     </div>
   </div>
 
-  <!-- Liste des restaurants -->
+  <div class="row mb-4" *ngIf="openRestaurants && openRestaurants.length === 0">
+    <div class="col-lg-12">
+      <div class="alert alert-warning text-center">
+        Aucun restaurant ouvert pour le moment.
+      </div>
+    </div>
+  </div>
+
   <div class="row">
-    <div *ngFor="let restaurant of filteredRestaurants" class="col-md-6 col-lg-4 mb-4">
-      <div class="card h-100 shadow-sm">
+    <div class="col-lg-12">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="card-title mb-0">
+            Restaurants
+            <span class="badge bg-dark ms-1">{{ filteredRestaurants.length }}</span>
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-centered table-nowrap">
+              <thead class="table-light">
+                <tr>
+                  <th>Image</th>
+                  <th>Nom</th>
+                  <th>Description</th>
+                  <th>Localisation</th>
+                  <th>Cuisine</th>
+                  <th>Horaires</th>
+                  <th>Capacité</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let restaurant of filteredRestaurants">
+                  <td>
+                    <img [src]="getImage(restaurant.image)"
+                         (error)="onImageError($event)"
+                         [alt]="'Image de ' + restaurant.nom"
+                         style="width: 60px; height: 60px; object-fit: cover;" />
+                  </td>
+                  <td>{{ restaurant.nom }}</td>
+                  <td>{{ restaurant.description }}</td>
+                  <td>{{ restaurant.localisation }}</td>
+                  <td>{{ restaurant.typeCuisine }}</td>
+                  <td>{{ restaurant.horairesOuverture }}</td>
+                  <td>{{ restaurant.capacite }}</td>
+                  <td>
+                    <button class="btn btn-sm btn-info me-2"
+                            [ngStyle]="{ 'background-color': '#101011', 'color': 'white' }"
+                            [routerLink]="['/admin/restaurants/details', restaurant.id, 'menus']">
+                      <i class="bi bi-eye"></i> Voir
+                    </button>
+                    <button class="btn btn-sm btn-warning me-2"
+                            [ngStyle]="{ 'background-color': '#4a87c5', 'color': 'white' }"
+                            [routerLink]="['/admin/restaurants/edit', restaurant.id]">
+                      <i class="bi bi-pencil"></i> Modifier
+                    </button>
+                    <button class="btn btn-sm btn-danger"
+                            [ngStyle]="{ 'background-color': '#c92010', 'color': 'white' }"
+                            (click)="openDeleteModal(confirmDeleteModal, restaurant.id!)">
+                      <i class="bi bi-trash"></i> Supprimer
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
 
-        <img
-          [src]="restaurant.image ? restaurantService.getImageUrl(restaurant.image) : 'assets/images/default.jpg'"
-          (error)="onImageError($event)"
-          class="card-img-top"
-          alt="Image du restaurant"
-          style="height: 200px; object-fit: cover;" />
+            <div *ngIf="filteredRestaurants.length === 0 && !isLoading" class="text-center py-4">
+              <p class="text-muted">Aucun restaurant trouvé.</p>
+            </div>
 
-        <div class="card-body d-flex flex-column">
-          <h5 class="card-title">{{ restaurant.nom }}</h5>
-          <p class="card-text">{{ restaurant.description }}</p>
-          <ul class="list-unstyled mb-3">
-            <li><strong>Localisation:</strong> {{ restaurant.localisation }}</li>
-            <li><strong>Cuisine:</strong> {{ restaurant.typeCuisine }}</li>
-            <li><strong>Horaires:</strong> {{ restaurant.horairesOuverture }}</li>
-          </ul>
-
-          <div class="mt-auto d-flex justify-content-between">
-            <!-- Voir les détails -->
-            <button class="btn btn-sm btn-outline-primary"
-                    title="Voir les détails"
-                    [routerLink]="['/admin/restaurants/details', restaurant.id, 'menus']">
-              <i class="bi bi-eye"></i>
-              Voir
-            </button>
-
-            <!-- Modifier -->
-            <button class="btn btn-sm btn-outline-warning"
-                    title="Modifier"
-                    [routerLink]="['edit', restaurant.id]">
-              <i class="bi bi-pencil"></i>
-              Modifier
-            </button>
-
-            <!-- Supprimer -->
-            <button class="btn btn-sm btn-outline-danger"
-                    title="Supprimer"
-                    (click)="deleteRestaurant(restaurant.id!)">
-              <i class="bi bi-trash"></i>
-              Supprimer
-            </button>
+            <div *ngIf="isLoading" class="text-center py-4">
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Chargement...</span>
+              </div>
+              <p class="text-muted mt-2">Chargement des restaurants...</p>
+            </div>
           </div>
         </div>
       </div>
     </div>
-
-    <!-- Aucun résultat -->
-    <div *ngIf="filteredRestaurants.length === 0 && !isLoading" class="text-center py-4 col-12">
-      <p class="text-muted">Aucun restaurant trouvé.</p>
-    </div>
-
-    <!-- Chargement -->
-    <div *ngIf="isLoading" class="text-center py-4 col-12">
-      <p class="text-muted">Chargement des restaurants...</p>
-    </div>
   </div>
+
+  <ng-template #confirmDeleteModal let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title">Confirmer la suppression</h5>
+      <button type="button" class="btn-close" aria-label="Fermer" (click)="modal.dismiss('cancel')"></button>
+    </div>
+    <div class="modal-body">
+      Êtes-vous sûr de vouloir supprimer ce restaurant ? Cette action est irréversible.
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="modal.dismiss('cancel')">Annuler</button>
+      <button type="button" class="btn btn-danger" (click)="confirmDelete(); modal.close('confirmed')">
+        Confirmer la suppression
+      </button>
+    </div>
+  </ng-template>
 </div>
+

@@ -1,36 +1,23 @@
-<div class="container">
-  <h2>Modifier un Guide</h2>
+<!-- guide-update.component.html -->
+<div class="container mt-4">
+  <h2>Modifier le Guide</h2>
 
-  <form [formGroup]="guideForm" (ngSubmit)="updateGuide()">
-    <div *ngIf="successMessage" class="alert alert-success">
-      {{ successMessage }}
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+  </div>
+
+  <form [formGroup]="guideForm" (ngSubmit)="onSubmit()">
+    <div class="mb-3">
+      <label for="firstName" class="form-label">Prénom</label>
+      <input type="text" class="form-control" id="firstName" formControlName="firstName" required>
     </div>
 
-    <div *ngIf="errorMessage" class="alert alert-danger">
-      {{ errorMessage }}
+    <div class="mb-3">
+      <label for="lastName" class="form-label">Nom</label>
+      <input type="text" class="form-control" id="lastName" formControlName="lastName" required>
     </div>
 
-    <div class="form-group">
-      <label for="firstName">Prénom</label>
-      <input type="text" id="firstName" formControlName="firstName" class="form-control">
-    </div>
-
-    <div class="form-group">
-      <label for="lastName">Nom</label>
-      <input type="text" id="lastName" formControlName="lastName" class="form-control">
-    </div>
-
-    <div class="form-group">
-      <label for="email">Email</label>
-      <input type="email" id="email" formControlName="email" class="form-control">
-    </div>
-
-    <div class="form-group">
-      <label for="phone">Téléphone</label>
-      <input type="text" id="phone" formControlName="phone" class="form-control">
-    </div>
-
-    <button type="submit" class="btn btn-primary" [disabled]="guideForm.invalid">Enregistrer</button>
-    <button class="btn btn-secondary ml-2" type="button" (click)="goBack()">Retour</button>
+    <button type="submit" class="btn btn-primary" [disabled]="!guideForm.valid">Mettre à jour</button>
+    <button type="button" class="btn btn-secondary ms-2" routerLink="/admin/guides">Annuler</button>
   </form>
 </div>

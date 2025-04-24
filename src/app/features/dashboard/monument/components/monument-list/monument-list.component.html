@@ -1,83 +1,132 @@
-<div id="monumentList">
-  <div class="row">
+<div id="monumentList" class="container mt-4">
+  <!-- Search Bar -->
+  <div class="row mb-4">
     <div class="col-lg-12">
-      <div class="card">
+      <div class="card border-0 shadow-sm">
         <div class="card-body">
-          <div class="row g-3">
+          <div class="row g-3 align-items-center">
             <div class="col-xxl">
-              <div class="search-box">
+              <div class="search-box position-relative">
                 <input
-                type="text"
-                class="form-control"
-                [(ngModel)]="searchTerm"
-                 (ngModelChange)="filterRestaurants()"
+                  type="text"
+                  class="form-control"
+                  [(ngModel)]="searchTerm"
+                  (ngModelChange)="onSearchChange()"
                   placeholder="Rechercher un monument..."
-                 />
-
-                <i class="ri-search-line search-icon"></i>
+                  aria-label="Rechercher un monument" />
+                <i class="ri-search-line search-icon position-absolute top-50 end-0 translate-middle-y me-3"></i>
               </div>
             </div>
-
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="row">
+  <!-- Error Message -->
+  <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+    {{ errorMessage }}
+    <button type="button" class="btn-close" (click)="errorMessage = null" aria-label="Close"></button>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="text-center py-4">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Chargement...</span>
+    </div>
+    <p class="text-muted mt-2">Chargement des monuments...</p>
+  </div>
+
+  <!-- Monuments List -->
+  <div class="row" *ngIf="!isLoading && filteredMonuments.length > 0">
     <div class="col-lg-12">
-      <div class="card">
-        <div class="card-header">
-          <h5 class="card-title mb-0">
-            Monuments <span class="badge bg-dark ms-1">{{ monuments.length }}</span>
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center rounded-top">
+          <h5 class="mb-0">
+            <i class="bi bi-building me-2"></i> Monuments
+            <span class="badge bg-light text-primary ms-2">{{ filteredMonuments.length }}</span>
           </h5>
+
         </div>
         <div class="card-body">
           <div class="table-responsive">
-            <table class="table table-centered table-nowrap">
-              <thead class="table-light">
+            <table class="table table-centered table-nowrap table-light">
+              <thead>
                 <tr>
-                  <th>ID</th>
+                  <th>Image</th>
                   <th>Nom</th>
                   <th>Description</th>
                   <th>Localisation</th>
-                  <th>Horaires d'ouverture</th>
-                  <th>Prix d'entrée</th>
-                  <th>Image</th>
+                  <th>Horaires</th>
+                  <th>Prix d'entrée (€)</th>
                   <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let monument of filteredRestaurants">
-                  <td>{{ monument.id }}</td>
-                  <td>{{ monument.nom }}</td>
-                  <td>{{ monument.description }}</td>
-                  <td>{{ monument.localisation }}</td>
-                  <td>{{ monument.horairesOuverture }}</td>
-                  <td>{{ monument.prixEntree }} DT</td>
+                <tr *ngFor="let monument of filteredMonuments">
                   <td>
-                    <img [src]="monument.image" alt="Image" width="50" />
+                    <img
+                      *ngIf="monument.image"
+                      [src]="'http://localhost:9000/uploads/menus/' + monument.image"
+                      [alt]="'Image de ' + monument.name"
+                      (error)="onImageError($event)"
+                      style="width: 60px; height: 60px; object-fit: cover;" />
                   </td>
+                  <td>{{ monument.name }}</td>
+                  <td>{{ monument.description | slice:0:100 }}{{ monument.description!.length > 100 ? '...' : '' }}</td>
+                  <td>{{ monument.location }}</td>
+                  <td>{{ monument.openingHours }}</td>
+                  <td>{{ monument.entranceFee ? (monument.entranceFee | number:'1.2-2') : 'Gratuit' }}</td>
                   <td>
+
                     <button
-                      class="btn btn-sm btn-warning me-2"
-                      [routerLink]="['/admin/monument/edit', monument.id]"
-                    >
-                      <i class="bi bi-pencil"></i>
-                    </button>
-                    <button class="btn btn-sm btn-danger" (click)=" deleteMonument(monument.id!)">
-                      <i class="bi bi-trash"></i>
+                    class="btn btn-sm btn-warning me-2"
+                    [ngStyle]="{'background-color': '#4a87c5', 'color': 'white'}"
+                    [routerLink]="['/admin/monument/details', monument.id, 'edit']">
+                    <i class="bi bi-pencil"></i> Modifier
+                  </button>
+                    <button
+                      class="btn btn-sm btn-danger"
+                      [ngStyle]="{'background-color': '#c92010', 'color': 'white'}"
+                      (click)="openDeleteModal(confirmDeleteModal, monument.id!)">
+                      <i class="bi bi-trash"></i> Supprimer
                     </button>
                   </td>
                 </tr>
               </tbody>
             </table>
           </div>
-          <div *ngIf="filteredRestaurants.length === 0" class="text-center py-4">
-            <p class="text-muted">Aucun monument trouvé.</p>
-          </div>
         </div>
       </div>
     </div>
   </div>
+
+  <!-- No Monuments Found -->
+  <div class="row" *ngIf="!isLoading && filteredMonuments.length === 0">
+    <div class="col-lg-12">
+      <div class="alert alert-warning text-center">
+        Aucun monument trouvé.
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <ng-template #confirmDeleteModal let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title">Confirmer la suppression</h5>
+      <button type="button" class="btn-close" aria-label="Fermer" (click)="modal.dismiss('cancel')"></button>
+    </div>
+    <div class="modal-body">
+      Êtes-vous sûr de vouloir supprimer ce monument ? Cette action est irréversible.
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="modal.dismiss('cancel')">Annuler</button>
+      <button
+        type="button"
+        class="btn btn-danger"
+        (click)="confirmDelete(); modal.close('confirmed')">
+        Confirmer la suppression
+      </button>
+    </div>
+  </ng-template>
 </div>

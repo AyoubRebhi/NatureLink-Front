@@ -1,8 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 
-import { Restaurant } from 'src/app/core/models/restaurant';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { RestaurantService } from 'src/app/core/services/restaurant.service';
 
 @Component({
@@ -12,67 +11,137 @@ import { RestaurantService } from 'src/app/core/services/restaurant.service';
 })
 export class RestaurantUpdateComponent implements OnInit {
   restaurantForm: FormGroup;
-  restaurantId: number | undefined;
-  successMessage: string = '';
-  errorMessage: string = '';
+  restaurantId: number;
+  imagePreviewUrl: string | ArrayBuffer | null = null;
+  selectedFile: File | null = null;
+  successMessage: string | null = null;
+  errorMessage: string | null = null;
+  isLoading = false;
 
   constructor(
-    private route: ActivatedRoute,
-    private restaurantService: RestaurantService,
     private fb: FormBuilder,
+    private restaurantService: RestaurantService,
+    private route: ActivatedRoute,
     private router: Router
   ) {
     this.restaurantForm = this.fb.group({
-      nom: ['', [Validators.required]],
-      description: ['', [Validators.required]],
-      localisation: ['', [Validators.required]],
-      typeCuisine: ['', [Validators.required]],
-      horairesOuverture: ['', [Validators.required]],
-      image: ['', [Validators.required]]
+      nom: ['', Validators.required],
+      description: ['', Validators.required],
+      localisation: ['', Validators.required],
+      typeCuisine: ['', Validators.required],
+      horairesOuverture: ['', [Validators.required, this.timeRangeValidator]],
+      capacite: ['', [Validators.required, Validators.min(1)]],
+      image: ['']
     });
+
+    this.restaurantId = +this.route.snapshot.params['id'];
   }
 
   ngOnInit(): void {
-    // Récupérer l'ID du restaurant depuis l'URL
-    this.restaurantId = Number(this.route.snapshot.paramMap.get('id'));
+    this.loadRestaurantData();
+  }
 
-    if (this.restaurantId) {
-      // Charger le restaurant existant pour modifier ses données
-      this.restaurantService.getRestaurantById(this.restaurantId).subscribe({
-        next: (restaurant) => {
-          this.restaurantForm.patchValue(restaurant);  // Remplir le formulaire avec les données du restaurant
-        },
-        error: (err) => {
-          this.errorMessage = "Erreur lors du chargement du restaurant.";
-          console.error(err);
+  loadRestaurantData(): void {
+    this.isLoading = true;
+    this.restaurantService.getRestaurantById(this.restaurantId).subscribe({
+      next: (restaurant) => {
+        this.restaurantForm.patchValue(restaurant);
+        if (restaurant.image) {
+          this.imagePreviewUrl = this.getImage(restaurant.image);
         }
-      });
+        this.isLoading = false;
+      },
+      error: (err) => {
+        this.errorMessage = 'Erreur lors du chargement des données du restaurant';
+        console.error(err);
+        this.isLoading = false;
+      }
+    });
+  }
+
+  onFileChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.selectedFile = input.files[0];
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.imagePreviewUrl = reader.result;
+      };
+      reader.readAsDataURL(this.selectedFile);
     }
   }
 
-  // Méthode pour mettre à jour un restaurant
   updateRestaurant(): void {
     if (this.restaurantForm.invalid) {
-      this.errorMessage = 'Veuillez remplir tous les champs correctement.';
+      this.markAllAsTouched();
       return;
     }
 
-    if (this.restaurantId !== undefined) {
-      this.restaurantService.updateRestaurant(this.restaurantId, this.restaurantForm.value).subscribe({
-        next: () => {
-          this.successMessage = 'Restaurant mis à jour avec succès!';
-          setTimeout(() => this.router.navigate(['/admin/restaurants']), 2000);
-        },
-        error: (err) => {
-          this.errorMessage = "Erreur lors de la mise à jour du restaurant.";
-          console.error(err);
-        }
-      });
-    }
+    this.isLoading = true;
+    const formData = this.prepareFormData();
+
+    this.restaurantService.updateRestaurant(this.restaurantId, formData).subscribe({
+      next: () => {
+        this.successMessage = 'Restaurant mis à jour avec succès';
+        this.errorMessage = null;
+        this.isLoading = false;
+        setTimeout(() => this.router.navigate(['/admin/restaurants']), 2000);
+      },
+      error: (err) => {
+        this.errorMessage = 'Erreur lors de la mise à jour du restaurant';
+        this.successMessage = null;
+        this.isLoading = false;
+        console.error(err);
+      }
+    });
   }
 
-  // Retour à la liste des restaurants
+  private prepareFormData(): FormData {
+    const formData = new FormData();
+    Object.keys(this.restaurantForm.controls).forEach(key => {
+      if (key !== 'image') {
+        const value = this.restaurantForm.get(key)?.value;
+        if (value !== null && value !== undefined) {
+          formData.append(key, value.toString());
+        }
+      }
+    });
+
+    if (this.selectedFile) {
+      formData.append('image', this.selectedFile);
+    }
+
+    return formData;
+  }
+
+  getImage(filename: string): string {
+    return this.restaurantService.getImage(filename);
+  }
+
+  isFieldInvalid(field: string): boolean {
+    const control = this.restaurantForm.get(field);
+    return control ? control.invalid && (control.dirty || control.touched) : false;
+  }
+
+  markAllAsTouched(): void {
+    Object.values(this.restaurantForm.controls).forEach(control => {
+      control.markAsTouched();
+    });
+  }
+
+  timeRangeValidator(control: FormControl): { [key: string]: boolean } | null {
+    const timeRange = control.value;
+    if (timeRange && timeRange.includes('-')) {
+      const [start, end] = timeRange.split('-');
+      if (start >= end) {
+        return { 'invalidTimeRange': true };
+      }
+    }
+    return null;
+  }
+
   goBack(): void {
     this.router.navigate(['/admin/restaurants']);
   }
 }
+

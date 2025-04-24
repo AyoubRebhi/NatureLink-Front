@@ -1,9 +1,10 @@
 export interface Monument {
   id?: number;
-  nom: string;
-  description: string;
-  localisation: string;
-  horairesOuverture: string;
-  prixEntree: number;
-  image: string;
+  name?: string;
+  description?: string;
+  location?: string;
+  openingHours?: string;
+  entranceFee?: number;
+  image?: string;
+  mapEmbedUrl?: string;
 }

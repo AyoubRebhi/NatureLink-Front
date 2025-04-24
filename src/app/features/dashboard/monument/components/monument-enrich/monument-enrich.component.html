@@ -1,0 +1,18 @@
+<div class="container mt-4">
+  <h2>Enrich Monument Data</h2>
+  <form [formGroup]="enrichForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="name">Monument Name</label>
+      <input type="text" class="form-control" id="name" formControlName="name" required />
+    </div>
+    <button type="submit" class="btn btn-primary mt-3" [disabled]="enrichForm.invalid">Enrich</button>
+  </form>
+  <div *ngIf="errorMessage" class="alert alert-danger mt-3">{{ errorMessage }}</div>
+  <div *ngIf="enrichedMonument" class="mt-3">
+    <h3>Enriched Data</h3>
+    <p><strong>Name:</strong> {{ enrichedMonument.name }}</p>
+    <p><strong>Location:</strong> {{ enrichedMonument.location }}</p>
+    <p><strong>Description:</strong> {{ enrichedMonument.description }}</p>
+    <iframe *ngIf="enrichedMonument.mapEmbedUrl" [src]="enrichedMonument.mapEmbedUrl | safe" width="600" height="450"></iframe>
+  </div>
+</div>

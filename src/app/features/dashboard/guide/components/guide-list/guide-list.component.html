@@ -1,73 +1,43 @@
-<div id="guideList">
-  <div class="row">
-    <div class="col-lg-12">
-      <div class="card">
-        <div class="card-body">
-          <div class="row g-3">
-            <div class="col-xxl">
-              <div class="search-box">
-                <input
-                  type="text"
-                  class="form-control"
-                  [(ngModel)]="searchTerm"
-                  placeholder="Rechercher un guide..."
-                />
-                <i class="ri-search-line search-icon"></i>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+<!-- guide-list.component.html -->
+<div class="container mt-4">
+  <div class="d-flex justify-content-between mb-3">
+    <h2>Liste des Guides</h2>
+    <button routerLink="add" class="btn btn-primary">Ajouter un Guide</button>
+  </div>
+
+  <div *ngIf="isLoading" class="text-center">
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">Loading...</span>
     </div>
   </div>
 
-  <div class="row">
-    <div class="col-lg-12">
-      <div class="card">
-        <div class="card-header">
-          <h5 class="card-title mb-0">
-            Guides touristiques
-            <span class="badge bg-dark ms-1">{{ filteredGuides.length }}</span>
-          </h5>
-        </div>
-        <div class="card-body">
-          <div class="table-responsive">
-            <table class="table table-centered table-nowrap">
-              <thead class="table-light">
-                <tr>
-                  <th>ID</th>
-                  <th>Prénom</th>
-                  <th>Nom</th>
-                  <th>Email</th>
-                  <th>Téléphone</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let guide of filteredGuides">
-                  <td>{{ guide.id }}</td>
-                  <td>{{ guide.firstName }}</td>
-                  <td>{{ guide.lastName }}</td>
-                  <td>{{ guide.email }}</td>
-                  <td>{{ guide.phone }}</td>
-                  <td>
-                  
-                    <button class="btn btn-sm btn-warning me-2" [routerLink]="['edit', guide.id]">
-                      <i class="bi bi-pencil"></i>
-                    </button>
-                    <button class="btn btn-sm btn-danger" (click)="deleteGuide(guide.id!)">
-                      <i class="bi bi-trash"></i>
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <div *ngIf="filteredGuides.length === 0" class="text-center py-4">
-            <p class="text-muted">Aucun guide trouvé.</p>
-          </div>
-        </div>
-      </div>
-    </div>
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
   </div>
+
+  <table class="table table-striped" *ngIf="!isLoading">
+    <thead>
+      <tr>
+        
+        <th>Prénom</th>
+        <th>Nom</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let guide of guides">
+
+        <td>{{ guide.firstName }}</td>
+        <td>{{ guide.lastName }}</td>
+        <td>
+          <button [routerLink]="['edit', guide.id]" class="btn btn-sm btn-warning me-2">
+            Modifier
+          </button>
+          <button (click)="deleteGuide(guide.id!)" class="btn btn-sm btn-danger">
+            Supprimer
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 </div>

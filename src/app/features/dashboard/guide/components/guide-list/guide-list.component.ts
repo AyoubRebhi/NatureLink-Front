@@ -1,7 +1,10 @@
+// guide-list.component.ts
 import { Component, OnInit } from '@angular/core';
+
+import { Router } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Guide } from 'src/app/core/models/guide';
 import { GuideService } from 'src/app/core/services/guide.service';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-guide-list',
@@ -9,18 +12,20 @@ import { Router } from '@angular/router';
   styleUrls: ['./guide-list.component.scss']
 })
 export class GuideListComponent implements OnInit {
-
   guides: Guide[] = [];
-  isLoading = true;
-  searchTerm = '';
+  isLoading = false;
+  errorMessage = '';
 
-  constructor(private guideService: GuideService, private router: Router) {}
+  constructor(
+    private guideService: GuideService,
+    private router: Router,
+    private modalService: NgbModal
+  ) {}
 
   ngOnInit(): void {
     this.loadGuides();
   }
 
-  // Charger les guides depuis l'API
   loadGuides(): void {
     this.isLoading = true;
     this.guideService.getAllGuides().subscribe({
@@ -28,40 +33,25 @@ export class GuideListComponent implements OnInit {
         this.guides = data;
         this.isLoading = false;
       },
-      error: (error) => {
-        console.error('Erreur lors du chargement des guides', error);
+      error: (err) => {
+        this.errorMessage = 'Erreur lors du chargement des guides';
         this.isLoading = false;
+        console.error(err);
       }
     });
   }
 
-  // Filtrage selon prénom, nom ou email
-  get filteredGuides(): Guide[] {
-    return this.guides.filter(guide =>
-      guide.firstName.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-      guide.lastName.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-      guide.email.toLowerCase().includes(this.searchTerm.toLowerCase())
-    );
-  }
-
-  // Redirection vers le formulaire de modification
-  update(id: number): void {
-    this.router.navigate(['/admin/dashboard/guides/edit', id]);
-  }
-
-  // Suppression avec confirmation
   deleteGuide(id: number): void {
     if (confirm('Êtes-vous sûr de vouloir supprimer ce guide ?')) {
       this.guideService.deleteGuide(id).subscribe({
         next: () => {
-          this.guides = this.guides.filter(guide => guide.id !== id);
-          console.log('Guide supprimé');
+          this.loadGuides();
         },
-        error: (error) => {
-          console.error('Erreur lors de la suppression du guide', error);
+        error: (err) => {
+          console.error(err);
+          this.errorMessage = 'Erreur lors de la suppression';
         }
       });
     }
   }
-
 }

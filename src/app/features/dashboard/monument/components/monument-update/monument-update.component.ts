@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MonumentService } from 'src/app/core/services/monument.service';
-import { Monument } from 'src/app/core/models/monument';
+
 
 @Component({
   selector: 'app-monument-update',
@@ -11,59 +11,133 @@ import { Monument } from 'src/app/core/models/monument';
 })
 export class MonumentUpdateComponent implements OnInit {
   monumentForm: FormGroup;
-  monumentId!: number;
-  successMessage: string = '';
-  errorMessage: string = '';
+  selectedFile: File | null = null;
+  errorMessage: string | null = null;
+  isSubmitting = false;
+  isGeneratingDescription = false;
+  monumentId: number | null = null;
 
   constructor(
-    private route: ActivatedRoute,
-    private monumentService: MonumentService,
     private fb: FormBuilder,
+    private monumentService: MonumentService,
+    private route: ActivatedRoute,
     private router: Router
   ) {
     this.monumentForm = this.fb.group({
-      nom: ['', Validators.required],
-      description: ['', Validators.required],
-      localisation: ['', Validators.required],
-      horairesOuverture: ['', Validators.required],
-      prixEntree: ['', Validators.required],
-      image: ['', Validators.required]
+      name: ['', [Validators.required, Validators.maxLength(100)]],
+      description: ['', Validators.maxLength(4000)],
+      location: ['', Validators.maxLength(255)],
+      openingHours: ['', Validators.maxLength(100)],
+      entranceFee: [null, [Validators.min(0)]]
     });
   }
 
   ngOnInit(): void {
-    this.monumentId = Number(this.route.snapshot.paramMap.get('id'));
-
-    this.monumentService.getMonumentById(this.monumentId).subscribe({
-      next: (monument: Monument) => {
-        this.monumentForm.patchValue(monument);
-      },
-      error: (err) => {
-        this.errorMessage = "Erreur lors du chargement du monument.";
-        console.error(err);
-      }
-    });
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id && !isNaN(+id)) {
+      this.monumentId = +id;
+      this.loadMonument();
+    } else {
+      this.errorMessage = 'Invalid monument ID';
+      this.router.navigate(['/admin/monument']);
+    }
   }
 
-  updateMonument(): void {
-    if (this.monumentForm.invalid) {
-      this.errorMessage = 'Veuillez remplir tous les champs correctement.';
+  // Load monument data
+  loadMonument(): void {
+    if (this.monumentId !== null) {
+      this.monumentService.getMonumentById(this.monumentId).subscribe({
+        next: (monument) => {
+          this.monumentForm.patchValue({
+            name: monument.name,
+            description: monument.description || '',
+            location: monument.location || '',
+            openingHours: monument.openingHours || '',
+            entranceFee: monument.entranceFee
+          });
+        },
+        error: (err) => {
+          this.errorMessage = err.error?.message || 'Failed to load monument';
+        }
+      });
+    }
+  }
+
+  // Handle file selection
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
+      const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
+      if (!validTypes.includes(file.type)) {
+        this.errorMessage = 'Please upload a valid image file (JPEG, PNG, or GIF).';
+        this.selectedFile = null;
+        input.value = '';
+        return;
+      }
+      if (file.size > 10 * 1024 * 1024) {
+        this.errorMessage = 'File size exceeds 10MB limit.';
+        this.selectedFile = null;
+        input.value = '';
+        return;
+      }
+      this.selectedFile = file;
+      this.errorMessage = null;
+    }
+  }
+
+  // Generate description
+  generateDescription(): void {
+    const name = this.monumentForm.get('name')?.value;
+    if (!name) {
+      this.errorMessage = 'Please enter a monument name before generating a description.';
       return;
     }
+    if (this.isGeneratingDescription) return;
 
-    this.monumentService.updateMonument(this.monumentId, this.monumentForm.value).subscribe({
-      next: () => {
-        this.successMessage = 'Monument mis à jour avec succès !';
-        setTimeout(() => this.router.navigate(['/admin/monument']), 2000);
+    this.isGeneratingDescription = true;
+    this.errorMessage = null;
+
+    this.monumentService.enrichMonument(name).subscribe({
+      next: (monument) => {
+        this.monumentForm.patchValue({ description: monument.description });
+        this.isGeneratingDescription = false;
       },
       error: (err) => {
-        this.errorMessage = "Erreur lors de la mise à jour du monument.";
-        console.error(err);
+        this.errorMessage = err.error?.message || 'Failed to generate description. Please try again.';
+        this.isGeneratingDescription = false;
       }
     });
   }
 
-  goBack(): void {
-    this.router.navigate(['/admin/monument']);
+  // Handle form submission
+  onSubmit(): void {
+    if (this.monumentForm.valid && !this.isSubmitting && this.monumentId !== null) {
+      this.isSubmitting = true;
+      this.errorMessage = null;
+
+      const formData = new FormData();
+      formData.append('name', this.monumentForm.get('name')?.value);
+      formData.append('description', this.monumentForm.get('description')?.value || '');
+      formData.append('location', this.monumentForm.get('location')?.value || '');
+      formData.append('openingHours', this.monumentForm.get('openingHours')?.value || '');
+      if (this.monumentForm.get('entranceFee')?.value !== null) {
+        formData.append('entranceFee', this.monumentForm.get('entranceFee')?.value.toString());
+      }
+      if (this.selectedFile) {
+        formData.append('image', this.selectedFile);
+      }
+
+      this.monumentService.updateMonument(this.monumentId, formData).subscribe({
+        next: () => {
+          this.isSubmitting = false;
+          this.router.navigate(['/admin/monument']);
+        },
+        error: (err) => {
+          this.isSubmitting = false;
+          this.errorMessage = err.error?.message || 'Failed to update monument. Please try again.';
+        }
+      });
+    }
   }
 }

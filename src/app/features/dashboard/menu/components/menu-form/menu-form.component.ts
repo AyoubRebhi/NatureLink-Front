@@ -1,104 +1,116 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router, ActivatedRoute } from '@angular/router';
 import { MenuService } from 'src/app/core/services/menu.service';
-import { Menu } from 'src/app/core/models/menu';
 
 @Component({
   selector: 'app-menu-form',
-  templateUrl: './menu-form.component.html',
-  styleUrls: ['./menu-form.component.scss']
+  templateUrl: './menu-form.component.html'
 })
 export class MenuFormComponent implements OnInit {
-  menuForm: FormGroup;
-  isLoading = false;
-  successMessage: string | null = null;
-  errorMessage: string | null = null;
-  restaurantId!: number | null;
+  menuForm!: FormGroup;
+  selectedImage?: File;
+  successMessage: string = '';
+  errorMessage: string = '';
+  isLoading: boolean = false;
+  isEditMode: boolean = false;
+  restaurantId!: number;
+  menuId?: number;
 
   constructor(
+    private fb: FormBuilder,
     private menuService: MenuService,
     private router: Router,
-    private route: ActivatedRoute,
-    private fb: FormBuilder
-  ) {
-    this.menuForm = this.fb.group({
-      plats: ['', [Validators.required, Validators.maxLength(100)]],
-      prixMoyen: ['', [Validators.required, Validators.min(0), Validators.max(1000)]]
-    });
-  }
+    private route: ActivatedRoute
+  ) {}
 
   ngOnInit(): void {
-    this.route.params.subscribe(params => {
-      const id = +params['restaurantId']; // S'assurer que le paramètre est bien "restaurantId"
-      console.log('ID du restaurant extrait:', id);
+    this.menuForm = this.fb.group({
+      plats: ['', [Validators.required, Validators.maxLength(100)]],
+      prixMoyen: ['', [Validators.required, Validators.min(0)]],
+      ingredientsDetails: ['', [Validators.required, Validators.maxLength(500)]]
+    });
 
-      if (!isNaN(id) && id > 0) {
-        this.restaurantId = id;
-      } else {
-        this.restaurantId = null;
-        this.errorMessage = "Restaurant non valide.";
-        setTimeout(() => this.router.navigate(['/admin/restaurants']), 3000);
+    this.route.params.subscribe(params => {
+      this.restaurantId = +params['restaurantId'];
+      if (params['menuId']) {
+        this.isEditMode = true;
+        this.menuId = +params['menuId'];
+        this.loadMenu();
       }
     });
   }
 
+  loadMenu(): void {
+    if (this.menuId && this.restaurantId) {
+      this.menuService.getMenuById(this.restaurantId, this.menuId).subscribe({
+        next: (menu) => {
+          this.menuForm.patchValue({
+            plats: menu.plats,
+            prixMoyen: menu.prixMoyen,
+            ingredientsDetails: menu.ingredientsDetails
+          });
+        },
+        error: (error) => {
+          this.errorMessage = 'Erreur lors du chargement du menu : ' + error.message;
+        }
+      });
+    }
+  }
+
+  onImageSelected(event: Event): void {
+    const fileInput = event.target as HTMLInputElement;
+    if (fileInput.files && fileInput.files.length > 0) {
+      this.selectedImage = fileInput.files[0];
+    } else {
+      this.selectedImage = undefined;
+    }
+  }
+
   onSubmit(): void {
-    if (this.menuForm.invalid) {
-      this.markFormGroupTouched(this.menuForm);
-      this.errorMessage = 'Veuillez corriger les erreurs dans le formulaire.';
+    if (this.menuForm.invalid || (!this.selectedImage && !this.isEditMode)) {
+      this.menuForm.markAllAsTouched();
+      this.errorMessage = 'Veuillez remplir tous les champs obligatoires, y compris l\'image.';
       return;
     }
 
     this.isLoading = true;
-    this.errorMessage = null;
-    this.successMessage = null;
+    const formData = this.prepareFormData();
 
-    const newMenu: Menu = {
-      ...this.menuForm.value,
-      prixMoyen: parseFloat(this.menuForm.value.prixMoyen)
-    };
+    const request = this.isEditMode && this.menuId
+      ? this.menuService.updateMenu(this.menuId, formData)
+      : this.menuService.createMenu(this.restaurantId, formData);
 
-    if (!this.restaurantId) {
-      this.errorMessage = "Impossible d'ajouter un menu sans restaurant valide.";
-      this.isLoading = false;
-      return;
-    }
-
-    console.log("Envoi du menu au backend:", newMenu);
-
-    this.menuService.createMenu(this.restaurantId, newMenu).subscribe({
+    request.subscribe({
       next: () => {
+        this.successMessage = this.isEditMode ? 'Menu modifié avec succès.' : 'Menu ajouté avec succès.';
+        this.errorMessage = '';
         this.isLoading = false;
-        this.successMessage = 'Menu créé avec succès!';
-        this.menuForm.reset();
-        setTimeout(() => {
-          this.router.navigate(['/admin/restaurants/details', this.restaurantId, 'menus']);
-        }, 1500);
+        setTimeout(() => this.router.navigate([`/admin/restaurants/details/${this.restaurantId}/menus`]), 1500);
       },
-      error: (err) => {
+      error: (error) => {
+        this.errorMessage = `Erreur lors de ${this.isEditMode ? 'la modification' : 'l\'ajout'} du menu : ${error.message}`;
+        this.successMessage = '';
         this.isLoading = false;
-        this.errorMessage = err.error?.message || "Une erreur est survenue lors de la création du menu.";
-        console.error('Erreur:', err);
       }
     });
   }
 
-
-  private markFormGroupTouched(formGroup: FormGroup): void {
-    Object.values(formGroup.controls).forEach(control => {
-      control.markAsTouched();
-      if (control instanceof FormGroup) {
-        this.markFormGroupTouched(control);
+  private prepareFormData(): FormData {
+    const formData = new FormData();
+    Object.keys(this.menuForm.value).forEach(key => {
+      if (this.menuForm.value[key] !== null) {
+        formData.append(key, this.menuForm.value[key].toString());
       }
     });
+    if (this.selectedImage) {
+      console.log(this.selectedImage.name);
+      formData.append('image', this.selectedImage, this.selectedImage.name);
+    }
+    return formData;
   }
 
   goBack(): void {
-    if (this.restaurantId !== null) {
-      this.router.navigate(['/admin/restaurants/details', this.restaurantId, 'menus']);
-    } else {
-      this.router.navigate(['/admin/restaurants']);
-    }
+    this.router.navigate([`/admin/restaurants/details/${this.restaurantId}/menus`]);
   }
 }
