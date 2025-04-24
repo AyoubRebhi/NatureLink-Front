@@ -1,5 +1,7 @@
 import { Component, EventEmitter, Output, ViewChild, ElementRef, OnInit, OnDestroy } from '@angular/core';
 import { PostService } from '../../../core/services/post.service';
+import { AuthService } from '../../../core/services/auth.service';
+import { Router } from '@angular/router';
 import { catchError, finalize, switchMap } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
 import { EmojiEvent } from '@ctrl/ngx-emoji-mart/ngx-emoji';
@@ -24,11 +26,47 @@ export class PostFormComponent implements OnInit, OnDestroy {
   generatedTags: string[] = [];
   isLoading: boolean = false;
   errorMessage: string = '';
+  newPostContent = '';
+  selectedFile: File | null = null;
+  imagePreview: string | ArrayBuffer | null = null;
+  isSubmitting = false;
+  showEmojiPicker = false;
+  isListening = false;
+  recognition: any;
 
+  @Output() postCreated = new EventEmitter<any>();
+  @ViewChild('postTextarea') postTextarea!: ElementRef;
 
-  generateTags() {
+  constructor(
+    private postService: PostService,
+    private toastr: ToastrService,
+    private http: HttpClient,
+    private authService: AuthService,
+    private router: Router
+  ) {}
+
+  ngOnInit(): void {
+    // Check if user is authenticated
+    if (!this.authService.isAuthenticated()) {
+      this.router.navigate(['/login'], {
+        queryParams: { returnUrl: this.router.url }
+      });
+      return;
+    }
+
+    this.initSpeechRecognition();
+  }
+
+  ngOnDestroy(): void {
+    if (this.recognition) {
+      this.recognition.stop();
+    }
+  }
+
+  generateTags(): void {
     if (!this.postContent.trim()) {
-      this.errorMessage = "Le contenu ne peut pas être vide.";
+      this.errorMessage = 'Le contenu ne peut pas être vide.';
+      this.toastr.warning(this.errorMessage);
       return;
     }
 
@@ -42,38 +80,15 @@ export class PostFormComponent implements OnInit, OnDestroy {
       next: res => {
         this.generatedTags = res.tags;
         this.isLoading = false;
+        this.toastr.success('Tags générés avec succès');
       },
       error: err => {
         this.errorMessage = 'Erreur lors de la génération des tags.';
         this.isLoading = false;
+        this.toastr.error(this.errorMessage);
+        console.error(err);
       }
     });
-  }
-  newPostContent = '';
-  selectedFile: File | null = null;
-  imagePreview: string | ArrayBuffer | null = null;
-  isSubmitting = false;
-  showEmojiPicker = false;
-  isListening = false;
-  recognition: any;
-  
-  @Output() postCreated = new EventEmitter<any>();
-  @ViewChild('postTextarea') postTextarea!: ElementRef;
-
-  constructor(
-    private postService: PostService,
-    private toastr: ToastrService,
-    private http: HttpClient
-  ) {}
-
-  ngOnInit(): void {
-    this.initSpeechRecognition();
-  }
-
-  ngOnDestroy(): void {
-    if (this.recognition) {
-      this.recognition.stop();
-    }
   }
 
   private validateText(text: string): Observable<any> {
@@ -87,7 +102,7 @@ export class PostFormComponent implements OnInit, OnDestroy {
       .set('text', encodeURIComponent(text))
       .set('mode', 'standard')
       .set('lang', 'en')
-      .set('models','general');
+      .set('models', 'general');
 
     return this.http.get(this.SIGHTENGINE_CONFIG.TEXT_API_URL, { params }).pipe(
       catchError(err => {
@@ -123,15 +138,23 @@ export class PostFormComponent implements OnInit, OnDestroy {
       (result.sexual?.score > thresholds.sexual) ||
       (result.drugs?.score > thresholds.drugs) ||
       (result.insult?.score > thresholds.insult) ||
-      (result.discrimination?.score > thresholds.discrimination)||
+      (result.discrimination?.score > thresholds.discrimination) ||
       (result.violent?.score > thresholds.violent)
-
     );
   }
 
   createPost(): void {
     if (!this.newPostContent.trim() && !this.selectedFile) {
       this.toastr.warning('Contenu requis');
+      return;
+    }
+
+    const userId = this.authService.getCurrentUserId();
+    if (!userId) {
+      this.toastr.error('Veuillez vous connecter pour publier.');
+      this.router.navigate(['/login'], {
+        queryParams: { returnUrl: this.router.url }
+      });
       return;
     }
 
@@ -145,7 +168,6 @@ export class PostFormComponent implements OnInit, OnDestroy {
           return throwError(() => new Error('Contenu inapproprié'));
         }
 
-        const userId = 1; // À remplacer par l'ID réel
         return this.postService.createPost(this.newPostContent, this.selectedFile, userId);
       }),
       finalize(() => {
@@ -162,11 +184,10 @@ export class PostFormComponent implements OnInit, OnDestroy {
     });
   }
 
-  // ... [Le reste des méthodes reste inchangé] ...
   private initSpeechRecognition(): void {
-    const SpeechRecognition = (window as any).SpeechRecognition || 
+    const SpeechRecognition = (window as any).SpeechRecognition ||
                             (window as any).webkitSpeechRecognition;
-    
+
     if (!SpeechRecognition) {
       console.warn('Reconnaissance vocale non supportée');
       this.toastr.warning('Fonctionnalité non disponible');
@@ -187,12 +208,12 @@ export class PostFormComponent implements OnInit, OnDestroy {
     const transcript = event.results[0][0].transcript;
     const textarea = this.postTextarea.nativeElement;
     const cursorPosition = textarea.selectionStart;
-    
-    this.newPostContent = 
-      this.newPostContent.substring(0, cursorPosition) + 
-      transcript + 
+
+    this.newPostContent =
+      this.newPostContent.substring(0, cursorPosition) +
+      transcript +
       this.newPostContent.substring(cursorPosition);
-    
+
     setTimeout(() => {
       textarea.selectionStart = textarea.selectionEnd = cursorPosition + transcript.length;
       textarea.focus();
@@ -333,12 +354,12 @@ export class PostFormComponent implements OnInit, OnDestroy {
   addEmoji(event: EmojiEvent): void {
     const textarea = this.postTextarea.nativeElement;
     const cursorPosition = textarea.selectionStart;
-    
-    this.newPostContent = 
-      this.newPostContent.substring(0, cursorPosition) + 
-      event.emoji.native + 
+
+    this.newPostContent =
+      this.newPostContent.substring(0, cursorPosition) +
+      event.emoji.native +
       this.newPostContent.substring(cursorPosition);
-    
+
     setTimeout(() => {
       textarea.focus();
       textarea.selectionStart = textarea.selectionEnd = cursorPosition + (event.emoji.native?.length || 0);
@@ -347,6 +368,8 @@ export class PostFormComponent implements OnInit, OnDestroy {
 
   clearForm(): void {
     this.newPostContent = '';
+    this.postContent = '';
+    this.generatedTags = [];
     this.selectedFile = null;
     this.imagePreview = null;
     this.showEmojiPicker = false;
