@@ -83,6 +83,7 @@ import { TraveComponent } from './features/travel/trave/trave.component';
 import { AuthService } from './core/services/auth.service';
 import { AuthGuard } from './core/guards/auth.guard';
 import { JwtInterceptor } from './core/services/jwt.interceptor';
+import { SharedModule } from './shared/shared.module';
 
 @NgModule({
   declarations: [
@@ -154,7 +155,7 @@ import { JwtInterceptor } from './core/services/jwt.interceptor';
     // Feature Modules
     ReservationModule,
     PackModule,
-    //SharedModule,
+    SharedModule,
     DashboardModule,
   ],
   providers: [

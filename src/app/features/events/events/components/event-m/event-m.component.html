@@ -1,0 +1,85 @@
+<button class="book-now" [routerLink]="['/admin/events/Add']" *ngIf="isAdminView">➕ Add Event </button>
+
+<div class="event-management-container">
+
+              <div class="carousel" *ngIf="recommendedEvents.length > 0">
+  <h3>Top 3 événements recommandés :</h3>
+
+  <div *ngFor="let event of recommendedEvents; let i = index" class="carousel-item" [ngClass]="{'active': i === currentIndex}">
+    <img [src]="event.image" [alt]="event.title" class="carousel-image">
+    
+    <div class="carousel-info">
+      <h4>Title:{{ event.title }}</h4>
+      <p>description:{{ event.description }}</p>
+    </div>
+  </div>
+
+  <button class="prev" (click)="prev()">&#10094;</button>
+  <button class="next" (click)="next()">&#10095;</button>
+</div>
+
+
+  <!-- Navigation buttons -->
+  <button class="prev" (click)="prev()">&#10094;</button>
+  <button class="next" (click)="next()">&#10095;</button>
+
+
+    <h2 class="title">Upcoming Events</h2>
+    <p class="subtitle">Browse various ongoing events</p>
+    <div class="search-container">
+      <input type="search" [(ngModel)]="searchQuery" id="form1" placeholder="Search Events" />
+    </div>
+    <!-- Tabs Section -->
+    <div class="event-tabs">
+      <div
+        *ngFor="let tab of tabs"
+        (click)="selectedTab = tab"
+        [class.active]="selectedTab.date === tab.date"
+        class="tab">
+        {{ tab.label }} <br /> <span></span>
+      </div>
+    </div>
+  </div>
+
+ 
+
+<!-- Popup d'entrée utilisateur -->
+<div *ngIf="showUserInputPopup && !isAdminView" class="popup-overlay">
+  <div class="popup-content">
+    <h3>Entrer votre centre d'intérêt</h3>
+    <input type="text" [(ngModel)]="userInput" placeholder="Ex: musique, sport, culture..." />
+    <button (click)="submitRecommendation()">Valider</button>
+    <button (click)="closeUserInputPopup()">Annuler</button>
+  </div>
+</div>
+     
+
+    <!-- Event Card -->
+    <div *ngFor="let event of events | filterByTitle:searchQuery | filterByDate:selectedTab" class="event-card-wrapper">
+      <div class="event-card">
+        <img src="{{event.image}}" alt="Event Image" class="event-image" />
+        
+        <div class="event-content">
+          <h3 class="event-title">{{ event.title }}</h3>
+          <div class="event-meta">
+            <p><i class="fa fa-user"></i> {{ event.founder }} </p>
+            <p><i class="fa fa-clock"></i> {{event.date}}</p>
+            <p><i class="fa fa-map-marker"></i> {{ event.location }}</p>
+          </div>
+    
+          <div class="event-actions" *ngIf="isAdminView">
+            <button class="event-btn update" [routerLink]="['/admin/events/update', event.id]">Update</button>
+            <button class="event-btn delete" (click)="deleteEvent(event.id)">Delete</button>
+
+          </div>
+        </div>
+      </div>
+      <button class="event-btn book" (click)="deleteEvent(event.id)">Book now</button>
+
+      
+    </div>
+    <button (click)="generatePDF()" class="btn btn-primary" *ngIf="isAdminView">
+      Export Events as PDF
+    </button>
+    
+    
