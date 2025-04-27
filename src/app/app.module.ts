@@ -6,7 +6,7 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModule,  NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 import { GoogleMapsModule } from '@angular/google-maps';
 import { PickerModule } from '@ctrl/ngx-emoji-mart';
 
@@ -22,6 +22,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatChipsModule } from '@angular/material/chips';
+import { PaginationModule } from 'ngx-bootstrap/pagination';
 
 // Toastr for notifications
 import { ToastrModule } from 'ngx-toastr';
@@ -136,7 +137,7 @@ import { SharedModule } from './shared/shared.module';
     FormsModule,
     ReactiveFormsModule,
     CommonModule,
-    //NgbModule, // <-- This is the correct import (from @ng-bootstrap/ng-bootstrap)
+    NgbModule, // <-- This is the correct import (from @ng-bootstrap/ng-bootstrap)
     PickerModule,
 
     // Angular Material
@@ -165,9 +166,9 @@ import { SharedModule } from './shared/shared.module';
     RestaurantModule,
     VisitModule,
     MenuModule,
-    
-  ],
-  providers: [
+    NgbPaginationModule,
+
+  ],  providers: [
     AuthService,
     AuthGuard,
     {

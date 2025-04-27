@@ -11,15 +11,16 @@ import { Router } from '@angular/router';
 export class ActivityComponent implements OnInit {
   activities: Activity[] = [];
   filteredActivities: Activity[] = [];
+  pagedActivities: Activity[] = [];
   isLoading = false;
   isRecommendationMode = false;
   recommendationError: string | null = null;
-
-  // Recommendation form
   showRecommendationForm = false;
   moodInput = '';
+  currentPage = 1;
+  itemsPerPage = 3;
 
-  constructor(private activityService: ActivityService, private router: Router) { }
+  constructor(private activityService: ActivityService, private router: Router) {}
 
   ngOnInit(): void {
     this.loadActivities();
@@ -31,13 +32,41 @@ export class ActivityComponent implements OnInit {
       next: (data) => {
         this.activities = this.processActivities(data);
         this.filteredActivities = [...this.activities];
+        this.updatePagedActivities();
         this.isLoading = false;
       },
       error: (err) => {
         console.error('Error loading activities:', err);
         this.isLoading = false;
+        this.recommendationError = 'Failed to load activities. Please try again later.';
       }
     });
+  }
+
+  updatePagedActivities(): void {
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    this.pagedActivities = this.filteredActivities.slice(startIndex, endIndex);
+    // Reset to page 1 if current page exceeds total pages after filtering
+    if (this.pagedActivities.length === 0 && this.currentPage > 1) {
+      this.currentPage = 1;
+      this.updatePagedActivities();
+    }
+  }
+
+  getTotalPages(): number {
+    return Math.ceil(this.filteredActivities.length / this.itemsPerPage);
+  }
+
+  getPagesArray(): number[] {
+    return Array.from({length: this.getTotalPages()}, (_, i) => i + 1);
+  }
+
+  goToPage(page: number): void {
+    if (page >= 1 && page <= this.getTotalPages()) {
+      this.currentPage = page;
+      this.updatePagedActivities();
+    }
   }
 
   getRecommendations(): void {
@@ -45,10 +74,11 @@ export class ActivityComponent implements OnInit {
       this.recommendationError = 'Please describe what you\'re looking for';
       return;
     }
-  
+
     this.isLoading = true;
     this.recommendationError = null;
-  
+    this.currentPage = 1; // Reset to first page when getting new recommendations
+
     this.activityService.recommendFromAllActivities(this.moodInput).subscribe({
       next: (recommendations) => {
         this.filteredActivities = recommendations.map(recommendation => {
@@ -60,6 +90,7 @@ export class ActivityComponent implements OnInit {
         });
         
         this.isRecommendationMode = true;
+        this.updatePagedActivities();
         this.isLoading = false;
       },
       error: (err) => {
@@ -76,54 +107,37 @@ export class ActivityComponent implements OnInit {
     this.moodInput = '';
     this.showRecommendationForm = false;
     this.recommendationError = null;
+    this.currentPage = 1;
+    this.updatePagedActivities();
   }
 
   bookActivity(activityId: number): void {
-    // Navigate to reservation create with activity ID and type
     this.router.navigate(['/reservation/create'], {
       queryParams: { type: 'ACTIVITE', id: activityId }
     });
   }
 
   private processActivities(activities: any[]): Activity[] {
-    console.log('🔧 Processing activities data...');
-    
+    if (!activities) return [];
+
     return activities.map(activity => {
-      console.groupCollapsed(`Processing activity: ${activity.name}`);
-      
-      const processField = (field: any, fieldName: string) => {
-        console.log(`Processing ${fieldName}:`, field);
-        
-        if (Array.isArray(field)) {
-          console.log(`✅ ${fieldName} is already an array`);
-          return field;
-        }
+      const processField = (field: any) => {
+        if (Array.isArray(field)) return field;
         if (typeof field === 'string' && field.includes(',')) {
-          const result = field.split(',').map(item => item.trim());
-          console.log(`🔄 Converted ${fieldName} from string to array:`, result);
-          return result;
+          return field.split(',').map(item => item.trim());
         }
-        if (field) {
-          console.log(`⚠️ ${fieldName} is not an array but has value:`, field);
-          return [field];
-        }
-        console.log(`⏩ ${fieldName} is empty, using empty array`);
-        return [];
+        return field ? [field] : [];
       };
-  
-      const processedActivity = {
+
+      return {
         ...activity,
         imageUrls: activity.imageUrls?.length ? 
-          (Array.isArray(activity.imageUrls) ? activity.imageUrls : [activity.imageUrls]) : 
+          (Array.isArray(activity.imageUrls) ? activity.imageUrls : [activity.imageUrls]) :
           ['assets/img/bg-hero.jpg'],
-        mood: processField(activity.mood, 'mood'),
-        tags: processField(activity.tags, 'tags'),
-        requiredEquipment: processField(activity.requiredEquipment, 'requiredEquipment')
+        mood: processField(activity.mood),
+        tags: processField(activity.tags),
+        requiredEquipment: processField(activity.requiredEquipment)
       };
-  
-      console.log('Processed activity:', processedActivity);
-      console.groupEnd();
-      return processedActivity;
     });
   }
 }

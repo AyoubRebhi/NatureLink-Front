@@ -1,208 +1,235 @@
 <div class="container-xxl py-5">
     <div class="container">
-        <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
-            <h6 class="section-title bg-white text-center text-primary px-3">Activities</h6>
-            <h1 class="mb-5">Explore Exciting Activities</h1>
+      <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+        <h6 class="section-title bg-white text-center text-primary px-3">Activities</h6>
+        <h1 class="mb-5">Explore Exciting Activities</h1>
+      </div>
+      
+      <!-- Recommendation Section -->
+      <div class="text-center mb-4">
+        <button class="btn btn-outline-primary" (click)="showRecommendationForm = !showRecommendationForm">
+          <i class="fa fa-magic me-2"></i> 
+          {{ isRecommendationMode ? 'View All Activities' : 'Need Help Choosing?' }}
+        </button>
+      </div>
+      
+      <!-- Recommendation Form -->
+      <div class="row justify-content-center mb-5" *ngIf="showRecommendationForm && !isRecommendationMode">
+        <div class="col-md-8">
+          <div class="card shadow-sm border">
+            <div class="card-body">
+              <h5 class="card-title text-center mb-3">Find Your Perfect Activity</h5>
+              <form (ngSubmit)="getRecommendations()">
+                <div class="mb-3">
+                  <label class="form-label">How are you feeling or what are you looking for?</label>
+                  <input [(ngModel)]="moodInput" name="moodInput" class="form-control" 
+                         placeholder="e.g. 'relaxing nature escape' or 'exciting adventure'" required>
+                  <div class="form-text">Describe your mood, interests, or what you'd like to experience</div>
+                </div>
+                <div class="text-center">
+                  <button type="submit" class="btn btn-primary" [disabled]="isLoading">
+                    <span *ngIf="!isLoading">
+                      <i class="fa fa-lightbulb me-1"></i> Get Recommendations
+                    </span>
+                    <span *ngIf="isLoading">
+                      <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                      Finding Activities...
+                    </span>
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
         </div>
-        
-        <!-- Recommendation Section -->
-        <div class="text-center mb-4">
-            <button class="btn btn-outline-primary" (click)="showRecommendationForm = !showRecommendationForm">
-                <i class="fa fa-magic me-2"></i> 
-                {{ isRecommendationMode ? 'View All Activities' : 'Need Help Choosing?' }}
-            </button>
+      </div>
+      
+      <!-- Recommendation Error -->
+      <div *ngIf="recommendationError" class="row justify-content-center mb-3">
+        <div class="col-md-8">
+          <div class="alert alert-danger alert-dismissible fade show">
+            {{ recommendationError }}
+            <button type="button" class="btn-close" (click)="recommendationError = null"></button>
+          </div>
         </div>
-        
-        <!-- Recommendation Form -->
-        <div class="row justify-content-center mb-5" *ngIf="showRecommendationForm && !isRecommendationMode">
-            <div class="col-md-8">
-                <div class="card shadow-sm border">
-                    <div class="card-body">
-                        <h5 class="card-title text-center mb-3">Find Your Perfect Activity</h5>
-                        <form (ngSubmit)="getRecommendations()">
-                            <div class="mb-3">
-                                <label class="form-label">How are you feeling or what are you looking for?</label>
-                                <input [(ngModel)]="moodInput" name="moodInput" class="form-control" 
-                                       placeholder="e.g. 'relaxing nature escape' or 'exciting adventure'" required>
-                                <div class="form-text">Describe your mood, interests, or what you'd like to experience</div>
-                            </div>
-                            <div class="text-center">
-                                <button type="submit" class="btn btn-primary" [disabled]="isLoading">
-                                    <span *ngIf="!isLoading">
-                                        <i class="fa fa-lightbulb me-1"></i> Get Recommendations
-                                    </span>
-                                    <span *ngIf="isLoading">
-                                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                                        Finding Activities...
-                                    </span>
-                                </button>
-                            </div>
-                        </form>
+      </div>
+      
+      <!-- Loading Indicator -->
+      <div *ngIf="isLoading" class="row justify-content-center py-5">
+        <div class="col-12 text-center">
+          <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+          <h4 class="mt-3 text-primary" *ngIf="isRecommendationMode">Finding perfect activities for you...</h4>
+          <p class="text-muted">This may take a moment</p>
+        </div>
+      </div>
+      
+      <!-- No Results Message -->
+      <div *ngIf="!isLoading && filteredActivities.length === 0" class="row justify-content-center py-5">
+        <div class="col-md-8 text-center">
+          <div class="alert alert-info">
+            <h4><i class="fa fa-info-circle me-2"></i> No activities found</h4>
+            <p *ngIf="isRecommendationMode">
+              We couldn't find activities matching your mood. Try different keywords or 
+              <a href="#" class="alert-link" (click)="resetRecommendations()">see all activities</a>.
+            </p>
+            <p *ngIf="!isRecommendationMode">
+              No activities available at the moment. Please check back later.
+            </p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Activities Grid -->
+      <div *ngIf="!isLoading && pagedActivities.length > 0">
+        <!-- Recommendation Header -->
+        <div *ngIf="isRecommendationMode" class="row mb-4">
+          <div class="col-12">
+            <div class="alert alert-success d-flex align-items-center justify-content-between">
+              <div>
+                <i class="fa fa-check-circle me-2"></i>
+                Showing personalized recommendations for: <strong>"{{ moodInput }}"</strong>
+              </div>
+              <button class="btn btn-sm btn-outline-success" (click)="resetRecommendations()">
+                <i class="fa fa-times me-1"></i> Clear
+              </button>
+            </div>
+          </div>
+        </div>
+  
+        <div class="row g-4 justify-content-center">
+          <!-- Activity Cards -->
+          <div *ngFor="let activity of pagedActivities; let i = index" 
+               class="col-lg-4 col-md-6 wow fadeInUp" 
+               [attr.data-wow-delay]="'0.' + (i+1) + 's'">
+            <div class="package-item h-100">
+              <!-- Image Carousel -->
+              <div class="overflow-hidden">
+                <div [id]="'activityCarousel-' + i" class="carousel slide" data-bs-ride="carousel">
+                  <div class="carousel-indicators">
+                    <button *ngFor="let img of activity.imageUrls; let j = index" 
+                            type="button" 
+                            [attr.data-bs-target]="'#activityCarousel-' + i" 
+                            [attr.data-bs-slide-to]="j" 
+                            [class.active]="j === 0"></button>
+                  </div>
+                  <div class="carousel-inner">
+                    <div *ngFor="let img of activity.imageUrls; let k = index" 
+                         class="carousel-item" 
+                         [class.active]="k === 0">
+                      <img class="d-block w-100 img-fluid" 
+                           [src]="img" 
+                           [alt]="activity.name + ' image ' + (k+1)"
+                           style="height: 200px; object-fit: cover;">
                     </div>
+                  </div>
+                  <button class="carousel-control-prev" 
+                          type="button" 
+                          [attr.data-bs-target]="'#activityCarousel-' + i" 
+                          data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon"></span>
+                  </button>
+                  <button class="carousel-control-next" 
+                          type="button" 
+                          [attr.data-bs-target]="'#activityCarousel-' + i" 
+                          data-bs-slide="next">
+                    <span class="carousel-control-next-icon"></span>
+                  </button>
                 </div>
-            </div>
-        </div>
-        
-        <!-- Recommendation Error -->
-        <div *ngIf="recommendationError" class="row justify-content-center mb-3">
-            <div class="col-md-8">
-                <div class="alert alert-danger alert-dismissible fade show">
-                    {{ recommendationError }}
-                    <button type="button" class="btn-close" (click)="recommendationError = null"></button>
+              </div>
+  
+              <!-- Activity Details -->
+              <div class="d-flex border-bottom">
+                <small class="flex-fill text-center border-end py-2">
+                  <i class="fa fa-map-marker-alt text-primary me-2"></i>{{ activity.location || 'Various locations' }}
+                </small>
+                <small class="flex-fill text-center border-end py-2">
+                  <i class="fa fa-clock text-primary me-2"></i>{{ activity.duration || '?' }} hrs
+                </small>
+                <small class="flex-fill text-center py-2">
+                  <i class="fa fa-users text-primary me-2"></i>{{ activity.maxParticipants || '?' }} max
+                </small>
+              </div>
+              
+              <div class="text-center p-4">
+                <h3 class="mb-0">{{ activity.name }}</h3>
+                <h4 class="mb-2 text-primary" *ngIf="activity.price">${{ activity.price }}</h4>
+                <div class="mb-3">
+                  <span *ngIf="activity.difficultyLevel" class="badge bg-primary me-1">
+                    {{ activity.difficultyLevel }}
+                  </span>
+                  <span *ngFor="let tag of activity.tags" class="badge bg-secondary me-1">
+                    {{ tag }}
+                  </span>
                 </div>
-            </div>
-        </div>
-        
-        <!-- Loading Indicator -->
-        <div *ngIf="isLoading" class="row justify-content-center py-5">
-            <div class="col-12 text-center">
-                <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
-                    <span class="visually-hidden">Loading...</span>
+                <p class="text-truncate-3">{{ activity.description }}</p>
+                
+                <!-- Equipment List -->
+                <div *ngIf="activity.requiredEquipment?.length" class="mb-3">
+                  <h6 class="text-muted">Required Equipment:</h6>
+                  <div class="d-flex flex-wrap justify-content-center">
+                    <span *ngFor="let item of activity.requiredEquipment" 
+                          class="badge bg-light text-dark me-1 mb-1">
+                      {{ item }}
+                    </span>
+                  </div>
                 </div>
-                <h4 class="mt-3 text-primary" *ngIf="isRecommendationMode">Finding perfect activities for you...</h4>
-                <p class="text-muted">This may take a moment</p>
-            </div>
-        </div>
-        
-        <!-- No Results Message -->
-        <div *ngIf="!isLoading && filteredActivities.length === 0" class="row justify-content-center py-5">
-            <div class="col-md-8 text-center">
-                <div class="alert alert-info">
-                    <h4><i class="fa fa-info-circle me-2"></i> No activities found</h4>
-                    <p *ngIf="isRecommendationMode">
-                        We couldn't find activities matching your mood. Try different keywords or 
-                        <a href="#" class="alert-link" (click)="resetRecommendations()">see all activities</a>.
-                    </p>
-                    <p *ngIf="!isRecommendationMode">
-                        No activities available at the moment. Please check back later.
-                    </p>
+                
+                <!-- Mood Tags -->
+                <div *ngIf="activity.mood?.length" class="mb-3">
+                  <h6 class="text-muted">Perfect For:</h6>
+                  <div class="d-flex flex-wrap justify-content-center">
+                    <span *ngFor="let moodItem of activity.mood" 
+                          class="badge bg-info text-dark me-1 mb-1">
+                      {{ moodItem }}
+                    </span>
+                  </div>
                 </div>
-            </div>
-        </div>
-        
-        <!-- Activities Grid -->
-        <div class="row g-4 justify-content-center" *ngIf="!isLoading && filteredActivities.length > 0">
-            <!-- Recommendation Header -->
-            <div *ngIf="isRecommendationMode" class="col-12 text-center mb-4">
-                <div class="alert alert-success d-flex align-items-center justify-content-between">
-                    <div>
-                        <i class="fa fa-check-circle me-2"></i>
-                        Showing personalized recommendations for: <strong>"{{ moodInput }}"</strong>
-                    </div>
-                    <button class="btn btn-sm btn-outline-success" (click)="resetRecommendations()">
-                        <i class="fa fa-times me-1"></i> Clear
-                    </button>
+                
+                <div class="d-flex justify-content-center mb-2">
+                  <a [routerLink]="['/activity', activity.id]" 
+                     class="btn btn-sm btn-primary px-3 border-end rounded-start-pill">
+                    Details
+                  </a>
+                  <button *ngIf="activity.id" (click)="bookActivity(activity.id)" 
+                          class="btn btn-sm btn-primary px-3 rounded-end-pill">
+                    Book Now
+                  </button>
                 </div>
+              </div>
             </div>
-            
-            <!-- Activity Cards -->
-            <div *ngFor="let activity of filteredActivities; let i = index" 
-                 class="col-lg-4 col-md-6 wow fadeInUp" 
-                 [attr.data-wow-delay]="'0.' + (i+1) + 's'">
-                <div class="package-item h-100">
-                    <!-- Image Carousel -->
-                    <div class="overflow-hidden">
-                        <div [id]="'activityCarousel-' + i" class="carousel slide" data-bs-ride="carousel">
-                            <div class="carousel-indicators">
-                                <button *ngFor="let img of activity.imageUrls; let j = index" 
-                                        type="button" 
-                                        [attr.data-bs-target]="'#activityCarousel-' + i" 
-                                        [attr.data-bs-slide-to]="j" 
-                                        [class.active]="j === 0"></button>
-                            </div>
-                            <div class="carousel-inner">
-                                <div *ngFor="let img of activity.imageUrls; let k = index" 
-                                     class="carousel-item" 
-                                     [class.active]="k === 0">
-                                    <img class="d-block w-100 img-fluid" 
-                                         [src]="img" 
-                                         [alt]="activity.name + ' image ' + (k+1)"
-                                         style="height: 200px; object-fit: cover;">
-                                </div>
-                            </div>
-                            <button class="carousel-control-prev" 
-                                    type="button" 
-                                    [attr.data-bs-target]="'#activityCarousel-' + i" 
-                                    data-bs-slide="prev">
-                                <span class="carousel-control-prev-icon"></span>
-                            </button>
-                            <button class="carousel-control-next" 
-                                    type="button" 
-                                    [attr.data-bs-target]="'#activityCarousel-' + i" 
-                                    data-bs-slide="next">
-                                <span class="carousel-control-next-icon"></span>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Activity Details -->
-                    <div class="d-flex border-bottom">
-                        <small class="flex-fill text-center border-end py-2">
-                            <i class="fa fa-map-marker-alt text-primary me-2"></i>{{ activity.location || 'Various locations' }}
-                        </small>
-                        <small class="flex-fill text-center border-end py-2">
-                            <i class="fa fa-clock text-primary me-2"></i>{{ activity.duration || '?' }} hrs
-                        </small>
-                        <small class="flex-fill text-center py-2">
-                            <i class="fa fa-users text-primary me-2"></i>{{ activity.maxParticipants || '?' }} max
-                        </small>
-                    </div>
-                    
-                    <div class="text-center p-4">
-                        <h3 class="mb-0">{{ activity.name }}</h3>
-                        <h4 class="mb-2 text-primary" *ngIf="activity.price">${{ activity.price }}</h4>
-                        <div class="mb-3">
-                            <span *ngIf="activity.difficultyLevel" class="badge bg-primary me-1">
-                                {{ activity.difficultyLevel }}
-                            </span>
-                            <span *ngFor="let tag of activity.tags" class="badge bg-secondary me-1">
-                                {{ tag }}
-                            </span>
-                        </div>
-                        <p class="text-truncate-3">{{ activity.description }}</p>
-                        
-                        <!-- Equipment List -->
-                        <div *ngIf="activity.requiredEquipment?.length" class="mb-3">
-                            <h6 class="text-muted">Required Equipment:</h6>
-                            <div class="d-flex flex-wrap justify-content-center">
-                                <span *ngFor="let item of activity.requiredEquipment" 
-                                      class="badge bg-light text-dark me-1 mb-1">
-                                    {{ item }}
-                                </span>
-                            </div>
-                        </div>
-                        
-                        <!-- Mood Tags -->
-                        <div *ngIf="activity.mood?.length" class="mb-3">
-                            <h6 class="text-muted">Perfect For:</h6>
-                            <div class="d-flex flex-wrap justify-content-center">
-                                <span *ngFor="let moodItem of activity.mood" 
-                                      class="badge bg-info text-dark me-1 mb-1">
-                                    {{ moodItem }}
-                                </span>
-                            </div>
-                        </div>
-                        
-                        <div class="d-flex justify-content-center mb-2">
-                            <a [routerLink]="['/activity', activity.id]" 
-                               class="btn btn-sm btn-primary px-3 border-end rounded-start-pill">
-                                Details
-                            </a>
-                            <button *ngIf="activity.id" (click)="bookActivity(activity.id)" 
-                                    class="btn btn-sm btn-primary px-3 rounded-end-pill">
-                                Book Now
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+          </div>
         </div>
-        
-        <!-- Reset Recommendations Button -->
-        <div *ngIf="isRecommendationMode && !isLoading && filteredActivities.length > 0" class="text-center mt-4">
-            <button class="btn btn-outline-secondary" (click)="resetRecommendations()">
-                <i class="fa fa-undo me-2"></i> Show All Activities
-            </button>
+      </div>
+      
+      <!-- Pagination -->
+      <div *ngIf="!isLoading && filteredActivities.length > itemsPerPage" class="row mt-4">
+        <div class="col-12 d-flex justify-content-center">
+          <nav aria-label="Activity pagination">
+            <ul class="pagination">
+              <li class="page-item" [class.disabled]="currentPage === 1">
+                <a class="page-link" (click)="currentPage = currentPage - 1; updatePagedActivities()">
+                  &laquo; Previous
+                </a>
+              </li>
+              <li class="page-item" *ngFor="let page of getPagesArray()" [class.active]="page === currentPage">
+                <a class="page-link" (click)="currentPage = page; updatePagedActivities()">{{ page }}</a>
+              </li>
+              <li class="page-item" [class.disabled]="currentPage === getTotalPages()">
+                <a class="page-link" (click)="currentPage = currentPage + 1; updatePagedActivities()">
+                  Next &raquo;
+                </a>
+              </li>
+            </ul>
+          </nav>
         </div>
+      </div>
+      
+      <!-- Reset Recommendations Button -->
+      <div *ngIf="isRecommendationMode && !isLoading && filteredActivities.length > 0" class="text-center mt-4">
+        <button class="btn btn-outline-secondary" (click)="resetRecommendations()">
+          <i class="fa fa-undo me-2"></i> Show All Activities
+        </button>
+      </div>
     </div>
-</div>
+  </div>
