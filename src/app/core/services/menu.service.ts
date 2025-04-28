@@ -1,14 +1,15 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
 import { Menu } from '../models/menu';
+import { catchError, map } from 'rxjs/operators'; // Added 'map' importimport { catchError, map } from 'rxjs/operators'; // Added 'map' import
 
 @Injectable({
   providedIn: 'root'
 })
 export class MenuService {
   private apiUrl = 'http://localhost:9000/api/menus';
+  private recommendationApiUrl = 'http://localhost:5007/api/recommendations'; // Flask recommendation API
 
   constructor(private http: HttpClient) {}
 
@@ -65,5 +66,12 @@ export class MenuService {
     }
     console.error(`Erreur HTTP ${error.status}:`, error);
     return throwError(() => new Error(errorMessage));
+  }
+  getMenuRecommendations(restaurantId: number, query: string): Observable<Menu[]> {
+    const payload = { query, restaurant_id: restaurantId };
+    return this.http.post<any>(this.recommendationApiUrl, payload).pipe(
+      map(response => response.recommendations as Menu[] ?? []), // Extract recommendations, default to empty array if missing
+      catchError(this.handleError)
+    );
   }
 }
