@@ -3,6 +3,9 @@ import { Router } from '@angular/router';
 import { ReservationService } from 'src/app/core/services/reservation.service';
 import { Reservation } from 'src/app/core/models/reservation.model';
 import { TypeReservation } from 'src/app/core/models/type-reservation.model';
+import { AuthService } from 'src/app/core/services/auth.service';
+import { StatutReservation } from 'src/app/core/models/statut-reservation.model';
+import { PackService } from 'src/app/core/services/pack.service';
 
 interface ReservationStats {
   totalReservations: number;
@@ -20,6 +23,7 @@ interface ReservationStats {
 export class ReservationListComponent implements OnInit {
   reservations: Reservation[] = [];
   filteredReservations: Reservation[] = [];
+  private deletedReservations: Reservation[] = []; // Store deleted reservations locally
   reservationStats: ReservationStats = {
     totalReservations: 0,
     byType: {
@@ -27,92 +31,111 @@ export class ReservationListComponent implements OnInit {
       [TypeReservation.LOGEMENT]: 0,
       [TypeReservation.RESTAURANT]: 0,
       [TypeReservation.EVENT]: 0,
-      [TypeReservation.TRANSPORT]: 0
+      [TypeReservation.TRANSPORT]: 0,
+      [TypeReservation.PACK]: 0
     },
     byStatus: { confirmed: 0, pending: 0, canceled: 0 },
     totalClients: 0,
     mostFrequentType: ''
   };
   selectedReservation?: Reservation;
-  userId = 8; // Replace with actual user ID (e.g., from auth service)
   searchQuery: string = '';
   selectedType: TypeReservation | '' = '';
   showModal: boolean = false;
-  showUpcoming: boolean = true; // Default to upcoming reservations
-
+  showReservationTypePopup: boolean = false;
+  showUpcoming: boolean = true;
   typeReservations = Object.values(TypeReservation);
+  TypeReservation = TypeReservation;
+  selectedPackDetails: string | null = null;
 
   constructor(
     private reservationService: ReservationService,
-    private router: Router
+    private packService: PackService,
+    private router: Router,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
+    if (!this.authService.isAuthenticated()) {
+      this.router.navigate(['/login'], { queryParams: { returnUrl: this.router.url } });
+      return;
+    }
     this.loadReservations();
   }
 
   loadReservations(): void {
-    const serviceCall = this.showUpcoming
-      ? this.reservationService.getUpcomingReservationsByUserId(this.userId)
-      : this.reservationService.getReservationsByUserId(this.userId);
+    const userId = this.authService.getCurrentUserId();
+    if (!userId) {
+      console.error('No userId found, redirecting to login');
+      this.router.navigate(['/login'], { queryParams: { returnUrl: this.router.url } });
+      return;
+    }
+
+    const now = new Date();
+
+    let serviceCall = this.showUpcoming
+      ? this.reservationService.getUpcomingReservationsByUserId(userId)
+      : this.reservationService.getReservationsByUserId(userId);
 
     serviceCall.subscribe({
       next: (data) => {
-        console.log('Raw API Response:', data);
-
         if (!data || !Array.isArray(data)) {
           console.error('Invalid data format:', data);
           this.reservations = [];
           this.updateStatistics();
+          this.filterReservations();
           return;
         }
 
-        this.reservations = data
-          .filter(reservation => {
-            if (this.showUpcoming) {
-              return true; // Already filtered by backend
-            } else {
-              // Filter for past reservations (dateFin < today)
-              return new Date(reservation.dateFin) < new Date();
-            }
-          })
-          .map((reservation) => {
-            let typeres: TypeReservation | undefined;
-            if (reservation.typeres && Object.values(TypeReservation).includes(reservation.typeres)) {
-              typeres = reservation.typeres as TypeReservation;
-            } else if (reservation.logementId) {
-              typeres = TypeReservation.LOGEMENT;
-            } else if (reservation.activityId) {
-              typeres = TypeReservation.ACTIVITE;
-            } else if (reservation.restaurantId) {
-              typeres = TypeReservation.RESTAURANT;
-            } else if (reservation.eventId) {
-              typeres = TypeReservation.EVENT;
-            } else if (reservation.transportId) {
-              typeres = TypeReservation.TRANSPORT;
-            }
+        // Log raw data
+        console.log(`Raw ${this.showUpcoming ? 'upcoming' : 'history'} reservations:`, JSON.stringify(data, null, 2));
 
-            return {
-              ...reservation,
-              id: reservation.id,
-              userId: reservation.userId,
-              dateDebut: new Date(reservation.dateDebut),
-              dateFin: new Date(reservation.dateFin),
-              statut: reservation.statut,
-              logementId: reservation.logementId,
-              numClients: reservation.numClients,
-              clientNames: reservation.clientNames,
-              numRooms: reservation.numRooms,
-              typeres
-            };
+        // Map reservations and validate dates
+        let mappedReservations = data
+          .map(reservation => this.mapReservation(reservation))
+          .filter(reservation => {
+            const isValid = reservation.dateDebut && reservation.dateFin && !isNaN(reservation.dateDebut.getTime()) && !isNaN(reservation.dateFin.getTime());
+            if (!isValid) {
+              console.warn('Invalid reservation filtered out:', reservation);
+            }
+            return isValid;
           });
 
-        console.log('Mapped Reservations:', this.reservations);
-        this.updateStatistics();
-        this.filterReservations();
+        // Update statuses for EN_ATTENTE reservations
+        this.updateReservationStatuses(mappedReservations, now).then(() => {
+          if (this.showUpcoming) {
+            // Filter upcoming reservations (dateDebut > now)
+            this.reservations = mappedReservations.filter(res => {
+              const isUpcoming = res.dateDebut > now && res.statut !== StatutReservation.CANCELLED;
+              if (!isUpcoming) {
+                console.warn('Non-upcoming or cancelled reservation found in upcoming list:', res);
+              }
+              return isUpcoming;
+            });
+          } else {
+            // History view: filter for past CANCELLED reservations, include deleted
+            const backendReservations = mappedReservations.filter(res => {
+              const isPastAndCanceled = res.dateFin < now && res.statut === StatutReservation.CANCELLED;
+              return isPastAndCanceled;
+            });
+            this.reservations = [...backendReservations, ...this.deletedReservations.filter(res => res.dateFin < now)];
+          }
+
+          // Log mapped reservations
+          console.log(`Mapped ${this.showUpcoming ? 'upcoming' : 'history'} reservations:`, JSON.stringify(this.reservations, null, 2));
+
+          // Fetch pack names for pack reservations
+          const packReservations = this.reservations.filter(r => r.packId);
+          if (packReservations.length > 0) {
+            this.fetchPackNames(packReservations);
+          }
+
+          this.updateStatistics();
+          this.filterReservations();
+        });
       },
       error: (error) => {
-        console.error(`Error fetching ${this.showUpcoming ? 'upcoming' : 'past'} reservations:`, error);
+        console.error(`Error fetching ${this.showUpcoming ? 'upcoming' : 'history'} reservations:`, error);
         this.reservations = [];
         this.updateStatistics();
         this.filterReservations();
@@ -120,8 +143,119 @@ export class ReservationListComponent implements OnInit {
     });
   }
 
+  private async updateReservationStatuses(reservations: Reservation[], now: Date): Promise<void> {
+    const updatePromises = reservations.map(res => {
+      let newStatus: StatutReservation | undefined;
+      if (res.statut === 'EN_ATTENTE' as any) {
+        if (res.dateFin < now) {
+          newStatus = StatutReservation.CANCELLED;
+        } else if (res.dateDebut > now) {
+          newStatus = StatutReservation.PENDING;
+        }
+      }
+
+      if (newStatus) {
+        // Update backend
+        const updatedRes = { ...res, statut: newStatus };
+        return this.reservationService.updateReservation(res.id!, updatedRes).toPromise()
+          .then(() => {
+            res.statut = newStatus!;
+            console.log(`Successfully updated reservation ${res.id} to ${newStatus}`);
+          })
+          .catch(error => {
+            console.error(`Error updating reservation ${res.id} to ${newStatus}:`, error);
+            // Fallback: Update locally
+            res.statut = newStatus!;
+            console.log(`Fallback: Locally updated reservation ${res.id} to ${newStatus}`);
+          });
+      }
+      return Promise.resolve();
+    });
+
+    await Promise.all(updatePromises);
+  }
+
+  private mapReservation(reservation: any): Reservation {
+    // Keep EN_ATTENTE as is for updateReservationStatuses to handle
+    let statut: StatutReservation | 'EN_ATTENTE' = reservation.statut as StatutReservation;
+
+    // Determine reservation type
+    let typeres: TypeReservation | undefined;
+    if (reservation.typeres && Object.values(TypeReservation).includes(reservation.typeres)) {
+      typeres = reservation.typeres as TypeReservation;
+    } else if (reservation.logementId) {
+      typeres = TypeReservation.LOGEMENT;
+    } else if (reservation.activityId) {
+      typeres = TypeReservation.ACTIVITE;
+    } else if (reservation.restaurantId) {
+      typeres = TypeReservation.RESTAURANT;
+    } else if (reservation.eventId) {
+      typeres = TypeReservation.EVENT;
+    } else if (reservation.transportId) {
+      typeres = TypeReservation.TRANSPORT;
+    } else if (reservation.packId) {
+      typeres = TypeReservation.PACK;
+    } else {
+      console.warn('Unknown reservation type:', reservation);
+    }
+
+    // Ensure dates are valid Date objects
+    const dateDebut = reservation.dateDebut
+      ? new Date(reservation.dateDebut)
+      : new Date();
+    const dateFin = reservation.dateFin
+      ? new Date(reservation.dateFin)
+      : new Date();
+
+    if (isNaN(dateDebut.getTime()) || isNaN(dateFin.getTime())) {
+      console.warn('Invalid dates in reservation:', reservation);
+    }
+
+    return {
+      id: reservation.id,
+      userId: reservation.userId,
+      dateDebut,
+      dateFin,
+      statut,
+      logementId: reservation.logementId,
+      activityId: reservation.activityId,
+      transportId: reservation.transportId,
+      restaurantId: reservation.restaurantId,
+      eventId: reservation.eventId,
+      packId: reservation.packId,
+      packName: reservation.packName,
+      numClients: reservation.numClients || 0,
+      clientNames: reservation.clientNames || [],
+      numRooms: reservation.numRooms || 0,
+      typeres
+    };
+  }
+
+  private fetchPackNames(packReservations: Reservation[]): void {
+    const packIds = [...new Set(packReservations.map(r => r.packId))] as number[];
+    
+    packIds.forEach(packId => {
+      this.packService.getPackById(packId).subscribe({
+        next: (pack) => {
+          this.reservations.forEach(r => {
+            if (r.packId === packId) {
+              r.packName = pack.nom;
+            }
+          });
+          this.filteredReservations.forEach(r => {
+            if (r.packId === packId) {
+              r.packName = pack.nom;
+            }
+          });
+        },
+        error: (error) => {
+          console.error(`Error fetching pack ${packId}:`, error);
+        }
+      });
+    });
+  }
+
   updateStatistics(): void {
-    // Reset stats
     this.reservationStats = {
       totalReservations: this.reservations.length,
       byType: {
@@ -129,51 +263,44 @@ export class ReservationListComponent implements OnInit {
         [TypeReservation.LOGEMENT]: 0,
         [TypeReservation.RESTAURANT]: 0,
         [TypeReservation.EVENT]: 0,
-        [TypeReservation.TRANSPORT]: 0
+        [TypeReservation.TRANSPORT]: 0,
+        [TypeReservation.PACK]: 0
       },
       byStatus: { confirmed: 0, pending: 0, canceled: 0 },
       totalClients: 0,
       mostFrequentType: ''
     };
 
-    // Compute stats
     this.reservations.forEach(reservation => {
-      // By type
       if (reservation.typeres) {
         this.reservationStats.byType[reservation.typeres]++;
       }
 
-      // By status
       if (reservation.statut) {
         const status = reservation.statut.toLowerCase();
         if (status.includes('confirm')) {
           this.reservationStats.byStatus.confirmed++;
-        } else if (status.includes('attente') || status.includes('pending')) {
+        } else if (status.includes('pending')) {
           this.reservationStats.byStatus.pending++;
-        } else if (status.includes('annul') || status.includes('canceled')) {
+        } else if (status.includes('cancelled')) {
           this.reservationStats.byStatus.canceled++;
         }
       }
 
-      // Total clients
       if (reservation.numClients) {
         this.reservationStats.totalClients += reservation.numClients;
       }
     });
 
-    // Find most frequent type
     const typeCounts = Object.entries(this.reservationStats.byType) as [TypeReservation, number][];
-    const mostFrequent = typeCounts.reduce((max, [type, count]) => 
-      count > max.count ? { type, count } : max, 
+    const mostFrequent = typeCounts.reduce((max, [type, count]) =>
+      count > max.count ? { type, count } : max,
       { type: '', count: 0 }
     );
     this.reservationStats.mostFrequentType = mostFrequent.type || 'None';
   }
 
   filterReservations(): void {
-    console.log('Filtering with query:', this.searchQuery);
-    console.log('Selected Type:', this.selectedType);
-
     this.filteredReservations = this.reservations.filter((reservation) => {
       const matchesSearch = this.searchQuery
         ? reservation.clientNames?.some((name) =>
@@ -188,21 +315,63 @@ export class ReservationListComponent implements OnInit {
       return matchesSearch && matchesType;
     });
 
-    console.log('Filtered Reservations:', this.filteredReservations);
+    // Log filtered reservations
+    console.log('Filtered reservations:', JSON.stringify(this.filteredReservations, null, 2));
   }
 
   selectReservation(reservation: Reservation): void {
     this.selectedReservation = reservation;
     this.showModal = true;
+    this.selectedPackDetails = null;
+
+    if (reservation.packId) {
+      this.packService.getPackById(reservation.packId).subscribe({
+        next: (pack) => {
+          this.selectedPackDetails = `Pack: ${pack.nom}`;
+        },
+        error: (error) => {
+          console.error('Error fetching pack info:', error);
+          this.selectedPackDetails = 'Pack details not available';
+        }
+      });
+    }
   }
 
   closeModal(): void {
     this.showModal = false;
     this.selectedReservation = undefined;
+    this.selectedPackDetails = null;
   }
 
   goToAdd(): void {
-    this.router.navigate(['/reservation/create']);
+    if (!this.authService.isAuthenticated()) {
+      this.router.navigate(['/login'], { queryParams: { returnUrl: this.router.url } });
+      return;
+    }
+    this.showReservationTypePopup = true;
+  }
+
+  selectReservationType(type: TypeReservation): void {
+    if (!this.authService.isAuthenticated()) {
+      this.router.navigate(['/login'], { queryParams: { returnUrl: this.router.url } });
+      return;
+    }
+
+    const routes: { [key in TypeReservation]: string } = {
+      [TypeReservation.LOGEMENT]: '/logementsFront',
+      [TypeReservation.EVENT]: '/events/management',
+      [TypeReservation.ACTIVITE]: '/activities',
+      [TypeReservation.TRANSPORT]: '/',
+      [TypeReservation.RESTAURANT]: '/restaurants',
+      [TypeReservation.PACK]: '/packs/list-frontend'
+    };
+
+    this.router.navigate([routes[type]]);
+    this.showReservationTypePopup = false;
+  }
+
+  closeReservationTypePopup(): void {
+    this.showReservationTypePopup = false;
   }
 
   goToUpdate(id?: number): void {
@@ -220,14 +389,29 @@ export class ReservationListComponent implements OnInit {
     }
 
     if (confirm('Are you sure you want to delete this reservation?')) {
+      const reservation = this.reservations.find(r => r.id === id);
+      if (!reservation) {
+        alert('Reservation not found.');
+        return;
+      }
+
+      // Store a copy in deletedReservations with CANCELLED status
+      const deletedRes = { ...reservation, statut: StatutReservation.CANCELLED };
+      this.deletedReservations.push(deletedRes);
+      console.log(`Stored deleted reservation ${id} as CANCELLED in local memory`);
+
+      // Delete from backend
       this.reservationService.deleteReservation(id).subscribe({
         next: () => {
+          console.log(`Reservation ${id} deleted from backend`);
           this.loadReservations();
           this.selectedReservation = undefined;
         },
         error: (error) => {
           console.error('Error deleting reservation:', error);
           alert('Failed to delete reservation');
+          // Remove from deletedReservations if deletion fails
+          this.deletedReservations = this.deletedReservations.filter(r => r.id !== id);
         }
       });
     }
@@ -243,7 +427,7 @@ export class ReservationListComponent implements OnInit {
         a.click();
         window.URL.revokeObjectURL(blobUrl);
       },
-      (error) => {
+      error => {
         console.error('Error downloading PDF:', error);
         alert('Failed to download the reservation PDF.');
       }

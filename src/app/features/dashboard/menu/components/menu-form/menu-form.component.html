@@ -1,0 +1,123 @@
+<div id="menuForm" class="container my-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <h4 class="mb-0">
+            <i class="bi bi-menu-button-wide me-2"></i>
+            {{ isEditMode ? 'Modifier le Menu' : 'Ajouter un Nouveau Menu' }}
+          </h4>
+        </div>
+        <div class="card-body">
+          <!-- Messages d'alerte -->
+          <div *ngIf="successMessage" class="alert alert-success alert-dismissible fade show">
+            {{ successMessage }}
+            <button type="button" class="btn-close" (click)="successMessage = ''" aria-label="Fermer"></button>
+          </div>
+          <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show">
+            {{ errorMessage }}
+            <button type="button" class="btn-close" (click)="errorMessage = ''" aria-label="Fermer"></button>
+          </div>
+
+          <!-- Formulaire -->
+          <form [formGroup]="menuForm" (ngSubmit)="onSubmit()" enctype="multipart/form-data" novalidate>
+            <div class="row">
+              <!-- Plats -->
+              <div class="col-lg-12 mb-3">
+                <label for="plats" class="form-label">
+                  Plats <span class="text-danger">*</span>
+                </label>
+                <input
+                  type="text"
+                  id="plats"
+                  formControlName="plats"
+                  class="form-control"
+                  maxlength="100"
+                  placeholder="Ex: Pizza Margherita"
+                  [ngClass]="{'is-invalid': menuForm.get('plats')?.invalid && menuForm.get('plats')?.touched}" />
+                <div *ngIf="menuForm.get('plats')?.invalid && menuForm.get('plats')?.touched" class="invalid-feedback">
+                  <small *ngIf="menuForm.get('plats')?.errors?.['required']">Ce champ est requis.</small>
+                  <small *ngIf="menuForm.get('plats')?.errors?.['maxlength']">Maximum 100 caractères.</small>
+                </div>
+              </div>
+
+              <!-- Prix Moyen -->
+              <div class="col-lg-6 mb-3">
+                <label for="prixMoyen" class="form-label">
+                  Prix Moyen (€) <span class="text-danger">*</span>
+                </label>
+                <input
+                  type="number"
+                  id="prixMoyen"
+                  formControlName="prixMoyen"
+                  class="form-control"
+                  placeholder="Ex: 15.99"
+                  min="0"
+                  step="0.01"
+                  [ngClass]="{'is-invalid': menuForm.get('prixMoyen')?.invalid && menuForm.get('prixMoyen')?.touched}" />
+                <div *ngIf="menuForm.get('prixMoyen')?.invalid && menuForm.get('prixMoyen')?.touched" class="invalid-feedback">
+                  <small *ngIf="menuForm.get('prixMoyen')?.errors?.['required']">Ce champ est requis.</small>
+                  <small *ngIf="menuForm.get('prixMoyen')?.errors?.['min']">Le prix doit être positif.</small>
+                </div>
+              </div>
+
+              <!-- Ingrédients -->
+              <div class="col-lg-12 mb-3">
+                <label for="ingredientsDetails" class="form-label">
+                  Ingrédients (séparés par des virgules) <span class="text-danger">*</span>
+                </label>
+                <textarea
+                  id="ingredientsDetails"
+                  formControlName="ingredientsDetails"
+                  class="form-control"
+                  rows="4"
+                  placeholder="Ex: farine de blé, lait, tomates, basilic"
+                  [ngClass]="{'is-invalid': menuForm.get('ingredientsDetails')?.invalid && menuForm.get('ingredientsDetails')?.touched}"></textarea>
+                <div *ngIf="menuForm.get('ingredientsDetails')?.invalid && menuForm.get('ingredientsDetails')?.touched" class="invalid-feedback">
+                  <small *ngIf="menuForm.get('ingredientsDetails')?.errors?.['required']">Ce champ est requis.</small>
+                  <small *ngIf="menuForm.get('ingredientsDetails')?.errors?.['maxlength']">Maximum 500 caractères.</small>
+                </div>
+              </div>
+
+              <!-- Image -->
+              <div class="col-lg-12 mb-3">
+                <label for="image" class="form-label">
+                  Image <span class="text-danger">*</span>
+                </label>
+                <input
+                  type="file"
+                  id="image"
+                  class="form-control"
+                  (change)="onImageSelected($event)"
+                  accept="image/*" />
+                <div *ngIf="!selectedImage && menuForm.touched && !isEditMode" class="invalid-feedback d-block">
+                  Veuillez sélectionner une image.
+                </div>
+                <small *ngIf="selectedImage" class="form-text text-muted">
+                  Fichier sélectionné : {{ selectedImage.name }}
+                </small>
+              </div>
+            </div>
+
+            <!-- Boutons d'action -->
+            <div class="d-flex justify-content-end mt-4">
+              <button
+                type="button"
+                class="btn btn-secondary me-2"
+                (click)="goBack()"
+                [disabled]="isLoading">
+                Annuler
+              </button>
+              <button
+                type="submit"
+                class="btn btn-success"
+                [disabled]="isLoading">
+                {{ isLoading ? 'Enregistrement...' : (isEditMode ? 'Modifier' : 'Ajouter') }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -4,6 +4,8 @@ import { PackService } from 'src/app/core/services/pack.service';
 import { PackDTO } from 'src/app/core/models/pack.model';
 import { RatingDTO } from 'src/app/core/models/rating.model';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { AuthService } from 'src/app/core/services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-front-list',
@@ -15,7 +17,7 @@ export class FrontListComponent implements OnInit {
   showRatingModal: boolean = false;
   selectedPack: PackDTO | null = null;
   selectedRating: number = 0;
-  userId: number = 4;
+  userId?: number;
   loading: boolean = false;
   errorMessage: string | null = null;
   showChat: boolean = false;
@@ -27,10 +29,27 @@ export class FrontListComponent implements OnInit {
 
   constructor(
     private packService: PackService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private authService: AuthService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
+    if (!this.authService.isAuthenticated()) {
+      this.router.navigate(['/login'], {
+        queryParams: { returnUrl: this.router.url }
+      });
+      return;
+    }
+
+    this.userId = this.authService.getCurrentUserId() || undefined;
+    if (!this.userId) {
+      this.router.navigate(['/login'], {
+        queryParams: { returnUrl: this.router.url }
+      });
+      return;
+    }
+
     this.fetchPacks();
   }
 
@@ -65,6 +84,13 @@ export class FrontListComponent implements OnInit {
     });
   }
 
+  bookPack(pack: PackDTO): void {
+    if (!this.userId) {
+      this.router.navigate(['/login'], { queryParams: { returnUrl: this.router.url } });
+      return;
+    }
+    this.router.navigate(['/reservation/create'], { queryParams: { packId: pack.id, type: 'PACK' } });
+  }
   getStarRating(rating: number): string[] {
     const fullStars = Math.floor(rating);
     const hasHalfStar = rating % 1 >= 0.5;
@@ -92,6 +118,12 @@ export class FrontListComponent implements OnInit {
   }
 
   submitRating(): void {
+    if (!this.userId) {
+      this.errorMessage = 'Please log in to submit a rating.';
+      this.router.navigate(['/login'], { queryParams: { returnUrl: this.router.url } });
+      return;
+    }
+
     if (!this.selectedPack || this.selectedRating <= 0 || this.selectedRating > 5) {
       this.errorMessage = 'Invalid rating or pack selection';
       return;
@@ -139,7 +171,7 @@ export class FrontListComponent implements OnInit {
       next: (res) => {
         console.log('Generate Image Response:', res);
         setTimeout(() => {
-          const imageUrl = `/static/${res.image_url}`; // Proxied to http://localhost:9000/generated_*.png
+          const imageUrl = `/static/${res.image_url}`;
           console.log('Generated Image URL:', imageUrl);
           this.generatedImageUrl = this.sanitizer.bypassSecurityTrustUrl(imageUrl);
           fetch(imageUrl)

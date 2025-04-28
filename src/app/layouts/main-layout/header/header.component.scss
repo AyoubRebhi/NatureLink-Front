@@ -31,3 +31,138 @@ html, body {
     margin-top: 0px; /* Adjust this to push the hero section lower */
 }
 
+/* Custom CSS for NatureLink */
+.naturelink-navbar {
+    background-color: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+  }
+  
+  .naturelink-navbar.scrolled {
+    background-color: #fff;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+  
+  .nav-hover {
+    position: relative;
+    padding: 8px 15px;
+    margin: 0 5px;
+    transition: all 0.3s ease;
+  }
+  
+  .nav-hover:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: #4CAF50;
+    transition: all 0.3s ease;
+  }
+  
+  .nav-hover:hover:after,
+  .nav-hover.active:after {
+    width: 80%;
+    left: 10%;
+  }
+  
+  .dropdown-menu-custom {
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    padding: 10px 0;
+    margin-top: 5px;
+  }
+  
+  .dropdown-item-custom {
+    padding: 8px 20px;
+    transition: all 0.2s;
+    color: #333;
+  }
+  
+  .dropdown-item-custom:hover {
+    background-color: #f8f9fa;
+    color: #4CAF50;
+    padding-left: 25px;
+  }
+  
+  .register-btn {
+    padding: 10px 25px;
+    font-weight: 600;
+    transition: all 0.3s;
+    background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+    border: none;
+  }
+  
+  .register-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(46, 125, 50, 0.3);
+  }
+  
+  .naturelink-hero {
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
+                url('https://example.com/tunisia-nature.jpg') no-repeat center center;
+    background-size: cover;
+    height: 90vh;
+    display: flex;
+    align-items: center;
+  }
+  
+  .naturelink-hero-inner {
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
+                url('https://example.com/tunisia-nature-2.jpg') no-repeat center center;
+    background-size: cover;
+    height: 50vh;
+    display: flex;
+    align-items: center;
+  }
+  
+  .hero-title {
+    font-weight: 700;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+    letter-spacing: 1px;
+  }
+  
+  .hero-subtitle {
+    font-weight: 300;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+  }
+  
+  .search-input {
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    font-size: 1.1rem;
+  }
+  
+  .search-btn {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    bottom: 5px;
+    padding: 0 25px;
+    font-weight: 600;
+    background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+    border: none;
+  }
+  
+  .custom-breadcrumb {
+    background-color: rgba(255, 255, 255, 0.2);
+    padding: 10px 20px;
+    border-radius: 50px;
+  }
+  
+  .custom-breadcrumb .breadcrumb-item a {
+    color: #fff;
+    text-decoration: none;
+  }
+  
+  @media (max-width: 992px) {
+    .naturelink-hero {
+      height: 70vh;
+    }
+    
+    .search-container {
+      width: 100% !important;
+    }
+  }

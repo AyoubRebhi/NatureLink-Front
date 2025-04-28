@@ -1,0 +1,111 @@
+<div class="container">
+  <h2>Add New Food</h2>
+  
+  <form [formGroup]="foodForm" (ngSubmit)="onSubmit()" class="food-form">
+    <!-- Error/Success Messages -->
+    <div *ngIf="errorMessage" class="alert error">
+      {{ errorMessage }}
+    </div>
+    <div *ngIf="successMessage" class="alert success">
+      {{ successMessage }}
+    </div>
+
+    <!-- Name Field -->
+    <div class="form-group">
+      <label for="name">Name</label>
+      <input 
+        id="name" 
+        type="text" 
+        formControlName="name"
+        [class.invalid]="nameControl?.invalid && nameControl?.touched">
+      <div *ngIf="nameControl?.invalid && nameControl?.touched" class="error-message">
+        <div *ngIf="nameControl?.hasError('required')">Name is required</div>
+        <div *ngIf="nameControl?.hasError('maxlength')">Maximum 100 characters</div>
+      </div>
+    </div>
+
+    <!-- Description Field -->
+    <div class="form-group">
+      <label for="description">Description</label>
+      <textarea 
+        id="description" 
+        formControlName="description"
+        rows="4"
+        [class.invalid]="descriptionControl?.invalid && descriptionControl?.touched"></textarea>
+      <div *ngIf="descriptionControl?.invalid && descriptionControl?.touched" class="error-message">
+        <div *ngIf="descriptionControl?.hasError('required')">Description is required</div>
+        <div *ngIf="descriptionControl?.hasError('maxlength')">Maximum 500 characters</div>
+      </div>
+    </div>
+
+    <!-- Season Field -->
+    <div class="form-group">
+      <label for="season">Season</label>
+      <select 
+        id="season" 
+        formControlName="season"
+        [class.invalid]="seasonControl?.invalid && seasonControl?.touched">
+        <option value="">Select a season</option>
+        <option *ngFor="let season of seasons" [value]="season">{{ season }}</option>
+      </select>
+      <div *ngIf="seasonControl?.invalid && seasonControl?.touched" class="error-message">
+        Season is required
+      </div>
+    </div>
+
+    <!-- Destination Field -->
+    <div class="form-group">
+      <label for="destination">Destination</label>
+      <select 
+        id="destination" 
+        formControlName="destination"
+        [class.invalid]="destinationControl?.invalid && destinationControl?.touched">
+        <option value="">Select a destination</option>
+        <option *ngFor="let dest of destinations" [ngValue]="dest">
+          {{ dest.nom }}
+        </option>
+      </select>
+      <div *ngIf="destinationControl?.invalid && destinationControl?.touched" class="error-message">
+        Destination is required
+      </div>
+    </div>
+
+    <!-- Image Field -->
+    <div class="form-group">
+      <label for="image">Image</label>
+      <input 
+        id="image" 
+        type="file" 
+        (change)="onFileSelected($event)"
+        accept="image/*">
+      
+      <!-- Image Preview -->
+      <div *ngIf="previewImageUrl" class="image-preview">
+        <img [src]="previewImageUrl" alt="Preview of uploaded image">
+        <button 
+          type="button" 
+          class="remove-image-btn"
+          (click)="removeImage()">
+          ×
+        </button>
+      </div>
+    </div>
+
+    <!-- Buttons -->
+    <div class="form-actions">
+      <button 
+        type="submit" 
+        [disabled]="foodForm.invalid || isSubmitting"
+        class="submit-btn">
+        <span *ngIf="!isSubmitting">Add</span>
+        <span *ngIf="isSubmitting">Submitting...</span>
+      </button>
+      <button 
+        type="button" 
+        (click)="navigateToFoods()"
+        class="cancel-btn">
+        Cancel
+      </button>
+    </div>
+  </form>
+</div>

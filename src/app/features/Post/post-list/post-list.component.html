@@ -1,0 +1,212 @@
+<div class="facebook-wrapper">
+  <!-- Colonne de gauche -->
+  <div class="fb-left-column">
+    <div class="fb-left-menu">
+      <div class="fb-menu-item active">
+        <i class="fas fa-home"></i>
+        <span>Accueil</span>
+      </div>
+      <div class="fb-menu-item">
+        <i class="fas fa-user-friends"></i>
+        <span>Amis</span>
+      </div>
+      <div class="fb-menu-item">
+        <i class="fas fa-bell"></i>
+        <span>Notifications</span>
+      </div>
+      <div class="fb-menu-item">
+        <i class="fas fa-envelope"></i>
+        <span>Messages</span>
+      </div>
+      <div class="fb-menu-item">
+        <i class="fas fa-bookmark"></i>
+        <span>Enregistrés</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenu central -->
+  <div class="facebook-container">
+    <!-- Post Form -->
+    <app-post-form></app-post-form>
+
+    <!-- Loading -->
+    <div *ngIf="isLoading" class="loading-spinner">
+      <div class="fb-spinner"></div>
+    </div>
+
+    <!-- Post List -->
+    <div *ngIf="!isLoading" class="fb-post-list">
+      <!-- No Posts -->
+      <div *ngIf="posts?.length === 0" class="fb-no-posts">
+        <div class="fb-no-posts-icon">
+          <i class="fas fa-newspaper"></i>
+        </div>
+        <p>Aucun post disponible</p>
+      </div>
+
+      <!-- Posts -->
+      <div *ngFor="let post of posts" class="fb-post">
+        <!-- Post Header -->
+        <div class="fb-post-header">
+          <img [src]="post.user?.avatarUrl || 'http://localhost:9000/uploads/img.PNG'" class="fb-avatar" alt="Avatar">
+          <div class="fb-post-user">
+            <h4>{{ post.user?.username }}</h4>
+            <small class="fb-post-time">{{ post.dateCreated ? formatDate(post.dateCreated) : '' }} · <i class="fas fa-globe-europe"></i></small>
+          </div>
+          <div class="fb-post-options">
+            <div class="fb-post-dropdown">
+              <i class="fas fa-ellipsis-h" (click)="toggleDropdown(post.id)"></i>
+              <div *ngIf="showDropdown[post.id]" class="fb-dropdown-menu">
+                <button *ngIf="canDeletePost(post)" 
+                        (click)="deletePost(post.id)" 
+                        class="fb-dropdown-item delete-item">
+                  <i class="fas fa-trash"></i> Supprimer
+                </button>
+                <button class="fb-dropdown-item">
+                  <i class="fas fa-bookmark"></i> Enregistrer
+                </button>
+                <button class="fb-dropdown-item">
+                  <i class="fas fa-link"></i> Copier le lien
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Post Content -->
+        <div class="fb-post-body">
+          <p>{{ post.content }}</p>
+          <!-- Post Image -->
+          <div *ngIf="post.imageUrl" class="fb-post-image">
+            <img [src]="post.imageUrl" alt="Image du post">
+          </div>
+        </div>
+
+        <!-- Post Stats -->
+        <div class="fb-post-stats">
+          <div class="fb-reaction-count">
+            <div class="fb-reaction-icons">
+              <span class="fb-like-icon"><i class="fas fa-thumbs-up"></i></span>
+            </div>
+            <span>{{ post.likesCount || 0 }} réactions</span>
+          </div>
+          <div class="fb-comment-share-count">
+          
+          </div>
+        </div>
+
+        <!-- Post Actions -->
+        <div class="fb-post-actions">
+          <!-- Dans votre boucle de posts -->
+          <button class="fb-action-btn" 
+          [class.active]="post.isLiked" 
+          (click)="toggleLike(post.id)"
+          [disabled]="likeLoading[post.id]">
+    <i [class.fas]="post.isLiked" 
+       [class.far]="!post.isLiked" 
+       class="fa-thumbs-up"></i> 
+    {{ post.isLiked ? 'Aimé' : 'J\'aime' }}
+    <span *ngIf="post.likesCount > 0" class="like-count">
+      ({{ post.likesCount }})
+    </span>
+  </button>
+
+          <button class="fb-action-btn" (click)="toggleComments(post.id)">
+            <i class="far fa-comment-alt"></i> Commenter
+          </button>
+         
+        </div>
+
+        <!-- Comments Section -->
+        <div *ngIf="showComments[post.id]" class="fb-comments-section">
+          <!-- Loading comments -->
+          <div *ngIf="isLoadingComments[post.id]" class="fb-comments-loading">
+            <div class="fb-spinner"></div>
+          </div>
+
+          <!-- Comments List -->
+          <div *ngFor="let comment of comments[post.id]" class="fb-comment">
+            <img [src]="comment.user?.avatarUrl || 'http://localhost:9000/uploads/img.PNG'" class="fb-comment-avatar" alt="Avatar">
+            
+            <div class="fb-comment-content">
+              <div class="fb-comment-header">
+                <strong>{{ comment.user?.username }}</strong>
+                <div *ngIf="editingCommentId !== comment.id && comment.user?.id === loggedInUserId" 
+                     class="fb-comment-actions">
+                  <button (click)="startEdit(comment)" class="fb-comment-action">
+                    <i class="far fa-edit"></i>
+                  </button>
+                  <button (click)="deleteComment(post.id, comment.id!)" 
+                          class="fb-comment-action">
+                    <i class="far fa-trash-alt"></i>
+                  </button>
+                </div>
+              </div>
+              
+              <div *ngIf="editingCommentId !== comment.id" class="fb-comment-text">
+                {{ comment.content }}
+              </div>
+              
+              <!-- Comment Edit Form -->
+              <div *ngIf="editingCommentId === comment.id" class="fb-comment-edit">
+                <input [(ngModel)]="editedCommentContent" class="fb-comment-edit-input" />
+                <div class="fb-comment-edit-actions">
+                  <button (click)="cancelEdit()" class="fb-comment-edit-cancel">Annuler</button>
+                  <button (click)="updateComment(post.id, comment.id)" class="fb-comment-edit-save">Enregistrer</button>
+                </div>
+              </div>
+              
+              <div class="fb-comment-footer">
+                <span class="fb-comment-time">{{ comment.createdAt ? formatDate(comment.createdAt) : '' }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Add Comment -->
+          <div class="fb-add-comment">
+            <img [src]="'http://localhost:9000/uploads/img.PNG'" class="fb-comment-avatar" alt="Avatar">
+            <div class="fb-comment-input-container">
+              <input [(ngModel)]="commentInputs[post.id]" 
+                     placeholder="Écrivez un commentaire..." 
+                     class="fb-comment-input"
+                     (keyup.enter)="addComment(post.id)" />
+              <div class="fb-comment-options">
+                <button (click)="addComment(post.id)" class="fb-comment-send">
+                  <i class="fas fa-paper-plane"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Colonne de droite -->
+  <div class="fb-right-column">
+    <div class="fb-sponsorized">
+      <h4>Sponsorisé</h4>
+      <div class="fb-sponsor-item">
+        <img src="https://cdn-icons-png.flaticon.com/512/3295/3295342.png" alt="Sponsor">
+        <p>Découvrez notre nouvelle collection</p>
+      </div>
+      <div class="fb-sponsor-item">
+        <img src="https://images.squarespace-cdn.com/content/v1/5f418f2353f6be5869d01674/1599353716469-SK03NZAZ93N8O91VJLB8/Sponsor+Icon+3x2.png" alt="Sponsor">
+        <p>Promotion spéciale été 2023</p>
+      </div>
+    </div>
+    
+    <div class="fb-contacts">
+      <h4>Contacts</h4>
+      <div class="fb-contact-item">
+        <img src="http://localhost:9000/uploads/img.PNG" alt="Contact">
+        <span>Marie Dupont</span>
+      </div>
+      <div class="fb-contact-item">
+        <img src="http://localhost:9000/uploads/img.PNG" alt="Contact">
+        <span>Jean Martin</span>
+      </div>
+    </div>
+  </div>
+</div>

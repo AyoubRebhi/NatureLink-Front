@@ -1,0 +1,23 @@
+<!-- guide-update.component.html -->
+<div class="container mt-4">
+  <h2>Modifier le Guide</h2>
+
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+  </div>
+
+  <form [formGroup]="guideForm" (ngSubmit)="onSubmit()">
+    <div class="mb-3">
+      <label for="firstName" class="form-label">Prénom</label>
+      <input type="text" class="form-control" id="firstName" formControlName="firstName" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="lastName" class="form-label">Nom</label>
+      <input type="text" class="form-control" id="lastName" formControlName="lastName" required>
+    </div>
+
+    <button type="submit" class="btn btn-primary" [disabled]="!guideForm.valid">Mettre à jour</button>
+    <button type="button" class="btn btn-secondary ms-2" routerLink="/admin/guides">Annuler</button>
+  </form>
+</div>

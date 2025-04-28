@@ -1,0 +1,144 @@
+.event-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(135deg, #f0f0f0, #ffffff);
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  margin: 20px auto;
+  max-width: 900px;
+  transition: transform 0.2s ease-in-out;
+
+  &:hover {
+    transform: scale(1.01);
+  }
+}
+
+.event-card-left {
+  display: flex;
+  align-items: center;
+}
+
+.event-image {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 20px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.event-info {
+  text-align: left;
+
+  .event-title {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+
+  .event-meta, .event-time, .event-location {
+    font-size: 14px;
+    color: #555;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 4px 0;
+  }
+}
+
+.event-card-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.btn {
+  border: none;
+  padding: 10px 20px;
+  font-weight: 600;
+  font-size: 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.15);
+}
+
+.show-btn {
+  background: linear-gradient(45deg, #3c8dbc, #666);
+  color: white;
+
+  &:hover {
+    opacity: 0.85;
+  }
+}
+
+.update-btn {
+  background-color: #007bff;
+  color: black;
+
+  &:hover {
+    background-color: #0056b3;
+  }
+}
+
+.delete-btn {
+  background-color: #dc3545;
+  color: white;
+
+  &:hover {
+    background-color: #a71d2a;
+  }
+}
+.event-btn {
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.event-btn.update {
+  background-color: #007bff;
+  color: white;
+}
+
+.event-btn.update:hover {
+  background-color: #0056b3;
+}
+
+.event-btn.delete {
+  background-color: #dc3545;
+  color: white;
+}
+
+.event-btn.delete:hover {
+  background-color: #a71d2a;
+}
+.event-btn.show{
+  background-color: #00ff04;
+  color: white;
+}
+.search-container {
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  margin: 20px 0;
+}
+
+.search-input {
+  padding: 10px 20px;
+  font-size: 16px;
+  border: 2px solid #3c8dbc;
+  border-radius: 10px;
+  width: 300px;
+  outline: none;
+  transition: 0.3s ease;
+
+  &:focus {
+    border-color: #666;
+    box-shadow: 0 0 5px rgba(60, 141, 188, 0.5);
+  }
+}

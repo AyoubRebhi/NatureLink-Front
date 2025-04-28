@@ -4,6 +4,7 @@ export enum TypeReservation {
     ACTIVITE = 'ACTIVITE',
     RESTAURANT = 'RESTAURANT',
     EVENT = 'EVENT',
-    TRANSPORT = 'TRANSPORT'
+    TRANSPORT = 'TRANSPORT',
+    PACK = 'PACK'
   }
   

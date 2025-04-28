@@ -46,19 +46,6 @@
       />
     </div>
 
-    <!-- Statut -->
-    <div class="form-group mb-3">
-      <label for="statut" class="form-label">Statut:</label>
-      <select 
-        id="statut" 
-        [(ngModel)]="selectedStatut" 
-        name="statut" 
-        class="form-control" 
-        required>
-        <option *ngFor="let statut of statutOptions" [ngValue]="statut">{{ statut }}</option>
-      </select>
-    </div>
-
     <!-- Number of Rooms (only for logement) -->
     <div *ngIf="logementId" class="form-group mb-3">
       <label for="numRooms">Number of Rooms:</label>
@@ -76,7 +63,7 @@
 
     <!-- Submit Button -->
     <div class="form-group text-center">
-      <button type="submit" class="btn btn-success" [disabled]="!username || !dateDebut || !dateFin || !selectedStatut">
+      <button type="submit" class="btn btn-success" [disabled]="hasInvalidClientNames() || !dateDebut || !dateFin">
         Update Reservation
       </button>
     </div>

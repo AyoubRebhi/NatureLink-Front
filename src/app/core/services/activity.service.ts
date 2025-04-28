@@ -135,3 +135,5 @@ export class ActivityService {
   
   
 }
+
+export { Activity };

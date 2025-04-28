@@ -724,3 +724,134 @@ h2 {
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+.pack-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 15px;
+  
+  button {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+  }
+}
+
+.book-button {
+  background-color: #4CAF50;
+  color: white;
+  
+  &:hover {
+    background-color: #3e8e41;
+  }
+}
+
+.rate-button {
+  background-color: #FFC107;
+  color: #333;
+  
+  &:hover {
+    background-color: #e0a800;
+  }
+}
+
+.generate-button {
+  background-color: #2196F3;
+  color: white;
+  
+  &:hover {
+    background-color: #0b7dda;
+  }
+}
+.image-popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.image-popup-content {
+  position: relative; /* Added for absolute positioning of close button */
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  max-width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  width: 600px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+}
+
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #333;
+  z-index: 1001;
+  padding: 5px 10px;
+  
+  &:hover {
+      color: #000;
+      background-color: #f0f0f0;
+      border-radius: 50%;
+  }
+}
+
+.image-popup-header {
+  margin-bottom: 15px;
+  padding-right: 30px; /* Ensure title doesn't overlap close button */
+}
+
+.image-popup-body {
+  .image-popup-price {
+      font-weight: bold;
+      font-size: 1.2em;
+      color: #2c3e50;
+  }
+  
+  .image-popup-description {
+      margin: 15px 0;
+      max-height: 100px;
+      overflow-y: auto;
+      padding-right: 10px;
+  }
+  
+  .generated-image-container {
+      text-align: center;
+      margin: 15px 0;
+      
+      img {
+          max-width: 100%;
+          max-height: 400px;
+          height: auto;
+          border-radius: 4px;
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+  }
+  
+  .image-loading {
+      text-align: center;
+      padding: 30px;
+      
+      
+  }
+}

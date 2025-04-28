@@ -100,7 +100,13 @@
 
         <!-- View More button -->
         <a [routerLink]="['/logement/detail', logement.id]" class="btn btn-primary">View More</a>
-        <a [routerLink]="['', logement.id]" class="btn btn-primary">Book Now</a>
+        <button
+                *ngIf="logement.id"
+                class="btn btn-primary px-3"
+                (click)="bookLogement(logement.id)"
+              >
+                <i class="fa fa-book me-2"></i> Book Now
+              </button>
       </div>
     </div>
   </div>

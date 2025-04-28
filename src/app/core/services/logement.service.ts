@@ -42,3 +42,5 @@ export class LogementService {
 
 
  
+
+export { Logement };
