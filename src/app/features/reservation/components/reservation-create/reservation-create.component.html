@@ -72,32 +72,29 @@
       </div>
     </div>
 
-   
-
-    <!-- Number of Rooms (only for logement) -->
-    <!-- Number of Rooms (only for logement) -->
-<div *ngIf="selectedType === 'LOGEMENT'" class="form-group mb-3">
-  <label for="numRooms">Number of Rooms:</label>
-  <input
-    type="number"
-    id="numRooms"
-    [(ngModel)]="numRooms"
-    name="numRooms"
-    class="form-control"
-    required
-    min="1"
-    placeholder="Enter the number of rooms"
-  />
-  <div *ngIf="reservationForm.controls['numRooms']?.invalid && reservationForm.controls['numRooms']?.touched" class="text-danger">
-    Please enter a valid number of rooms (minimum 1).
-  </div>
-</div>
+    <!-- Number of Rooms (for LOGEMENT or PACK with logement) -->
+    <div *ngIf="selectedType === TypeReservation.LOGEMENT || (selectedType === TypeReservation.PACK && hasLogement)" class="form-group mb-3">
+      <label for="numRooms">Number of Rooms:</label>
+      <input
+        type="number"
+        id="numRooms"
+        [(ngModel)]="numRooms"
+        name="numRooms"
+        class="form-control"
+        required
+        min="1"
+        placeholder="Enter the number of rooms"
+      />
+      <div *ngIf="reservationForm.controls['numRooms']?.invalid && reservationForm.controls['numRooms']?.touched" class="text-danger">
+        Please enter a valid number of rooms (minimum 1).
+      </div>
+    </div>
 
     <!-- Submit Button -->
     <div class="form-group text-center">
       <button type="submit" class="btn btn-primary" [disabled]="isLoading || reservationForm.invalid">
         <span *ngIf="isLoading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-        {{ isLoading ? 'Ajout en cours...' : 'Ajouter la réservation' }}
+        {{ isLoading ? 'Adding...' : 'Add Reservation' }}
       </button>
     </div>
   </form>

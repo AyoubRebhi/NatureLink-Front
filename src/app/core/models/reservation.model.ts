@@ -8,6 +8,9 @@ export interface Reservation {
   dateFin: Date; // End date of the reservation
   statut: StatutReservation;
   typeres?:TypeReservation // Reservation status (Confirmed, Cancelled, Pending)
+  packId?: number;
+  packDetails?: string; // Add this property
+  packName?: string; // Add this property
 
   // New Fields:
   numClients: number; // Number of clients involved in the reservation
