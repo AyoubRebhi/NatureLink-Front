@@ -3,6 +3,9 @@ import { Router } from '@angular/router';
 import { TransportService } from '../../../../core/services/transport.service';
 import { Transport } from '../../../../core/models/transport.model';
 import { ToastrService } from 'ngx-toastr';
+import { AuthService } from 'src/app/core/services/auth.service';
+import { Role } from 'src/app/core/models/user.model';
+import { TransportType } from 'src/app/core/enums/transport-type.enum';
 
 @Component({
   selector: 'app-add-transport',
@@ -10,26 +13,33 @@ import { ToastrService } from 'ngx-toastr';
   styleUrls: ['./add-transport.component.scss']
 })
 export class AddTransportComponent {
+  transportTypes = Object.values(TransportType);
+
   transport: Transport = {
-    type: '',
+    type: TransportType.VOITURE,
     capacity: 0,
     pricePerKm: 0,
     available: true,
     imgUrl: '',
-    description: ''
+    description: '',
+    agenceId: this.authService.currentUserValue?.id || 0
   };
 
   selectedImageFile: File | null = null;
   imagePreview: string | ArrayBuffer | null = null;
   isSubmitting = false;
-  formSubmitted = false; // Add this line
+  formSubmitted = false;
 
+  isAgenceUser: boolean = false;
 
   constructor(
     private transportService: TransportService,
     private router: Router,
-    private toastr: ToastrService
-  ) {}
+    private toastr: ToastrService,
+    private authService: AuthService
+  ) {
+    this.isAgenceUser = this.authService.hasRole(Role.AGENCE);
+  }
 
   onImageSelected(event: Event): void {
     const fileInput = event.target as HTMLInputElement;
@@ -46,7 +56,7 @@ export class AddTransportComponent {
   }
 
   onSubmit(): void {
-    this.formSubmitted = true; // Add this line
+    this.formSubmitted = true;
     
     if (!this.selectedImageFile) {
       this.toastr.error('Please select an image!', 'Error');

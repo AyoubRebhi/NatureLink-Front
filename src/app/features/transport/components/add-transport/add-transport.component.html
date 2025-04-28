@@ -7,9 +7,13 @@
             <!-- Type Field -->
             <div class="col-lg-6 mb-3">
               <label for="type" class="form-label">Type <span class="text-danger">*</span></label>
-              <input type="text" class="form-control" id="type" required 
-                     [(ngModel)]="transport.type" name="type" #type="ngModel"
-                     [class.is-invalid]="type.invalid && (type.dirty || type.touched)">
+              <select class="form-select" id="type" required
+                      [(ngModel)]="transport.type" name="type" #type="ngModel"
+                      [class.is-invalid]="type.invalid && (type.dirty || type.touched)">
+                <option *ngFor="let transportType of transportTypes" [value]="transportType">
+                  {{ transportType }}
+                </option>
+              </select>
               <div *ngIf="type.invalid && (type.dirty || type.touched)" class="invalid-feedback">
                 Transport type is required
               </div>

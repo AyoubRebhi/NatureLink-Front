@@ -23,55 +23,55 @@ export class LoginComponent {
     private authService: AuthService,
     private router: Router,
     private paymentService: PaymentService
-  ) {}
-
- // login.component.ts
-onSubmit() {
-  if (this.loginForm.invalid) return;
-
-  this.isLoading = true;
-  this.errorMessage = '';
-  
-  const credentials = this.loginForm.value as { email: string; password: string };
-
-  this.authService.signIn(credentials).subscribe({
-    next: () => {
-      this.paymentService.checkPendingPayments();
-      this.isLoading = false;
-      // Add explicit navigation
-    },
-    error: (err) => {
-      this.errorMessage = this.parseErrorMessage(err);
-      this.isLoading = false;
-      if (err.message.includes('blocked')) {
-        this.errorMessage = 'Account blocked. Please contact administrator.';
-      }
-      console.error('Login error:', err);  // Add detailed logging
-    }
-  });
-}
+  ) { }
 
   // login.component.ts
-// Update parseErrorMessage method
-private parseErrorMessage(error: any): string {
-  console.error('Full login error:', error);
-  
-  // Handle nested errors
-  const serverMessage = error?.error?.error || 
-                       error?.error?.message || 
-                       error?.message;
+  onSubmit() {
+    if (this.loginForm.invalid) return;
 
-  if (serverMessage?.toLowerCase().includes('invalid credentials')) {
-    return 'Invalid email or password';
+    this.isLoading = true;
+    this.errorMessage = '';
+
+    const credentials = this.loginForm.value as { email: string; password: string };
+
+    this.authService.signIn(credentials).subscribe({
+      next: () => {
+        this.paymentService.checkPendingPayments();
+        this.isLoading = false;
+        // Add explicit navigation
+      },
+      error: (err) => {
+        this.errorMessage = this.parseErrorMessage(err);
+        this.isLoading = false;
+        if (err.message.includes('blocked')) {
+          this.errorMessage = 'Account blocked. Please contact administrator.';
+        }
+        console.error('Login error:', err);  // Add detailed logging
+      }
+    });
   }
 
-  switch (error.status) {
-    case 401: return 'Invalid login credentials';
-    case 403: return 'Invalid credentials';
-    case 0: return 'Network connection failed';
-    case 500: return 'Server error. Please try later';
-  }
+  // login.component.ts
+  // Update parseErrorMessage method
+  private parseErrorMessage(error: any): string {
+    console.error('Full login error:', error);
 
-  return 'Login failed. Please try again';
-}
+    // Handle nested errors
+    const serverMessage = error?.error?.error ||
+      error?.error?.message ||
+      error?.message;
+
+    if (serverMessage?.toLowerCase().includes('invalid credentials')) {
+      return 'Invalid email or password';
+    }
+
+    switch (error.status) {
+      case 401: return 'Invalid login credentials';
+      case 403: return 'Invalid credentials';
+      case 0: return 'Network connection failed';
+      case 500: return 'Server error. Please try later';
+    }
+
+    return 'Login failed. Please try again';
+  }
 }

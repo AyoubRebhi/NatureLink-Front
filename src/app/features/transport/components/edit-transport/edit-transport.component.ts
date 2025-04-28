@@ -3,6 +3,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TransportService } from '../../../../core/services/transport.service';
 import { Transport } from '../../../../core/models/transport.model';
 import { ToastrService } from 'ngx-toastr';
+import { TransportType } from 'src/app/core/enums/transport-type.enum';
+import { AuthService } from 'src/app/core/services/auth.service';
 
 @Component({
   selector: 'app-edit-transport',
@@ -10,14 +12,18 @@ import { ToastrService } from 'ngx-toastr';
   styleUrls: ['./edit-transport.component.scss']
 })
 export class EditTransportComponent implements OnInit {
+  transportTypes = Object.values(TransportType); // Add this line for dropdown options
+  
   transport: Transport = {
-    type: '',
+    type: TransportType.VOITURE, // Set default value
     capacity: 0,
     pricePerKm: 0,
     available: true,
     imgUrl: '',
-    description: ''
+    description: '',
+    agenceId: this.authService.currentUserValue?.id ||0 // Use actual user ID instead of hardcoded 4
   };
+
   selectedImageFile: File | null = null;
   imagePreview: string | ArrayBuffer | null = null;
   isSubmitting = false;
@@ -27,7 +33,8 @@ export class EditTransportComponent implements OnInit {
     private transportService: TransportService,
     private route: ActivatedRoute,
     private router: Router,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private authService: AuthService // Add this to constructor
   ) {}
 
   ngOnInit(): void {

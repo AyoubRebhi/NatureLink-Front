@@ -31,6 +31,8 @@ import { ReservationAllComponent } from '../reservation/components/reservation-a
 import { PackAddComponent } from '../pack/components/pack-add/pack-add.component';
 import { PackListAComponent } from '../pack/components/pack-list-a/pack-list-a.component';
 import { PackUpdateComponent } from '../pack/components/pack-update/pack-update.component';
+import { AuthGuard } from 'src/app/core/guards/auth.guard';
+import { Role } from 'src/app/core/models/user.model';
 
 const routes: Routes = [
   {
@@ -121,6 +123,8 @@ const routes: Routes = [
       // Lazy-loaded routes from both files
       {
         path: 'transport',
+        canActivate: [AuthGuard],
+        data: { roles: [Role.AGENCE] },
         loadChildren: () => import('../transport/transport.module').then(m => m.TransportModule)
       },
       {

@@ -1,4 +1,4 @@
-<div id="transportList">
+<div id="transportList" *ngIf="isAgenceUser">
   <div class="row">
     <div class="col-lg-12">
       <div class="card">
@@ -10,7 +10,7 @@
                 <i class="ri-search-line search-icon"></i>
               </div>
             </div>
-            <div class="col-xxl-auto col-sm-6">
+            <div class="col-xxl-auto col-sm-6" *ngIf="isAgenceUser">
               <button class="btn btn-success" routerLink="/admin/transport/add">
                 <i class="bi bi-plus-circle me-1"></i> Add Transport
               </button>
@@ -36,7 +36,7 @@
                   <th>Capacity</th>
                   <th>Price </th>
                   <th>Available</th>
-                  <th>Actions</th>
+                  <th *ngIf="isAgenceUser">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -49,7 +49,7 @@
                       {{ transport.available ? 'Yes' : 'No' }}
                     </span>
                   </td>
-                  <td>
+                  <td *ngIf="isAgenceUser">
                     <button class="btn btn-sm btn-info me-2" [ngStyle]="{ 'background-color': '#101011', 'color': 'white' }" [routerLink]="['/admin/transport/details', transport.id]">
                       <i class="bi bi-eye">View</i>
                     </button>

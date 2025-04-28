@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { TransportService } from '../../../../core/services/transport.service';
 import { Transport } from '../../../../core/models/transport.model';
 import { Router } from '@angular/router';
+import { AuthService } from 'src/app/core/services/auth.service';
+import { Role } from 'src/app/core/models/user.model';
 
 @Component({
   selector: 'app-list-transport',
@@ -12,8 +14,17 @@ export class ListTransportComponent implements OnInit {
   transports: Transport[] = [];
   filteredTransports: Transport[] = [];
   term: string = '';
+  isAgenceUser: boolean = false;
+  currentUserId: number | null = null;
 
-  constructor(private transportService: TransportService, private router: Router) {}
+  constructor(
+    private transportService: TransportService, 
+    private router: Router, 
+    private authService: AuthService
+  ) {
+    this.isAgenceUser = this.authService.hasRole(Role.AGENCE);
+    this.currentUserId = this.authService.currentUserValue?.id || null;
+  }
   
   goToEditTransport(id: number): void {
     if (!id && id !== 0) {
@@ -32,19 +43,24 @@ export class ListTransportComponent implements OnInit {
     this.transportService.getAllTransports().subscribe({
       next: (data) => {
         this.transports = data;
-        this.filteredTransports = data;
+        // Filter transports if user is AGENCE
+        if (this.isAgenceUser && this.currentUserId) {
+          this.transports = data.filter(transport => transport.agenceId === this.currentUserId);
+        }
+        this.filteredTransports = [...this.transports];
       },
       error: (err) => {
         console.error('Error fetching transports', err);
       }
     });
   }
+
   filterData(): void {
     const search = this.term.toLowerCase();
     this.filteredTransports = this.transports.filter(t =>
-      t.type.toLowerCase().includes(search)
-      || t.capacity?.toString().includes(search)
-      || t.pricePerKm?.toString().includes(search)
+      t.type.toLowerCase().includes(search) ||
+      t.capacity?.toString().includes(search) ||
+      t.pricePerKm?.toString().includes(search)
     );
   }
 
