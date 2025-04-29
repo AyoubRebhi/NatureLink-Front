@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MenuService } from 'src/app/core/services/menu.service';
 
+
 @Component({
   selector: 'app-menu-form',
   templateUrl: './menu-form.component.html'
@@ -18,12 +19,14 @@ export class MenuFormComponent implements OnInit {
   restaurantId!: number;
   menuId?: number;
 
+
   constructor(
     private fb: FormBuilder,
     private menuService: MenuService,
     private router: Router,
     private route: ActivatedRoute
   ) {}
+
 
   ngOnInit(): void {
     this.menuForm = this.fb.group({
@@ -32,6 +35,7 @@ export class MenuFormComponent implements OnInit {
       ingredients: ['', [Validators.required, Validators.maxLength(500)]],  // Modifié ici
       description: ['', [Validators.maxLength(500)]]
     });
+
 
     this.route.params.subscribe(params => {
       this.restaurantId = +params['restaurantId'];
@@ -42,6 +46,7 @@ export class MenuFormComponent implements OnInit {
       }
     });
   }
+
 
   loadMenu(): void {
     if (this.menuId && this.restaurantId) {
@@ -60,6 +65,7 @@ export class MenuFormComponent implements OnInit {
     }
   }
 
+
   onImageSelected(event: Event): void {
     const fileInput = event.target as HTMLInputElement;
     if (fileInput.files && fileInput.files.length > 0) {
@@ -71,6 +77,7 @@ export class MenuFormComponent implements OnInit {
     }
   }
 
+
   previewImage(image: File): void {
     const reader = new FileReader();
     reader.onload = (e: any) => {
@@ -79,10 +86,12 @@ export class MenuFormComponent implements OnInit {
     reader.readAsDataURL(image);
   }
 
+
   isFieldInvalid(fieldName: string): boolean {
     const control = this.menuForm.get(fieldName);
     return (control?.invalid && (control?.touched || control?.dirty)) ?? false;
   }
+
 
   onSubmit(): void {
     if (this.menuForm.invalid) {
@@ -91,9 +100,11 @@ export class MenuFormComponent implements OnInit {
       return;
     }
 
+
     this.isLoading = true;
     const formData = new FormData();
     const menuData = this.menuForm.value;
+
 
     // Ajouter les champs texte
     formData.append('plats', menuData.plats);
@@ -103,14 +114,17 @@ export class MenuFormComponent implements OnInit {
       formData.append('description', menuData.description);
     }
 
+
     // Ajouter l'image si elle existe
     if (this.selectedImage) {
       formData.append('image', this.selectedImage);
     }
 
+
     const request = this.isEditMode && this.menuId
       ? this.menuService.updateMenu(this.menuId, formData)
       : this.menuService.createMenu(this.restaurantId, formData);
+
 
     request.subscribe({
       next: () => {
@@ -127,7 +141,10 @@ export class MenuFormComponent implements OnInit {
     });
   }
 
+
   goBack(): void {
     this.router.navigate([`/admin/restaurants/details/${this.restaurantId}/menus`]);
   }
 }
+
+

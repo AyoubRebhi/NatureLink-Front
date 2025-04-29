@@ -10,30 +10,40 @@ import { MonumentService } from 'src/app/core/services/monument.service';
   styleUrls: ['./monument-list.component.scss']
 })
 export class MonumentListComponent implements OnInit {
+
+
   monuments: Monument[] = [];
   filteredMonuments: Monument[] = [];
   searchTerm: string = '';
   errorMessage: string | null = null;
   isLoading = false;
-  private monumentIdToDelete: number | null = null;
+  monumentIdToDelete: number | null = null;
+
+
+  private readonly DEFAULT_IMAGE = 'assets/images/default-monument.jpg';
+
 
   constructor(
     private monumentService: MonumentService,
     private modalService: NgbModal
   ) {}
 
+
   ngOnInit(): void {
     this.loadMonuments();
   }
 
-  // Load all monuments
+
+  /** Load all monuments from the backend */
   loadMonuments(): void {
     this.isLoading = true;
     this.errorMessage = null;
+
+
     this.monumentService.getAllMonuments().subscribe({
       next: (data) => {
         this.monuments = data;
-        this.filteredMonuments = data; // Initialize filtered list
+        this.filteredMonuments = [...data];
         this.isLoading = false;
       },
       error: (error) => {
@@ -44,43 +54,54 @@ export class MonumentListComponent implements OnInit {
     });
   }
 
-  // Filter monuments based on search term
+
+  /** Filter monuments based on search input */
   onSearchChange(): void {
-    const term = this.searchTerm.toLowerCase();
+    const term = this.searchTerm.trim().toLowerCase();
+
+
     this.filteredMonuments = this.monuments.filter(monument =>
-      monument.name?.toLowerCase().includes(term) ||
-      monument.location?.toLowerCase().includes(term)
+      (monument.name && monument.name.toLowerCase().includes(term)) ||
+      (monument.location && monument.location.toLowerCase().includes(term))
     );
   }
 
-  // Open delete confirmation modal
+
+  /** Open delete confirmation modal */
   openDeleteModal(modal: TemplateRef<any>, id: number): void {
     this.monumentIdToDelete = id;
     this.modalService.open(modal, { ariaLabelledBy: 'modal-title' });
   }
 
-  // Confirm deletion
+
+  /** Confirm and delete the selected monument */
   confirmDelete(): void {
-    if (this.monumentIdToDelete !== null) {
-      this.monumentService.deleteMonument(this.monumentIdToDelete).subscribe({
-        next: () => {
-          this.loadMonuments();
-          this.monumentIdToDelete = null;
-        },
-        error: (error) => {
-          this.errorMessage = 'Failed to delete monument. Please try again.';
-          console.error('Error deleting monument:', error);
-        }
-      });
-    }
+    if (this.monumentIdToDelete === null) return;
+
+
+    this.monumentService.deleteMonument(this.monumentIdToDelete).subscribe({
+      next: () => {
+        this.loadMonuments();
+        this.monumentIdToDelete = null;
+      },
+      error: (error) => {
+        this.errorMessage = 'Failed to delete monument. Please try again.';
+        console.error('Error deleting monument:', error);
+      }
+    });
   }
 
+
+  /** Handle image loading error */
   onImageError(event: Event): void {
     const imgElement = event.target as HTMLImageElement;
-    imgElement.src = 'assets/images/default.jpg';
+    imgElement.src = this.DEFAULT_IMAGE;
+    imgElement.onerror = null;
   }
 
-  getImage(filename: string | undefined): string {
-    return filename ? this.monumentService.getImage(filename) : 'assets/images/default.jpg';
+
+  /** Get the full image URL or a default fallback */
+  getImageUrl(imageName?: string): string {
+    return imageName ? this.monumentService.getImage(imageName) : this.DEFAULT_IMAGE;
   }
 }

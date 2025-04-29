@@ -7,6 +7,7 @@ import { Menu } from 'src/app/core/models/menu';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { MenuAllergenChatbotComponent } from 'src/app/features/dashboard/menu/menu-allergen-chatbot/menu-allergen-chatbot.component';
 
+
 @Component({
   selector: 'app-restaurant-detail',
   templateUrl: './restaurant-detail.component.html',
@@ -21,6 +22,7 @@ export class RestaurantDetailComponent implements OnInit {
   isFiltered = false;
   defaultImage = 'assets/images/default.jpg';
 
+
   constructor(
     private route: ActivatedRoute,
     private restaurantService: RestaurantService,
@@ -28,11 +30,13 @@ export class RestaurantDetailComponent implements OnInit {
     private modalService: NgbModal
   ) {}
 
+
   ngOnInit(): void {
     const restaurantId = +this.route.snapshot.paramMap.get('id')!;
     this.loadRestaurant(restaurantId);
     this.loadMenus(restaurantId);
   }
+
 
   loadRestaurant(id: number): void {
     this.restaurantService.getRestaurantById(id).subscribe({
@@ -45,6 +49,7 @@ export class RestaurantDetailComponent implements OnInit {
       }
     });
   }
+
 
   loadMenus(restaurantId: number): void {
     this.isLoading = true;
@@ -64,6 +69,7 @@ export class RestaurantDetailComponent implements OnInit {
     });
   }
 
+
   openAllergenChatbot(): void {
     const modalRef = this.modalService.open(MenuAllergenChatbotComponent, { size: 'lg' });
     modalRef.componentInstance.restaurantId = +this.route.snapshot.paramMap.get('id')!;
@@ -73,7 +79,9 @@ export class RestaurantDetailComponent implements OnInit {
     });
   }
 
+
   // Removed duplicate implementation of onImageError
+
 
   getImage(filename: string | undefined): string {
     return filename ? this.restaurantService.getImage(filename) : this.defaultImage;
@@ -83,14 +91,17 @@ export class RestaurantDetailComponent implements OnInit {
       return 'assets/images/default-menu.jpg';
     }
 
+
     // Vérifiez si l'URL contient déjà le chemin complet
     if (filename.startsWith('http')) {
       return filename;
     }
 
+
     // Retournez l'URL complète avec le chemin de base
     return `http://localhost:9000/uploads/images/${filename}`;
   }
+
 
   // Modifiez onImageError pour utiliser l'image par défaut
   onImageError(event: Event): void {
@@ -98,10 +109,6 @@ export class RestaurantDetailComponent implements OnInit {
     imgElement.src = 'assets/images/default-menu.jpg';
     imgElement.onerror = null; // Empêche les boucles d'erreur infinies
   }
-
-
-
-
 
 
 }

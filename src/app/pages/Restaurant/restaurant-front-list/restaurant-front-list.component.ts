@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { RestaurantService } from 'src/app/core/services/restaurant.service';
 import { Restaurant } from 'src/app/core/models/restaurant';
-import { AuthService } from 'src/app/core/services/auth.service';
-import { Router } from '@angular/router';
+
 
 @Component({
   selector: 'app-restaurant-front-list',
@@ -16,16 +15,15 @@ export class RestaurantFrontListComponent implements OnInit {
   isLoading = true;
   searchTerm = '';
 
-  constructor(
-    private restaurantService: RestaurantService,
-    private authService: AuthService,
-    private router: Router
-  ) {}
+
+  constructor(private restaurantService: RestaurantService) {}
+
 
   ngOnInit(): void {
     this.loadRestaurants();
     this.loadCurrentlyOpen();
   }
+
 
   loadRestaurants(): void {
     this.isLoading = true;
@@ -42,6 +40,7 @@ export class RestaurantFrontListComponent implements OnInit {
     });
   }
 
+
   loadCurrentlyOpen(): void {
     this.restaurantService.getRestaurantsOpenNow().subscribe({
       next: (data) => {
@@ -53,11 +52,13 @@ export class RestaurantFrontListComponent implements OnInit {
     });
   }
 
+
   onSearchChange(): void {
     if (!this.searchTerm) {
       this.filteredRestaurants = [...this.restaurants];
       return;
     }
+
 
     const term = this.searchTerm.toLowerCase();
     this.filteredRestaurants = this.restaurants.filter(restaurant =>
@@ -67,28 +68,14 @@ export class RestaurantFrontListComponent implements OnInit {
     );
   }
 
+
   onImageError(event: Event): void {
     const imgElement = event.target as HTMLImageElement;
     imgElement.src = 'assets/images/default.jpg';
   }
 
+
   getImage(filename: string | undefined): string {
     return filename ? this.restaurantService.getImage(filename) : 'assets/images/default.jpg';
-  }
-
-  bookRestaurant(restaurantId: number): void {
-    if (!this.isAuthenticated()) {
-      this.router.navigate(['/login'], {
-        queryParams: { returnUrl: this.router.url }
-      });
-      return;
-    }
-    this.router.navigate(['/reservation/create'], {
-      queryParams: { type: 'RESTAURANT', id: restaurantId }
-    });
-  }
-
-  isAuthenticated(): boolean {
-    return this.authService.isAuthenticated();
   }
 }

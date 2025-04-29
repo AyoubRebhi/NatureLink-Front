@@ -4,6 +4,7 @@ import { Restaurant } from 'src/app/core/models/restaurant';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
+
 @Component({
   selector: 'app-restaurant-list',
   templateUrl: './restaurant-list.component.html',
@@ -17,16 +18,19 @@ export class RestaurantListComponent implements OnInit {
   searchTerm = '';
   restaurantIdToDelete: number | null = null;
 
+
   constructor(
     private restaurantService: RestaurantService,
     private router: Router,
     private modalService: NgbModal
   ) {}
 
+
   ngOnInit(): void {
     this.loadRestaurants();
     this.loadCurrentlyOpen();
   }
+
 
   loadCurrentlyOpen(): void {
     this.restaurantService.getRestaurantsOpenNow().subscribe({
@@ -39,6 +43,7 @@ export class RestaurantListComponent implements OnInit {
       }
     });
   }
+
 
   loadRestaurants(): void {
     this.isLoading = true;
@@ -55,11 +60,13 @@ export class RestaurantListComponent implements OnInit {
     });
   }
 
+
   onSearchChange(): void {
     if (!this.searchTerm) {
       this.filteredRestaurants = [...this.restaurants];
       return;
     }
+
 
     const term = this.searchTerm.toLowerCase();
     this.filteredRestaurants = this.restaurants.filter(restaurant =>
@@ -69,10 +76,12 @@ export class RestaurantListComponent implements OnInit {
     );
   }
 
+
   openDeleteModal(content: TemplateRef<any>, restaurantId: number): void {
     this.restaurantIdToDelete = restaurantId;
     this.modalService.open(content);
   }
+
 
   confirmDelete(): void {
     if (this.restaurantIdToDelete !== null) {
@@ -91,13 +100,14 @@ export class RestaurantListComponent implements OnInit {
     }
   }
 
+
   onImageError(event: Event): void {
     const imgElement = event.target as HTMLImageElement;
     imgElement.src = 'assets/images/default.jpg';
   }
 
+
   getImage(filename: string | undefined): string {
     return filename ? this.restaurantService.getImage(filename) : 'assets/images/default.jpg';
   }
 }
-

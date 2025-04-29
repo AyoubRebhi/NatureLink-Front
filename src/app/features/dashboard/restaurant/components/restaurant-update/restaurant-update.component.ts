@@ -1,8 +1,8 @@
-
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RestaurantService } from 'src/app/core/services/restaurant.service';
+
 
 @Component({
   selector: 'app-restaurant-update',
@@ -14,9 +14,10 @@ export class RestaurantUpdateComponent implements OnInit {
   restaurantId: number;
   imagePreviewUrl: string | ArrayBuffer | null = null;
   selectedFile: File | null = null;
-  successMessage: string | null = null;
   errorMessage: string | null = null;
   isLoading = false;
+  showSuccessPopup = false;
+
 
   constructor(
     private fb: FormBuilder,
@@ -34,12 +35,15 @@ export class RestaurantUpdateComponent implements OnInit {
       image: ['']
     });
 
+
     this.restaurantId = +this.route.snapshot.params['id'];
   }
+
 
   ngOnInit(): void {
     this.loadRestaurantData();
   }
+
 
   loadRestaurantData(): void {
     this.isLoading = true;
@@ -59,6 +63,7 @@ export class RestaurantUpdateComponent implements OnInit {
     });
   }
 
+
   onFileChange(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
@@ -71,30 +76,38 @@ export class RestaurantUpdateComponent implements OnInit {
     }
   }
 
+
   updateRestaurant(): void {
     if (this.restaurantForm.invalid) {
       this.markAllAsTouched();
       return;
     }
 
+
     this.isLoading = true;
     const formData = this.prepareFormData();
 
+
     this.restaurantService.updateRestaurant(this.restaurantId, formData).subscribe({
       next: () => {
-        this.successMessage = 'Restaurant mis à jour avec succès';
+        this.showSuccessPopup = true;
         this.errorMessage = null;
         this.isLoading = false;
-        setTimeout(() => this.router.navigate(['/admin/restaurants']), 2000);
+
+
+        // Redirection après 1 seconde
+        setTimeout(() => {
+          this.router.navigate(['/admin/restaurants']);
+        }, 1000);
       },
       error: (err) => {
-        this.errorMessage = 'Erreur lors de la mise à jour du restaurant';
-        this.successMessage = null;
+        this.errorMessage = err.message || 'Erreur lors de la mise à jour du restaurant';
         this.isLoading = false;
         console.error(err);
       }
     });
   }
+
 
   private prepareFormData(): FormData {
     const formData = new FormData();
@@ -107,27 +120,33 @@ export class RestaurantUpdateComponent implements OnInit {
       }
     });
 
+
     if (this.selectedFile) {
       formData.append('image', this.selectedFile);
     }
 
+
     return formData;
   }
+
 
   getImage(filename: string): string {
     return this.restaurantService.getImage(filename);
   }
+
 
   isFieldInvalid(field: string): boolean {
     const control = this.restaurantForm.get(field);
     return control ? control.invalid && (control.dirty || control.touched) : false;
   }
 
+
   markAllAsTouched(): void {
     Object.values(this.restaurantForm.controls).forEach(control => {
       control.markAsTouched();
     });
   }
+
 
   timeRangeValidator(control: FormControl): { [key: string]: boolean } | null {
     const timeRange = control.value;
@@ -140,8 +159,13 @@ export class RestaurantUpdateComponent implements OnInit {
     return null;
   }
 
+
   goBack(): void {
     this.router.navigate(['/admin/restaurants']);
   }
 }
+
+
+
+
 

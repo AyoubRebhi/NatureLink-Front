@@ -164,6 +164,51 @@
           <span class="menu-text">Reservations</span>
         </a>
       </li>
+      <!-- Menu Monument -->
+<li class="menu-item has-submenu">
+  <div class="submenu-toggle" (click)="toggleSubmenu('monument')">
+    <i class="menu-icon fas fa-monument"></i>
+    <span class="menu-text">Monuments</span>
+    <i class="submenu-indicator fas fa-angle-down" [class.rotate]="submenus['monument']"></i>
+  </div>
+  <ul class="submenu-list" [class.open]="submenus['monument']">
+    <li class="submenu-item">
+      <a routerLink="/admin/monument" class="submenu-link" routerLinkActive="active">
+        <i class="submenu-icon far fa-circle"></i>
+        <span>All Monuments</span>
+      </a>
+    </li>
+    <li class="submenu-item">
+      <a routerLink="/admin/monument/add" class="submenu-link" routerLinkActive="active">
+        <i class="submenu-icon far fa-circle"></i>
+        <span>Add New</span>
+      </a>
+    </li>
+  </ul>
+</li>
+       <!-- Restaurants -->
+<li class="menu-item has-submenu">
+  <div class="submenu-toggle" (click)="toggleSubmenu('restaurant')">
+    <i class="menu-icon fas fa-utensils"></i>
+    <span class="menu-text">Restaurants</span>
+    <i class="submenu-indicator fas fa-angle-down" [class.rotate]="submenus['restaurant']"></i>
+  </div>
+  <ul class="submenu-list" [class.open]="submenus['restaurant']">
+    <li class="submenu-item">
+      <a routerLink="/admin/restaurants" class="submenu-link" routerLinkActive="active">
+        <i class="submenu-icon far fa-circle"></i>
+        <span>All Restaurants</span>
+      </a>
+    </li>
+    <li class="submenu-item">
+      <a routerLink="/admin/restaurants/add" class="submenu-link" routerLinkActive="active">
+        <i class="submenu-icon far fa-circle"></i>
+        <span>Add New</span>
+      </a>
+    </li>
+  </ul>
+</li>
+
 
       <!-- System Section -->
       <li class="menu-section">

@@ -35,7 +35,7 @@ export class PackAddComponent implements OnInit {
 
   loading = false;
   errorMessage: string | null = null;
-  successMessage: string | null = null;
+    successMessage: string | null = null;
 
   constructor(
     private packService: PackService,
@@ -130,4 +130,49 @@ export class PackAddComponent implements OnInit {
       }
     });
   }
+  toggleSelection(category: string, id: number): void {
+    const array = this.pack[category as keyof PackDTO] as number[];
+    const index = array.indexOf(id);
+    
+    if (index === -1) {
+      array.push(id);
+    } else {
+      array.splice(index, 1);
+    }
+  }
+  // Add these properties to your component class
+itemsPerPage: number = 5; // Items to show per page
+currentPages: { [key: string]: number } = {
+  logements: 1,
+  restaurants: 1,
+  activities: 1,
+  transports: 1,
+  evenements: 1
+};
+
+// Add these methods to your component class
+getPaginatedItems(items: any[], category: string): any[] {
+  const startIndex = (this.currentPages[category] - 1) * this.itemsPerPage;
+  return items.slice(startIndex, startIndex + this.itemsPerPage);
+}
+
+totalPages(category: string): number {
+  return Math.ceil((this.pack[category as keyof PackDTO] as any[]).length / this.itemsPerPage);
+}
+
+nextPage(category: string): void {
+  if (this.currentPages[category] < this.totalPages(category)) {
+    this.currentPages[category]++;
+  }
+}
+
+prevPage(category: string): void {
+  if (this.currentPages[category] > 1) {
+    this.currentPages[category]--;
+  }
+}
+goBack(): void {
+  console.log('Navigating back to list');
+  this.router.navigate(['/admin/list-admin']);
+}
 }

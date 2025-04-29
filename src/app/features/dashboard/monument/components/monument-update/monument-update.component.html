@@ -2,33 +2,37 @@
   <div class="row">
     <div class="col-lg-12">
       <div class="card border-0 shadow-sm">
-        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center rounded-top">
-          <h5 class="mb-0">
-            <i class="bi bi-building me-2"></i> Modifier un monument
-          </h5>
-          <a [routerLink]="['/admin/monument']" class="btn btn-light btn-sm">
-            <i class="bi bi-arrow-left"></i> Retour
-          </a>
-        </div>
+        <div class="card border-0 shadow-sm">
+
+
+          <h2 class="mb-4 text-primary">Edit Monument</h2>
+
+
+        <div class="card-body">
         <div class="card-body">
           <!-- Error Message -->
           <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
             {{ errorMessage }}
             <button type="button" class="btn-close" (click)="errorMessage = null" aria-label="Close"></button>
           </div>
+          <div *ngIf="showSuccessPopup" class="alert alert-success alert-dismissible fade show position-fixed top-50 start-50 translate-middle" role="alert" style="z-index: 1050;">
+            Monument successfully updated!
+            <button type="button" class="btn-close" (click)="showSuccessPopup = false" aria-label="Close"></button>
+          </div>
+
 
           <!-- Form -->
           <form [formGroup]="monumentForm" (ngSubmit)="onSubmit()">
             <div class="row g-3">
               <!-- Name -->
               <div class="col-md-6">
-                <label for="name" class="form-label">Nom <span class="text-danger">*</span></label>
+                <label for="name" class="form-label">Name <span class="text-danger">*</span></label>
                 <div class="position-relative">
                   <input
                     id="name"
                     formControlName="name"
                     class="form-control"
-                    placeholder="Entrez le nom du monument"
+                    placeholder="Enter the monument name"
                     [ngClass]="{
                       'is-invalid': monumentForm.get('name')?.touched && monumentForm.get('name')?.invalid
                     }" />
@@ -37,19 +41,20 @@
                 <div
                   *ngIf="monumentForm.get('name')?.touched && monumentForm.get('name')?.invalid"
                   class="invalid-feedback">
-                  Le nom est requis et ne doit pas dépasser 100 caractères.
+                  Name is required and must not exceed 100 characters.
                 </div>
               </div>
 
+
               <!-- Location -->
               <div class="col-md-6">
-                <label for="location" class="form-label">Localisation</label>
+                <label for="location" class="form-label">Location</label>
                 <div class="position-relative">
                   <input
                     id="location"
                     formControlName="location"
                     class="form-control"
-                    placeholder="Entrez la localisation"
+                    placeholder="Enter the location"
                     [ngClass]="{
                       'is-invalid': monumentForm.get('location')?.touched && monumentForm.get('location')?.invalid
                     }" />
@@ -58,9 +63,10 @@
                 <div
                   *ngIf="monumentForm.get('location')?.touched && monumentForm.get('location')?.invalid"
                   class="invalid-feedback">
-                  La localisation ne doit pas dépasser 255 caractères.
+                  Location must not exceed 255 characters.
                 </div>
               </div>
+
 
               <!-- Description -->
               <div class="col-12">
@@ -71,7 +77,7 @@
                     formControlName="description"
                     class="form-control me-2"
                     rows="4"
-                    placeholder="Entrez une description ou générez-la automatiquement"
+                    placeholder="Enter a description or generate it automatically"
                     [ngClass]="{
                       'is-invalid': monumentForm.get('description')?.touched && monumentForm.get('description')?.invalid
                     }"></textarea>
@@ -82,25 +88,26 @@
                     [ngStyle]="{'background-color': '#4a87c5', 'color': 'white'}"
                     (click)="generateDescription()">
                     <i class="bi bi-magic me-2"></i>
-                    {{ isGeneratingDescription ? 'Génération...' : 'Générer' }}
+                    {{ isGeneratingDescription ? 'Generating...' : 'Generate' }}
                   </button>
                 </div>
                 <div
                   *ngIf="monumentForm.get('description')?.touched && monumentForm.get('description')?.invalid"
                   class="invalid-feedback">
-                  La description ne doit pas dépasser 4000 caractères.
+                  Description must not exceed 4000 characters.
                 </div>
               </div>
 
+
               <!-- Opening Hours -->
               <div class="col-md-6">
-                <label for="openingHours" class="form-label">Horaires d'ouverture</label>
+                <label for="openingHours" class="form-label">Opening Hours</label>
                 <div class="position-relative">
                   <input
                     id="openingHours"
                     formControlName="openingHours"
                     class="form-control"
-                    placeholder="Ex: Lun-Ven 9h-17h"
+                    placeholder="Ex: Mon-Fri 9am-5pm"
                     [ngClass]="{
                       'is-invalid': monumentForm.get('openingHours')?.touched && monumentForm.get('openingHours')?.invalid
                     }" />
@@ -109,20 +116,21 @@
                 <div
                   *ngIf="monumentForm.get('openingHours')?.touched && monumentForm.get('openingHours')?.invalid"
                   class="invalid-feedback">
-                  Les horaires ne doivent pas dépasser 100 caractères.
+                  Opening hours must not exceed 100 characters.
                 </div>
               </div>
 
+
               <!-- Entrance Fee -->
               <div class="col-md-6">
-                <label for="entranceFee" class="form-label">Prix d'entrée (€)</label>
+                <label for="entranceFee" class="form-label">Entrance Fee (€)</label>
                 <div class="position-relative">
                   <input
                     id="entranceFee"
                     type="number"
                     formControlName="entranceFee"
                     class="form-control"
-                    placeholder="Entrez le prix d'entrée"
+                    placeholder="Enter the entrance fee"
                     step="0.01"
                     min="0"
                     [ngClass]="{
@@ -133,9 +141,10 @@
                 <div
                   *ngIf="monumentForm.get('entranceFee')?.touched && monumentForm.get('entranceFee')?.invalid"
                   class="invalid-feedback">
-                  Le prix doit être un nombre positif.
+                  The fee must be a positive number.
                 </div>
               </div>
+
 
               <!-- Image Upload -->
               <div class="col-12">
@@ -150,9 +159,9 @@
                 <div *ngIf="errorMessage && !selectedFile" class="invalid-feedback">
                   {{ errorMessage }}
                 </div>
-                <small class="form-text text-muted">Formats acceptés : JPEG, PNG, GIF. Taille max : 10 Mo. Laissez vide pour conserver l'image existante.</small>
               </div>
             </div>
+
 
             <!-- Submit Button -->
             <div class="mt-4 d-flex justify-content-end">
@@ -162,7 +171,7 @@
                 [disabled]="monumentForm.invalid || isSubmitting"
                 [ngStyle]="{'background-color': '#101011', 'color': 'white'}">
                 <i class="bi bi-save me-2"></i>
-                {{ isSubmitting ? 'Mise à jour en cours...' : 'Mettre à jour' }}
+                {{ isSubmitting ? 'Updating...' : 'Update' }}
               </button>
             </div>
           </form>

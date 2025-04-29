@@ -4,6 +4,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { MonumentService } from 'src/app/core/services/monument.service';
 
 
+
+
 @Component({
   selector: 'app-monument-update',
   templateUrl: './monument-update.component.html',
@@ -16,7 +18,7 @@ export class MonumentUpdateComponent implements OnInit {
   isSubmitting = false;
   isGeneratingDescription = false;
   monumentId: number | null = null;
-
+showSuccessPopup = false;
   constructor(
     private fb: FormBuilder,
     private monumentService: MonumentService,
@@ -32,6 +34,7 @@ export class MonumentUpdateComponent implements OnInit {
     });
   }
 
+
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
     if (id && !isNaN(+id)) {
@@ -42,6 +45,7 @@ export class MonumentUpdateComponent implements OnInit {
       this.router.navigate(['/admin/monument']);
     }
   }
+
 
   // Load monument data
   loadMonument(): void {
@@ -62,6 +66,7 @@ export class MonumentUpdateComponent implements OnInit {
       });
     }
   }
+
 
   // Handle file selection
   onFileSelected(event: Event): void {
@@ -86,6 +91,7 @@ export class MonumentUpdateComponent implements OnInit {
     }
   }
 
+
   // Generate description
   generateDescription(): void {
     const name = this.monumentForm.get('name')?.value;
@@ -95,8 +101,10 @@ export class MonumentUpdateComponent implements OnInit {
     }
     if (this.isGeneratingDescription) return;
 
+
     this.isGeneratingDescription = true;
     this.errorMessage = null;
+
 
     this.monumentService.enrichMonument(name).subscribe({
       next: (monument) => {
@@ -110,34 +118,55 @@ export class MonumentUpdateComponent implements OnInit {
     });
   }
 
+
   // Handle form submission
   onSubmit(): void {
-    if (this.monumentForm.valid && !this.isSubmitting && this.monumentId !== null) {
-      this.isSubmitting = true;
-      this.errorMessage = null;
-
-      const formData = new FormData();
-      formData.append('name', this.monumentForm.get('name')?.value);
-      formData.append('description', this.monumentForm.get('description')?.value || '');
-      formData.append('location', this.monumentForm.get('location')?.value || '');
-      formData.append('openingHours', this.monumentForm.get('openingHours')?.value || '');
-      if (this.monumentForm.get('entranceFee')?.value !== null) {
-        formData.append('entranceFee', this.monumentForm.get('entranceFee')?.value.toString());
-      }
-      if (this.selectedFile) {
-        formData.append('image', this.selectedFile);
-      }
-
-      this.monumentService.updateMonument(this.monumentId, formData).subscribe({
-        next: () => {
-          this.isSubmitting = false;
-          this.router.navigate(['/admin/monument']);
-        },
-        error: (err) => {
-          this.isSubmitting = false;
-          this.errorMessage = err.error?.message || 'Failed to update monument. Please try again.';
-        }
-      });
+    if (this.monumentForm.invalid) {
+      this.errorMessage = 'Veuillez corriger les erreurs dans le formulaire avant de soumettre.';
+      return;
     }
+
+
+    if (this.isSubmitting || this.monumentId === null) return;
+
+
+    this.isSubmitting = true;
+    this.errorMessage = null;
+
+
+    const formData = new FormData();
+    formData.append('name', this.monumentForm.get('name')?.value);
+    formData.append('description', this.monumentForm.get('description')?.value || '');
+    formData.append('location', this.monumentForm.get('location')?.value || '');
+    formData.append('openingHours', this.monumentForm.get('openingHours')?.value || '');
+
+
+    const entranceFee = this.monumentForm.get('entranceFee')?.value;
+    if (entranceFee !== null && entranceFee !== undefined) {
+      formData.append('entranceFee', entranceFee.toString());
+    }
+
+
+    if (this.selectedFile) {
+      formData.append('image', this.selectedFile);
+    }
+
+
+    this.monumentService.updateMonument(this.monumentId, formData).subscribe({
+      next: () => {
+        this.isSubmitting = false;
+        this.showSuccessPopup = true;
+
+
+        // Redirection après 2 secondes
+        setTimeout(() => {
+          this.router.navigate(['/admin/monument']);
+        }, 2000);
+      },
+      error: (err) => {
+        this.isSubmitting = false;
+        this.errorMessage = err.error?.message || 'Échec de la mise à jour du monument. Veuillez réessayer.';
+      }
+    });
   }
 }

@@ -32,9 +32,253 @@
             </select>
           </div>
           
+          <!-- Enhanced Stats Button -->
+          <button class="stats-btn" (click)="toggleStatsPopup()">
+            <i class="fas fa-chart-pie"></i> View Statistics
+            <i class="fas fa-chevron-down toggle-icon" [class.rotate]="showStatsPopup"></i>
+          </button>
         </div>
       </header>
 
+      <div class="stats-modal-backdrop" [class.show]="showStatsPopup" (click)="closeModal()">
+        <div class="stats-modal" [@modalAnimation] *ngIf="showStatsPopup" (click)="$event.stopPropagation()">
+          <div class="modal-glass">
+            <div class="modal-header">
+              <h3>
+                <i class="fas fa-chart-pie pulse"></i>
+                Reservation Statistics
+                <span class="total-count">{{ filteredReservations.length }} Total</span>
+              </h3>
+              <button class="close-btn" (click)="closeModal($event)" aria-label="Close statistics modal">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+            
+            <div class="modal-body">
+              <!-- Chart Controls -->
+              <div class="chart-controls">
+                <button class="chart-toggle-btn" (click)="toggleChartType()">
+                  <i class="fas" [class.fa-circle]="chartConfig.type === 'pie'" [class.fa-dot-circle]="chartConfig.type === 'donut'"></i>
+                  {{ chartConfig.type === 'pie' ? 'Switch to Donut Chart' : 'Switch to Pie Chart' }}
+                </button>
+              </div>
+      
+              <!-- Enhanced Chart Container -->
+              <div class="chart-container">
+                <div class="pie-chart-wrapper">
+                  <div class="pie-chart" [class.donut]="chartConfig.type === 'donut'">
+                    <!-- Enhanced Segments with Tooltips -->
+                    <div *ngFor="let segment of typeDistribution; trackBy: trackBySegment" 
+                         class="pie-segment"
+                         [@segmentAnimation]
+                         [style.transform]="'rotate(' + segment.startAngle + 'deg)'"
+                         [style.backgroundColor]="segment.color.background"
+                         [style.borderColor]="segment.color.hover"
+                         [style.zIndex]="segment.hovered ? 10 : 1"
+                         [class.highlighted]="activeSegment?.index === segment.index"
+                         (mouseenter)="onSegmentHover(segment, true)"
+                         (mouseleave)="onSegmentHover(segment, false)">
+                      
+                      <div class="pie-segment-inner" 
+                           [style.transform]="'rotate(' + segment.angle + 'deg)'"
+                           [style.filter]="segment.hovered ? 'brightness(1.1)' : ''">
+                      </div>
+                      
+                      <!-- Tooltip -->
+                      <div class="segment-tooltip" *ngIf="segment.tooltipVisible && chartConfig.showTooltips">
+                        <div class="tooltip-content">
+                          <strong>{{ segment.type }}</strong><br>
+                          {{ segment.count }} ({{ segment.percentage | number:'1.1-1' }}%)
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <!-- Center of Chart -->
+                    <div class="pie-center" [class.active]="!!activeSegment"
+                         [style.width]="chartConfig.type === 'donut' ? (chartConfig.donutWidth - 5) + '%' : '0'"
+                         [style.height]="chartConfig.type === 'donut' ? (chartConfig.donutWidth - 5) + '%' : '0'">
+                      <div *ngIf="activeSegment; else defaultCenter" class="segment-info">
+                        <div class="segment-percentage" [style.color]="activeSegment.color.background">
+                          {{ activeSegment.percentage | number:'1.1-1' }}%
+                        </div>
+                        <div class="segment-type">{{ activeSegment.type }}</div>
+                        <div class="segment-count">{{ activeSegment.count }} reservations</div>
+                      </div>
+                      <ng-template #defaultCenter>
+                        <div class="total">
+                          <div class="total-value">{{ filteredReservations.length }}</div>
+                          <div class="total-label">Total Reservations</div>
+                        </div>
+                      </ng-template>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Enhanced Interactive Legend -->
+                <div class="chart-legend">
+                  <div *ngFor="let segment of typeDistribution; trackBy: trackBySegment" 
+                       class="legend-item"
+                       [class.active]="activeSegment?.index === segment.index"
+                       (mouseenter)="onLegendHover(segment, true)"
+                       (mouseleave)="onLegendHover(segment, false)">
+                    <div class="legend-color" 
+                         [style.backgroundColor]="segment.color.background"
+                         [style.boxShadow]="'0 0 0 2px ' + (activeSegment?.index === segment.index ? segment.color.hover : 'transparent')">
+                    </div>
+                    <div class="legend-text">
+                      <div class="legend-label">{{ segment.type }}</div>
+                      <div class="legend-details">
+                        <span class="legend-percentage" [style.color]="segment.color.background">
+                          {{ segment.percentage | number:'1.1-1' }}%
+                        </span>
+                        <span class="legend-count">{{ segment.count }}</span>
+                      </div>
+                    </div>
+                    <div class="legend-arrow">
+                      <i class="fas fa-chevron-right"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Enhanced Summary Cards -->
+              <div class="stats-summary" @fadeIn>
+                <div *ngFor="let stat of typeDistribution | slice:0:4; trackBy: trackBySegment" 
+                     class="stat-card"
+                     [style.borderLeftColor]="stat.color.background"
+                     (mouseenter)="onLegendHover(stat, true)"
+                     (mouseleave)="onLegendHover(stat, false)">
+                  <div class="stat-value" [style.color]="stat.color.background">
+                    {{ stat.percentage | number:'1.1-1' }}%
+                  </div>
+                  <div class="stat-label">{{ stat.type }}</div>
+                  <div class="stat-count">{{ stat.count }} reservations</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div><div class="stats-modal-backdrop" [class.show]="showStatsPopup" (click)="closeModal()">
+  <div class="stats-modal" [@modalAnimation] *ngIf="showStatsPopup" (click)="$event.stopPropagation()">
+    <div class="modal-glass">
+      <div class="modal-header">
+        <h3>
+          <i class="fas fa-chart-pie pulse"></i>
+          Reservation Statistics
+          <span class="total-count">{{ filteredReservations.length }} Total</span>
+        </h3>
+        <button class="close-btn" (click)="closeModal($event)" aria-label="Close statistics modal">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      
+      <div class="modal-body">
+        <!-- Chart Controls -->
+        <div class="chart-controls">
+          <button class="chart-toggle-btn" (click)="toggleChartType()">
+            <i class="fas" [class.fa-circle]="chartConfig.type === 'pie'" [class.fa-dot-circle]="chartConfig.type === 'donut'"></i>
+            {{ chartConfig.type === 'pie' ? 'Switch to Donut Chart' : 'Switch to Pie Chart' }}
+          </button>
+        </div>
+
+        <!-- Enhanced Chart Container -->
+        <div class="chart-container">
+          <div class="pie-chart-wrapper">
+            <div class="pie-chart" [class.donut]="chartConfig.type === 'donut'">
+              <!-- Enhanced Segments with Tooltips -->
+              <div *ngFor="let segment of typeDistribution; trackBy: trackBySegment" 
+                   class="pie-segment"
+                   [@segmentAnimation]
+                   [style.transform]="'rotate(' + segment.startAngle + 'deg)'"
+                   [style.backgroundColor]="segment.color.background"
+                   [style.borderColor]="segment.color.hover"
+                   [style.zIndex]="segment.hovered ? 10 : 1"
+                   [class.highlighted]="activeSegment?.index === segment.index"
+                   (mouseenter)="onSegmentHover(segment, true)"
+                   (mouseleave)="onSegmentHover(segment, false)">
+                
+                <div class="pie-segment-inner" 
+                     [style.transform]="'rotate(' + segment.angle + 'deg)'"
+                     [style.filter]="segment.hovered ? 'brightness(1.1)' : ''">
+                </div>
+                
+                <!-- Tooltip -->
+                <div class="segment-tooltip" *ngIf="segment.tooltipVisible && chartConfig.showTooltips">
+                  <div class="tooltip-content">
+                    <strong>{{ segment.type }}</strong><br>
+                    {{ segment.count }} ({{ segment.percentage | number:'1.1-1' }}%)
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Center of Chart -->
+              <div class="pie-center" [class.active]="!!activeSegment"
+                   [style.width]="chartConfig.type === 'donut' ? (chartConfig.donutWidth - 5) + '%' : '0'"
+                   [style.height]="chartConfig.type === 'donut' ? (chartConfig.donutWidth - 5) + '%' : '0'">
+                <div *ngIf="activeSegment; else defaultCenter" class="segment-info">
+                  <div class="segment-percentage" [style.color]="activeSegment.color.background">
+                    {{ activeSegment.percentage | number:'1.1-1' }}%
+                  </div>
+                  <div class="segment-type">{{ activeSegment.type }}</div>
+                  <div class="segment-count">{{ activeSegment.count }} reservations</div>
+                </div>
+                <ng-template #defaultCenter>
+                  <div class="total">
+                    <div class="total-value">{{ filteredReservations.length }}</div>
+                    <div class="total-label">Total Reservations</div>
+                  </div>
+                </ng-template>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Enhanced Interactive Legend -->
+          <div class="chart-legend">
+            <div *ngFor="let segment of typeDistribution; trackBy: trackBySegment" 
+                 class="legend-item"
+                 [class.active]="activeSegment?.index === segment.index"
+                 (mouseenter)="onLegendHover(segment, true)"
+                 (mouseleave)="onLegendHover(segment, false)">
+              <div class="legend-color" 
+                   [style.backgroundColor]="segment.color.background"
+                   [style.boxShadow]="'0 0 0 2px ' + (activeSegment?.index === segment.index ? segment.color.hover : 'transparent')">
+              </div>
+              <div class="legend-text">
+                <div class="legend-label">{{ segment.type }}</div>
+                <div class="legend-details">
+                  <span class="legend-percentage" [style.color]="segment.color.background">
+                    {{ segment.percentage | number:'1.1-1' }}%
+                  </span>
+                  <span class="legend-count">{{ segment.count }}</span>
+                </div>
+              </div>
+              <div class="legend-arrow">
+                <i class="fas fa-chevron-right"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Enhanced Summary Cards -->
+        <div class="stats-summary" @fadeIn>
+          <div *ngFor="let stat of typeDistribution | slice:0:4; trackBy: trackBySegment" 
+               class="stat-card"
+               [style.borderLeftColor]="stat.color.background"
+               (mouseenter)="onLegendHover(stat, true)"
+               (mouseleave)="onLegendHover(stat, false)">
+            <div class="stat-value" [style.color]="stat.color.background">
+              {{ stat.percentage | number:'1.1-1' }}%
+            </div>
+            <div class="stat-label">{{ stat.type }}</div>
+            <div class="stat-count">{{ stat.count }} reservations</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <!-- Reservation Table -->
       <div class="reservation-table-container">
         <table class="reservation-table">
           <thead>
@@ -77,6 +321,7 @@
         </table>
       </div>
 
+      <!-- Pagination -->
       <div class="pagination-container" *ngIf="filteredReservations.length > 0">
         <div class="pagination-info">
           Showing {{ getFirstItemNumber() }} to {{ getLastItemNumber() }} of {{ filteredReservations.length }} entries

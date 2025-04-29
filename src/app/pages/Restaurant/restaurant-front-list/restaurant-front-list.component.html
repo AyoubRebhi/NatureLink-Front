@@ -20,6 +20,7 @@
     </div>
   </div>
 
+
   <!-- Currently Open Restaurants -->
   <div class="row mb-5" *ngIf="openRestaurants?.length">
     <div class="col-12">
@@ -63,17 +64,10 @@
                 <i class="bi bi-people-fill text-secondary me-2"></i>
                 <strong>Capacité:</strong> {{ resto.capacite }}
               </p>
-              <div class="mt-auto d-flex gap-2">
+              <div class="mt-auto">
                 <a [routerLink]="['/restaurants', resto.id]" class="btn btn-outline-success w-100">
                   <i class="bi bi-eye me-1"></i> View Details
                 </a>
-                <button
-                  class="btn btn-primary w-100"
-                  (click)="bookRestaurant(resto.id!)"
-                  [disabled]="!isAuthenticated()"
-                >
-                  <i class="bi bi-book me-1"></i> Book
-                </button>
               </div>
             </div>
           </div>
@@ -81,6 +75,7 @@
       </div>
     </div>
   </div>
+
 
   <!-- All Restaurants -->
   <div class="text-center mb-5">
@@ -96,7 +91,7 @@
           class="card-img-top rounded-top-4"
           style="height: 150px; object-fit: cover;"
         />
-        <div class="card-body text-start d-flex flex-column">
+        <div class="card-body text-start d-flex flex-column"> <!-- Aligné à gauche ici -->
           <h5 class="fw-semibold mb-2">{{ resto.nom }}</h5>
           <p class="mb-2">
             <i class="bi bi-geo-alt-fill text-danger me-2"></i>
@@ -114,22 +109,14 @@
             <i class="bi bi-people-fill text-secondary me-2"></i>
             <strong>Capacité:</strong> {{ resto.capacite }}
           </p>
-          <div class="mt-auto d-flex gap-2">
-            <a [routerLink]="['/restaurants', resto.id]" class="btn btn-outline-success btn-sm w-100">
-              <i class="bi bi-eye me-1"></i> View Details
-            </a>
-            <button
-              class="btn btn-primary btn-sm w-100"
-              (click)="bookRestaurant(resto.id!)"
-              [disabled]="!isAuthenticated()"
-            >
-              <i class="bi bi-book me-1"></i> Book
-            </button>
-          </div>
+          <a [routerLink]="['/restaurants', resto.id]" class="btn btn-outline-success btn-sm mt-auto">
+            <i class="bi bi-eye me-1"></i> View Details
+          </a>
         </div>
       </div>
     </div>
   </div>
+
 
   <!-- Empty & Loading States -->
   <div *ngIf="filteredRestaurants.length === 0 && !isLoading" class="text-center py-4">

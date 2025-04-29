@@ -1,181 +1,116 @@
+<div class="container mt-5">
+  <h2 class="mb-4 text-primary">Add a Restaurant</h2>
 
-<div id="restaurantForm" class="container my-4">
-  <div class="row justify-content-center">
-    <div class="col-lg-8">
-      <div class="card shadow-sm">
-        <div class="card-header bg-primary text-white">
-          <h4 class="mb-0">
-            <i class="bi bi-plus-circle me-2"></i> Ajouter un nouveau restaurant
-          </h4>
-        </div>
-        <div class="card-body">
-          <!-- Messages d'alerte -->
-          <div *ngIf="successMessage" class="alert alert-success alert-dismissible fade show">
-            {{ successMessage }}
-            <button type="button" class="btn-close" (click)="successMessage = ''" aria-label="Fermer"></button>
-          </div>
-          <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show">
-            {{ errorMessage }}
-            <button type="button" class="btn-close" (click)="errorMessage = ''" aria-label="Fermer"></button>
-          </div>
 
-          <!-- Formulaire -->
-          <form [formGroup]="restaurantForm" (ngSubmit)="saveRestaurant()" enctype="multipart/form-data" novalidate>
-            <div class="row">
-              <!-- Nom -->
-              <div class="col-lg-6 mb-3">
-                <label for="nom" class="form-label">
-                  Nom <span class="text-danger">*</span>
-                </label>
-                <input
-                  type="text"
-                  id="nom"
-                  formControlName="nom"
-                  class="form-control"
-                  [ngClass]="{'is-invalid': restaurantForm.get('nom')?.invalid && restaurantForm.get('nom')?.touched}"
-                  placeholder="Ex: Le Gourmet" />
-                <div *ngIf="restaurantForm.get('nom')?.invalid && restaurantForm.get('nom')?.touched" class="invalid-feedback">
-                  Le nom est requis.
-                </div>
-              </div>
+  <!-- Success Popup -->
+  <div *ngIf="showSuccessPopup" class="alert alert-success alert-dismissible fade show position-fixed top-50 start-50 translate-middle" role="alert" style="z-index: 1050;">
+    Restaurant added successfully!
+  </div>
 
-              <!-- Localisation -->
-              <div class="col-lg-6 mb-3">
-                <label for="localisation" class="form-label">
-                  Localisation <span class="text-danger">*</span>
-                </label>
-                <input
-                  type="text"
-                  id="localisation"
-                  formControlName="localisation"
-                  class="form-control"
-                  [ngClass]="{'is-invalid': restaurantForm.get('localisation')?.invalid && restaurantForm.get('localisation')?.touched}"
-                  placeholder="Ex: 12 Rue de l'Exemple, Tunis" />
-                <div *ngIf="restaurantForm.get('localisation')?.invalid && restaurantForm.get('localisation')?.touched" class="invalid-feedback">
-                  La localisation est requise.
-                </div>
-              </div>
 
-              <!-- Description -->
-              <div class="col-lg-12 mb-3">
-                <label for="description" class="form-label">
-                  Description <span class="text-danger">*</span>
-                </label>
-                <textarea
-                  id="description"
-                  formControlName="description"
-                  class="form-control"
-                  rows="4"
-                  [ngClass]="{'is-invalid': restaurantForm.get('description')?.invalid && restaurantForm.get('description')?.touched}"
-                  placeholder="Décrivez brièvement le restaurant"></textarea>
-                <div *ngIf="restaurantForm.get('description')?.invalid && restaurantForm.get('description')?.touched" class="invalid-feedback">
-                  La description est requise.
-                </div>
-              </div>
+  <!-- Error Message -->
+  <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
+    {{ errorMessage }}
+    <button type="button" class="btn-close" (click)="errorMessage = ''" aria-label="Close"></button>
+  </div>
 
-              <!-- Type de Cuisine -->
-              <div class="col-lg-6 mb-3">
-                <label for="typeCuisine" class="form-label">
-                  Type de Cuisine <span class="text-danger">*</span>
-                </label>
-                <select
-                  id="typeCuisine"
-                  formControlName="typeCuisine"
-                  class="form-select"
-                  [ngClass]="{'is-invalid': restaurantForm.get('typeCuisine')?.invalid && restaurantForm.get('typeCuisine')?.touched}">
-                  <option value="" disabled>Choisir un type de cuisine</option>
-                  <option value="française">Française</option>
-                  <option value="italienne">Italienne</option>
-                  <option value="chinoise">Chinoise</option>
-                  <option value="mexicaine">Mexicaine</option>
-                  <option value="tunisienne">Tunisienne</option>
-                  <option value="japonaise">Japonaise</option>
-                </select>
-                <div *ngIf="restaurantForm.get('typeCuisine')?.invalid && restaurantForm.get('typeCuisine')?.touched" class="invalid-feedback">
-                  Le type de cuisine est requis.
-                </div>
-              </div>
 
-              <!-- Horaires d'ouverture -->
-              <div class="col-lg-6 mb-3">
-                <label for="horairesOuverture" class="form-label">
-                  Horaires d'ouverture <span class="text-danger">*</span>
-                </label>
-                <input
-                  type="text"
-                  id="horairesOuverture"
-                  formControlName="horairesOuverture"
-                  class="form-control"
-                  [ngClass]="{'is-invalid': restaurantForm.get('horairesOuverture')?.invalid && restaurantForm.get('horairesOuverture')?.touched}"
-                  placeholder="Ex: 08:00-22:00" />
-                <div *ngIf="restaurantForm.get('horairesOuverture')?.hasError('required') && restaurantForm.get('horairesOuverture')?.touched" class="invalid-feedback">
-                  Les horaires sont requis.
-                </div>
-                <div *ngIf="restaurantForm.get('horairesOuverture')?.hasError('invalidTimeRange') && restaurantForm.get('horairesOuverture')?.touched" class="invalid-feedback">
-                  L'heure de début doit être antérieure à l'heure de fin.
-                </div>
-              </div>
-
-              <!-- Capacité -->
-              <div class="col-lg-6 mb-3">
-                <label for="capacite" class="form-label">
-                  Capacité <span class="text-danger">*</span>
-                </label>
-                <input
-                  type="number"
-                  id="capacite"
-                  formControlName="capacite"
-                  class="form-control"
-                  min="1"
-                  [ngClass]="{'is-invalid': restaurantForm.get('capacite')?.invalid && restaurantForm.get('capacite')?.touched}"
-                  placeholder="Ex: 100" />
-                <div *ngIf="restaurantForm.get('capacite')?.hasError('required') && restaurantForm.get('capacite')?.touched" class="invalid-feedback">
-                  La capacité est requise.
-                </div>
-                <div *ngIf="restaurantForm.get('capacite')?.hasError('min') && restaurantForm.get('capacite')?.touched" class="invalid-feedback">
-                  La capacité doit être un nombre positif.
-                </div>
-              </div>
-
-              <!-- Image -->
-              <div class="col-lg-12 mb-3">
-                <label for="image" class="form-label">
-                  Image <span class="text-danger">*</span>
-                </label>
-                <input
-                  type="file"
-                  id="image"
-                  class="form-control"
-                  (change)="onImageSelected($event)"
-                  accept="image/*" />
-                <div *ngIf="!selectedImage && restaurantForm.touched" class="invalid-feedback d-block">
-                  Veuillez sélectionner une image.
-                </div>
-                <small *ngIf="selectedImage" class="form-text text-muted">
-                  Fichier sélectionné : {{ selectedImage.name }}
-                </small>
-              </div>
-            </div>
-
-            <!-- Boutons d'action -->
-            <div class="d-flex justify-content-end mt-4">
-              <button
-                type="button"
-                class="btn btn-secondary me-2"
-                (click)="goBack()">
-                Annuler
-              </button>
-              <button
-                type="submit"
-                class="btn btn-success"
-                [disabled]="isLoading">
-                {{ isLoading ? 'Enregistrement...' : 'Ajouter' }}
-              </button>
-            </div>
-          </form>
+  <form [formGroup]="restaurantForm" (ngSubmit)="saveRestaurant()" enctype="multipart/form-data" novalidate>
+    <div class="row g-3">
+      <!-- Name -->
+      <div class="col-md-6">
+        <label for="nom" class="form-label">Name <span class="text-danger">*</span></label>
+        <input type="text" id="nom" formControlName="nom" class="form-control" [ngClass]="{'is-invalid': isFieldInvalid('nom')}" placeholder="Ex: Le Gourmet">
+        <div *ngIf="isFieldInvalid('nom')" class="invalid-feedback">
+          Name is required.
         </div>
       </div>
-    </div>
-  </div>
-</div>
 
+
+      <!-- Location -->
+      <div class="col-md-6">
+        <label for="localisation" class="form-label">Location <span class="text-danger">*</span></label>
+        <input type="text" id="localisation" formControlName="localisation" class="form-control" [ngClass]="{'is-invalid': isFieldInvalid('localisation')}" placeholder="Ex: 12 Rue de l'Exemple, Tunis">
+        <div *ngIf="isFieldInvalid('localisation')" class="invalid-feedback">
+          Location is required.
+        </div>
+      </div>
+
+
+      <!-- Cuisine Type -->
+      <div class="col-md-6">
+        <label for="typeCuisine" class="form-label">Cuisine Type <span class="text-danger">*</span></label>
+        <select id="typeCuisine" formControlName="typeCuisine" class="form-control" [ngClass]="{'is-invalid': isFieldInvalid('typeCuisine')}">
+          <option value="" disabled>Select a cuisine type</option>
+          <option value="french">French</option>
+          <option value="italian">Italian</option>
+          <option value="chinese">Chinese</option>
+          <option value="mexican">Mexican</option>
+          <option value="tunisian">Tunisian</option>
+          <option value="japanese">Japanese</option>
+        </select>
+        <div *ngIf="isFieldInvalid('typeCuisine')" class="invalid-feedback">
+          Cuisine type is required.
+        </div>
+      </div>
+
+
+      <!-- Opening Hours -->
+      <div class="col-md-6">
+        <label for="horairesOuverture" class="form-label">Opening Hours <span class="text-danger">*</span></label>
+        <input type="text" id="horairesOuverture" formControlName="horairesOuverture" class="form-control" [ngClass]="{'is-invalid': isFieldInvalid('horairesOuverture')}" placeholder="Ex: 08:00-22:00">
+        <div *ngIf="isFieldInvalid('horairesOuverture')" class="invalid-feedback">
+          <span *ngIf="restaurantForm.get('horairesOuverture')?.errors?.['required']">Opening hours are required.</span>
+          <span *ngIf="restaurantForm.get('horairesOuverture')?.errors?.['invalidTimeRange']">The start time must be earlier than the end time.</span>
+        </div>
+      </div>
+
+
+      <!-- Capacity -->
+      <div class="col-md-6">
+        <label for="capacite" class="form-label">Capacity <span class="text-danger">*</span></label>
+        <input type="number" id="capacite" formControlName="capacite" class="form-control" min="1" [ngClass]="{'is-invalid': isFieldInvalid('capacite')}" placeholder="Ex: 100">
+        <div *ngIf="isFieldInvalid('capacite')" class="invalid-feedback">
+          <span *ngIf="restaurantForm.get('capacite')?.errors?.['required']">Capacity is required.</span>
+          <span *ngIf="restaurantForm.get('capacite')?.errors?.['min']">Capacity must be a positive number.</span>
+        </div>
+      </div>
+
+
+      <!-- Description -->
+      <div class="col-12">
+        <label for="description" class="form-label">Description <span class="text-danger">*</span></label>
+        <textarea id="description" formControlName="description" rows="4" class="form-control" [ngClass]="{'is-invalid': isFieldInvalid('description')}" placeholder="Briefly describe the restaurant"></textarea>
+        <div *ngIf="isFieldInvalid('description')" class="invalid-feedback">
+          Description is required.
+        </div>
+      </div>
+
+
+      <!-- Image -->
+      <div class="col-md-6">
+        <label for="image" class="form-label">Image <span class="text-danger">*</span></label>
+        <input type="file" id="image" class="form-control mb-3" (change)="onImageSelected($event)" accept="image/*">
+
+
+        <div class="border rounded p-2 bg-light text-center">
+          <img [src]="imagePreviewUrl" alt="Restaurant Image Preview" class="img-fluid rounded" style="max-height: 200px;" *ngIf="imagePreviewUrl">
+          <div *ngIf="!imagePreviewUrl" class="text-muted py-4">No image selected</div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+    <div class="mt-4 text-end">
+      <button type="submit" class="btn btn-success" [disabled]="restaurantForm.invalid || isLoading">
+        <span *ngIf="isLoading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        <i *ngIf="!isLoading" class="bi bi-check-circle"></i>
+        {{ isLoading ? 'Adding...' : 'Add Restaurant' }}
+      </button>
+
+
+    </div>
+  </form>
+</div>

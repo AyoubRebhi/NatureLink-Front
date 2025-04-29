@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { MenuService } from 'src/app/core/services/menu.service';
 import { Menu } from 'src/app/core/models/menu';
 
+
 @Component({
   selector: 'app-menu-update',
   templateUrl: './menu-update.component.html',
@@ -18,6 +19,7 @@ export class MenuUpdateComponent implements OnInit {
   successMessage: string = '';
   imagePreviewUrl: string | ArrayBuffer | null = null;
   selectedFile: File | null = null;
+
 
   constructor(
     private route: ActivatedRoute,
@@ -35,6 +37,7 @@ export class MenuUpdateComponent implements OnInit {
     });
   }
 
+
   ngOnInit(): void {
     if (this.menuId && this.restaurantId) {
       this.loadMenu();
@@ -42,6 +45,7 @@ export class MenuUpdateComponent implements OnInit {
       this.errorMessage = 'Identifiant de menu ou restaurant invalide.';
     }
   }
+
 
   loadMenu(): void {
     this.isLoading = true;
@@ -65,6 +69,7 @@ export class MenuUpdateComponent implements OnInit {
     });
   }
 
+
   onFileChange(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
@@ -78,14 +83,17 @@ export class MenuUpdateComponent implements OnInit {
     }
   }
 
+
   onSubmit(): void {
     if (this.menuForm.invalid) {
       this.markAllAsTouched();
       return;
     }
 
+
     this.isLoading = true;
     const formData = this.prepareFormData();
+
 
     this.menuService.updateMenu(this.menuId, formData).subscribe({
       next: () => {
@@ -105,6 +113,7 @@ export class MenuUpdateComponent implements OnInit {
     });
   }
 
+
   private prepareFormData(): FormData {
     const formData = new FormData();
     const formValue = this.menuForm.value;
@@ -117,10 +126,12 @@ export class MenuUpdateComponent implements OnInit {
     return formData;
   }
 
+
   isFieldInvalid(field: string): boolean {
     const control = this.menuForm.get(field);
     return control ? control.invalid && (control.dirty || control.touched) : false;
   }
+
 
   markAllAsTouched(): void {
     Object.values(this.menuForm.controls).forEach(control => {
@@ -128,8 +139,8 @@ export class MenuUpdateComponent implements OnInit {
     });
   }
 
+
   onCancel(): void {
     this.router.navigate([`/admin/restaurants/details/${this.restaurantId}/menus`]);
   }
 }
-
