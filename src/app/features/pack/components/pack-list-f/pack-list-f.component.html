@@ -15,7 +15,7 @@
 
   <!-- Pack Grid -->
   <div *ngIf="packs.length > 0 && !loading" class="pack-grid">
-    <div *ngFor="let pack of packs" class="pack-card">
+    <div *ngFor="let pack of packs" class="pack-card" [id]="'pack-' + pack.id">
       <div class="pack-icon">🎁</div>
       <h3>{{ pack.nom }}</h3>
       <p class="price">{{ pack.prix }} TND</p>

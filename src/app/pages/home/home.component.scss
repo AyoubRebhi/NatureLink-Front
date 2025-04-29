@@ -1,4 +1,4 @@
-// Basic styling for spacing and alignment
+/* Existing styles */
 .container-xxl {
   padding-top: 60px;
   padding-bottom: 60px;
@@ -20,4 +20,95 @@
 .clickable:hover {
   transform: translateY(-5px);
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Updated Best Pack Popup styles */
+.best-pack-popup {
+  position: fixed;
+  top: 100px;
+  right: 03px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  max-width: 200px; /* Even smaller width */
+  width: 80%;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+
+  .popup-content {
+    padding: 12px; /* Further reduced padding */
+    text-align: center;
+    position: relative;
+
+    .close-btn {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      background: none;
+      border: none;
+      font-size: 1rem;
+      color: #555;
+      cursor: pointer;
+      padding: 2px 6px;
+      line-height: 1;
+
+      &:hover {
+        color: #007bff;
+      }
+    }
+
+    h3 {
+      color: #007bff;
+      font-size: 1rem; /* Smaller font */
+      margin-bottom: 6px;
+    }
+
+    h4 {
+      font-size: 0.9rem; /* Smaller font */
+      margin: 6px 0;
+    }
+
+    p {
+      font-size: 0.7rem; /* Smaller font */
+      color: #555;
+      margin-bottom: 6px;
+    }
+
+    .rating {
+      margin: 6px 0;
+      .fa-star {
+        font-size: 0.8rem; /* Smaller stars */
+      }
+    }
+
+    .price {
+      font-size: 0.9rem; /* Smaller font */
+      font-weight: bold;
+      color: #28a745;
+    }
+
+    .btn-primary {
+      padding: 5px 12px; /* Smaller button */
+      font-size: 0.8rem;
+    }
+  }
+  /* Animation for popup appearance */
+@keyframes slideInBounce {
+  0% {
+    opacity: 0;
+    transform: translateX(100px);
+  }
+  70% {
+    opacity: 1;
+    transform: translateX(-10px); /* Slight overshoot for bounce */
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0); /* Settle in place */
+  }
+}
 }
