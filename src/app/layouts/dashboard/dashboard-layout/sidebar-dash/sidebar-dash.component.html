@@ -1,13 +1,4 @@
 <aside class="dashboard-sidebar">
-  <!-- Brand Logo -->
-  <div class="sidebar-brand">
-    <a routerLink="/dashboard" class="brand-link">
-      <div class="brand-logo">
-        <span>NL</span>
-      </div>
-      <span class="brand-text">NatureLink</span>
-    </a>
-  </div>
 
   <!-- User Panel -->
   <div class="user-panel">
@@ -105,29 +96,16 @@
       </li>
 
       <!-- Activities -->
-      <li class="menu-item has-submenu">
-        <div class="submenu-toggle" (click)="toggleSubmenu('activities')">
+      <li class="menu-item" *ngIf="isProvider()">
+        <a routerLink="/admin/activity" class="menu-link" routerLinkActive="active">
           <i class="menu-icon fas fa-hiking"></i>
           <span class="menu-text">Activities</span>
-          <i class="submenu-indicator fas fa-angle-down" [class.rotate]="submenus['activities']"></i>
-        </div>
-        <ul class="submenu-list" [class.open]="submenus['activities']">
-          <li class="submenu-item">
-            <a routerLink="/dashboard/activities" class="submenu-link" routerLinkActive="active">
-              <i class="submenu-icon far fa-circle"></i> All Activities
-            </a>
-          </li>
-          <li class="submenu-item">
-            <a routerLink="/dashboard/activities/new" class="submenu-link" routerLinkActive="active">
-              <i class="submenu-icon far fa-circle"></i> Add New
-            </a>
-          </li>
-        </ul>
+        </a>
       </li>
 
       <!-- Transport -->
-      <li class="menu-item">
-        <a routerLink="/dashboard/transport" class="menu-link" routerLinkActive="active">
+      <li class="menu-item" *ngIf="isAgence()">
+        <a routerLink="/admin/transport" class="menu-link" routerLinkActive="active">
           <i class="menu-icon fas fa-bus"></i>
           <span class="menu-text">Transport</span>
         </a>

@@ -7,17 +7,14 @@
           <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
             <!-- Search Box -->
             <div class="search-box position-relative flex-grow-1 me-2" style="max-width: 400px;">
-              <input type="text" class="form-control ps-4" 
-                     [(ngModel)]="searchTerm" 
-                     (input)="filterActivities()"
-                     placeholder="Search your activities...">
+              <input type="text" class="form-control ps-4" [(ngModel)]="searchTerm" (input)="filterActivities()"
+                placeholder="Search your activities...">
               <i class="ri-search-line search-icon position-absolute"></i>
             </div>
-            
+
             <!-- Add Button -->
-            <button class="btn btn-success d-flex align-items-center" 
-                    routerLink="/admin/activity/add">
-              <i class="bi bi-plus-circle me-2"></i> 
+            <button class="btn btn-success d-flex align-items-center" routerLink="/admin/activity/add">
+              <i class="bi bi-plus-circle me-2"></i>
               <span>Add New Activity</span>
             </button>
           </div>
@@ -33,11 +30,11 @@
         <div class="card-header bg-transparent border-0 p-3">
           <h5 class="card-title mb-0 d-flex align-items-center">
             <i class="bi bi-activity me-2"></i>
-            My Activities 
+            My Activities
             <span class="badge bg-primary ms-2 align-self-center">{{ activities.length }}</span>
           </h5>
         </div>
-        
+
         <div class="card-body p-0">
           <div class="table-responsive">
             <table class="table table-hover mb-0">
@@ -55,11 +52,11 @@
                 <tr *ngFor="let activity of filteredActivities" class="align-middle">
                   <td class="ps-4 fw-medium">{{ activity.name }}</td>
                   <td>{{ activity.location }}</td>
-                  <td>{{ activity.price | currency:'TND':'symbol':'1.2-2' }}</td>
+                  <td>{{ activity.price | number:'1.2-2' }} TND</td>
                   <td>{{ activity.duration }} hours</td>
                   <td>
-                    <span class="badge rounded-pill py-1 px-3 text-white" 
-                          [style.background-color]="getDifficultyColor(activity.difficultyLevel)">
+                    <span class="badge rounded-pill py-1 px-3 text-white"
+                      [style.background-color]="getDifficultyColor(activity.difficultyLevel)">
                       {{ activity.difficultyLevel | titlecase }}
                     </span>
                   </td>
@@ -67,19 +64,19 @@
                     <div class="d-flex justify-content-end gap-2">
                       <!-- View Button -->
                       <button class="btn btn-sm btn-outline-primary d-flex align-items-center"
-                              [routerLink]="['/admin/activity/details', activity.id]">
+                        [routerLink]="['/admin/activity/details', activity.id]">
                         <i class="bi bi-eye me-1"></i> View
                       </button>
-                      
+
                       <!-- Edit Button -->
                       <button class="btn btn-sm btn-outline-warning d-flex align-items-center"
-                              (click)="goToEditActivity(activity.id!)">
+                        (click)="goToEditActivity(activity.id!)">
                         <i class="bi bi-pencil me-1"></i> Edit
                       </button>
-                      
+
                       <!-- Delete Button -->
                       <button class="btn btn-sm btn-outline-danger d-flex align-items-center"
-                              (click)="deleteActivity(activity.id!)">
+                        (click)="deleteActivity(activity.id!)">
                         <i class="bi bi-trash me-1"></i> Delete
                       </button>
                     </div>
@@ -88,7 +85,7 @@
               </tbody>
             </table>
           </div>
-          
+
           <!-- Empty State -->
           <div *ngIf="filteredActivities.length === 0" class="text-center py-5">
             <i class="bi bi-activity text-muted" style="font-size: 3rem;"></i>

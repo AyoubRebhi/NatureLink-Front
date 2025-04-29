@@ -27,6 +27,9 @@ export class AuthService {
   ) {
     this.initializeAuthState();
   }
+  getCurrentUser(): User | null {
+    return this.currentUserSubject.value; // Or however you store the user
+  }
 
   private initializeAuthState() {
     try {
