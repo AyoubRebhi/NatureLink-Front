@@ -40,9 +40,7 @@
             <button *ngIf="isFiltered" class="btn btn-warning btn-sm me-2" (click)="resetFilter()">
               <i class="bi bi-arrow-counterclockwise me-1"></i> Réinitialiser le filtre
             </button>
-            <button class="btn btn-info btn-sm" (click)="openAllergenChatbot()">
-              <i class="bi bi-shield-check me-1"></i> Vérifier les allergènes
-            </button>
+
           </div>
         </div>
         <div class="card-body">
@@ -75,12 +73,7 @@
                     {{ menu.ingredientsDetails || 'Non spécifié' }}
                   </td>
                   <td>
-                    <button
-                      class="btn btn-sm btn-info me-2"
-                      [ngStyle]="{ 'background-color': '#101011', 'color': 'white' }"
-                      [routerLink]="['/admin/restaurants/details', restaurantId, 'menus', menu.id]">
-                      <i class="bi bi-eye"></i> Voir
-                    </button>
+                   
                     <button
                       class="btn btn-sm btn-warning me-2"
                       [ngStyle]="{ 'background-color': '#4a87c5', 'color': 'white' }"

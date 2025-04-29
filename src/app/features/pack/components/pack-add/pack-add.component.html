@@ -118,6 +118,22 @@
           </option>
         </select>
       </div>
+      <!-- New Events Dropdown -->
+  <div class="form-group">
+    <label class="form-label">Events (Select multiple)</label>
+    <select 
+      multiple
+      class="form-select"
+      [(ngModel)]="pack.evenements"
+      name="evenements"
+      aria-label="Select events"
+    >
+      <option *ngIf="!evenements.length" disabled>No events available</option>
+      <option *ngFor="let evenement of evenements" [value]="evenement.id">
+        {{ evenement.title }}
+      </option>
+    </select>
+  </div>
 
     </div>
 

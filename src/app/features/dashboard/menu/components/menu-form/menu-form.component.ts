@@ -10,6 +10,7 @@ import { MenuService } from 'src/app/core/services/menu.service';
 export class MenuFormComponent implements OnInit {
   menuForm!: FormGroup;
   selectedImage?: File;
+  imagePreviewUrl?: string;
   successMessage: string = '';
   errorMessage: string = '';
   isLoading: boolean = false;
@@ -26,9 +27,10 @@ export class MenuFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.menuForm = this.fb.group({
-      plats: ['', [Validators.required, Validators.maxLength(100)]],
+      plats: ['', [Validators.required, Validators.maxLength(100), Validators.minLength(3)]],
       prixMoyen: ['', [Validators.required, Validators.min(0)]],
-      ingredientsDetails: ['', [Validators.required, Validators.maxLength(500)]]
+      ingredients: ['', [Validators.required, Validators.maxLength(500)]],  // Modifié ici
+      description: ['', [Validators.maxLength(500)]]
     });
 
     this.route.params.subscribe(params => {
@@ -48,11 +50,11 @@ export class MenuFormComponent implements OnInit {
           this.menuForm.patchValue({
             plats: menu.plats,
             prixMoyen: menu.prixMoyen,
-            ingredientsDetails: menu.ingredientsDetails
+            ingredients: menu.ingredientsDetails,  // Modifié ici
           });
         },
         error: (error) => {
-          this.errorMessage = 'Erreur lors du chargement du menu : ' + error.message;
+          this.errorMessage = 'Erreur lors du chargement du menu : ' + (error.message || 'Erreur inconnue');
         }
       });
     }
@@ -62,20 +64,49 @@ export class MenuFormComponent implements OnInit {
     const fileInput = event.target as HTMLInputElement;
     if (fileInput.files && fileInput.files.length > 0) {
       this.selectedImage = fileInput.files[0];
+      this.previewImage(this.selectedImage);
     } else {
       this.selectedImage = undefined;
+      this.imagePreviewUrl = undefined;
     }
   }
 
+  previewImage(image: File): void {
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      this.imagePreviewUrl = e.target.result;
+    };
+    reader.readAsDataURL(image);
+  }
+
+  isFieldInvalid(fieldName: string): boolean {
+    const control = this.menuForm.get(fieldName);
+    return (control?.invalid && (control?.touched || control?.dirty)) ?? false;
+  }
+
   onSubmit(): void {
-    if (this.menuForm.invalid || (!this.selectedImage && !this.isEditMode)) {
+    if (this.menuForm.invalid) {
       this.menuForm.markAllAsTouched();
-      this.errorMessage = 'Veuillez remplir tous les champs obligatoires, y compris l\'image.';
+      this.errorMessage = 'Veuillez remplir tous les champs obligatoires.';
       return;
     }
 
     this.isLoading = true;
-    const formData = this.prepareFormData();
+    const formData = new FormData();
+    const menuData = this.menuForm.value;
+
+    // Ajouter les champs texte
+    formData.append('plats', menuData.plats);
+    formData.append('prixMoyen', menuData.prixMoyen.toString());
+    formData.append('ingredientsDetails', menuData.ingredients); // Mapping ingredients -> ingredientsDetails
+    if (menuData.description) {
+      formData.append('description', menuData.description);
+    }
+
+    // Ajouter l'image si elle existe
+    if (this.selectedImage) {
+      formData.append('image', this.selectedImage);
+    }
 
     const request = this.isEditMode && this.menuId
       ? this.menuService.updateMenu(this.menuId, formData)
@@ -89,25 +120,11 @@ export class MenuFormComponent implements OnInit {
         setTimeout(() => this.router.navigate([`/admin/restaurants/details/${this.restaurantId}/menus`]), 1500);
       },
       error: (error) => {
-        this.errorMessage = `Erreur lors de ${this.isEditMode ? 'la modification' : 'l\'ajout'} du menu : ${error.message}`;
+        this.errorMessage = `Erreur lors de ${this.isEditMode ? 'la modification' : 'l\'ajout'} du menu : ${error.message || 'Erreur inconnue'}`;
         this.successMessage = '';
         this.isLoading = false;
       }
     });
-  }
-
-  private prepareFormData(): FormData {
-    const formData = new FormData();
-    Object.keys(this.menuForm.value).forEach(key => {
-      if (this.menuForm.value[key] !== null) {
-        formData.append(key, this.menuForm.value[key].toString());
-      }
-    });
-    if (this.selectedImage) {
-      console.log(this.selectedImage.name);
-      formData.append('image', this.selectedImage, this.selectedImage.name);
-    }
-    return formData;
   }
 
   goBack(): void {

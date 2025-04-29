@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpHeaders } from '@angular/common/http';
-
+import { Event } from '../models/event.module'; // Adjust the import path as necessary
 const BASIC_URl=["http://localhost:9000"]
 
 @Injectable({

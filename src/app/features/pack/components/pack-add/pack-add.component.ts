@@ -4,7 +4,8 @@ import { PackService } from 'src/app/core/services/pack.service';
 import { Router } from '@angular/router';
 import { LogementService, Logement } from 'src/app/core/services/logement.service';
 import { RestaurantService, Restaurant } from 'src/app/core/services/restaurant.service';
-import { EventServiceService  } from 'src/app/core/services/event-service.service';
+import { EventServiceService } from 'src/app/core/services/event-service.service';
+import { Event } from 'src/app/core/models/event.module';
 import { Activity, ActivityService } from 'src/app/core/services/activity.service';
 import { Transport, TransportService } from 'src/app/core/services/transport.service';
 
@@ -68,7 +69,10 @@ export class PackAddComponent implements OnInit {
     });
 
     this.eventService.getAllEvents().subscribe({
-      next: (data) => (this.evenements = data),
+      next: (data) => {
+        console.log('Events:', data); // Optional: for debugging
+        this.evenements = data;
+      },
       error: (err) => {
         console.error('Error fetching evenements:', err);
         this.errorMessage = 'Failed to load evenements.';
@@ -110,6 +114,8 @@ export class PackAddComponent implements OnInit {
     this.loading = true;
     this.errorMessage = null;
     this.successMessage = null;
+
+    console.log('Submitting pack:', this.pack); // Optional: for debugging
 
     this.packService.addPack(this.pack).subscribe({
       next: () => {

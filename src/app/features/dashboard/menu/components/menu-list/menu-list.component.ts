@@ -36,7 +36,6 @@ export class MenuListComponent implements OnInit {
       this.isLoading = false;
       return;
     }
-    console.log('Restaurant ID:', this.restaurantId);
     this.loadMenus();
     this.loadSpecialMenus();
   }
@@ -59,11 +58,9 @@ export class MenuListComponent implements OnInit {
   }
 
   loadSpecialMenus(): void {
-    // Placeholder: Replace with actual logic to fetch special/popular menus
-    // For now, assume the first 3 menus are "special" for demonstration
     this.menuService.getMenusByRestaurant(this.restaurantId).subscribe({
       next: (data) => {
-        this.specialMenus = data.slice(0, 3); // Example: Take first 3 menus
+        this.specialMenus = data.slice(0, 3); // Exemple : Prendre les 3 premiers menus
       },
       error: (error) => {
         console.error('Erreur lors de la récupération des menus spéciaux : ', error);
@@ -133,7 +130,6 @@ export class MenuListComponent implements OnInit {
   }
 
   getImage(filename: string | undefined): string {
-    console.log();
     return filename ? this.menuService.getImage(filename) : 'assets/images/default-menu.jpg';
   }
 
