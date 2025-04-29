@@ -9,10 +9,11 @@
     <div class="collapse navbar-collapse" id="navbarCollapse">
       <div class="navbar-nav ms-auto py-0">
         <!-- Main Navigation -->
-        <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-item nav-link">
+        <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
+          class="nav-item nav-link">
           Home
         </a>
-        
+
         <!-- Travel Services Dropdown -->
         <div class="nav-item dropdown">
           <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Services</a>
@@ -21,11 +22,10 @@
             <a routerLink="/logementsFront" class="dropdown-item">Accommodations</a>
             <a routerLink="/activities" class="dropdown-item">Activities</a>
             <a routerLink="/listD" class="dropdown-item">Destinations</a>
-            <a routerLink="/transports"class="dropdown-item">Transports</a>
-
+            <a routerLink="/transports" class="dropdown-item">Transports</a>
           </div>
         </div>
-        
+
         <!-- Packages Section -->
         <div class="nav-item dropdown">
           <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Packages</a>
@@ -34,7 +34,7 @@
             <a routerLink="/packs/list-frontend" class="dropdown-item">Package List</a>
           </div>
         </div>
-        
+
         <!-- Reservations Section -->
         <div class="nav-item dropdown">
           <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Reservations</a>
@@ -42,14 +42,35 @@
             <a routerLink="/reservation/reservation-list" class="dropdown-item">My Reservations</a>
           </div>
         </div>
-        
+
         <!-- Social Media -->
         <a routerLink="/postlist" routerLinkActive="active" class="nav-item nav-link">Social Media</a>
-        
+
         <!-- Contact -->
         <a routerLink="/contact" routerLinkActive="active" class="nav-item nav-link">Contact</a>
+
+        <!-- Profile Link (only shown when authenticated) -->
+        <a *ngIf="isAuthenticated" routerLink="/profile" routerLinkActive="active" class="nav-item nav-link">
+          Profile
+        </a>
+
+        <!-- Payments Icon (only shown when authenticated) -->
+        <a *ngIf="isAuthenticated" routerLink="/payments" class="btn btn-icon" title="View Payments">
+          <i class="fas fa-shopping-cart"></i>
+          <span *ngIf="paymentService.hasPendingPayments$ | async" class="badge bg-danger">!</span>
+        </a>
       </div>
-      <a routerLink="/auth/login" class="btn btn-primary rounded-pill py-2 px-4 ms-lg-3">Register</a>
+
+      <!-- Authentication Buttons -->
+      <div class="d-flex align-items-center ms-lg-4">
+        <div *ngIf="!isAuthenticated" class="auth-buttons">
+          <a routerLink="/auth/login" class="btn btn-outline-primary me-2">Login</a>
+          <a routerLink="/auth/register" class="btn btn-primary">Register</a>
+        </div>
+        <div *ngIf="isAuthenticated" class="logged-in-section">
+          <button (click)="logout()" class="btn btn-danger">Logout</button>
+        </div>
+      </div>
     </div>
   </nav>
 
@@ -64,8 +85,10 @@
           Experience unforgettable adventures with NatureLink - Your gateway to authentic Tunisian experiences
         </p>
         <div class="search-container position-relative w-75 mx-auto animated slideInDown">
-          <input class="form-control border-0 rounded-pill w-100 py-3 ps-4 pe-5" type="text" placeholder="Search destinations...">
-          <button type="button" class="btn btn-primary rounded-pill py-2 px-4 position-absolute top-0 end-0 me-2" style="height: 100%">
+          <input class="form-control border-0 rounded-pill w-100 py-3 ps-4 pe-5" type="text"
+            placeholder="Search destinations...">
+          <button type="button" class="btn btn-primary rounded-pill py-2 px-4 position-absolute top-0 end-0 me-2"
+            style="height: 100%">
             Search
           </button>
         </div>

@@ -2,6 +2,9 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { DashboardLayoutComponent } from '../../layouts/dashboard/dashboard-layout/dashboard-layout.component';
 import { DashboardComponent } from '../../pages/dashboard/dashboard.component';
+import { AdminDashboardComponent } from './pages/admin-dashboard/admin-dashboard.component';
+import { AuthGuard } from '../../core/guards/auth.guard';
+import { Role } from '../../core/models/user.model';
 
 // Clothing and Food components
 import { ClothingListComponent } from '../Clothing/clothing-list/clothing-list.component';
@@ -13,8 +16,8 @@ import { UpdateClothingComponent } from '../Clothing/update-clothing/update-clot
 import { CarbonCalculatorComponent } from '../CarbonCalculator/carbon-calculator/carbon-calculator.component';
 
 // Logement components
-import { LogementListComponent } from '../../features/logement/components/logement-list/logement-list.component';
-import { LogementCreateComponent } from '../../features/logement/components/logement-create/logement-create.component';
+import { LogementListComponent } from '../logement/components/logement-list/logement-list.component';
+import { LogementCreateComponent } from '../logement/components/logement-create/logement-create.component';
 import { LogementEditComponent } from '../logement/components/logement-edit/logement-edit.component';
 import { LogementDetailBackComponent } from '../logement/components/logement-detail-back/logement-detail-back.component';
 import { LogementStatsComponent } from '../logement-stats/logement-stats.component';
@@ -31,14 +34,25 @@ import { ReservationAllComponent } from '../reservation/components/reservation-a
 import { PackAddComponent } from '../pack/components/pack-add/pack-add.component';
 import { PackListAComponent } from '../pack/components/pack-list-a/pack-list-a.component';
 import { PackUpdateComponent } from '../pack/components/pack-update/pack-update.component';
-import { AuthGuard } from 'src/app/core/guards/auth.guard';
-import { Role } from 'src/app/core/models/user.model';
+//import { UserPaymentsComponent } from './pages/user-payments/user-payments.component';
 
 const routes: Routes = [
   {
     path: '',
     component: DashboardLayoutComponent,
     children: [
+      // Admin routes
+      { 
+        path: 'dash-admin',
+        canActivate: [AuthGuard],
+        data: { roles: [Role.ADMIN] },
+        children: [
+          { path: '', component: AdminDashboardComponent },
+          //{ path: 'users/:userId/payments', component: UserPaymentsComponent }
+        ]
+      },
+
+      // Regular dashboard routes
       { path: '', redirectTo: 'restaurants', pathMatch: 'full' },
       { path: 'dashboard', component: DashboardComponent },
 
@@ -120,7 +134,7 @@ const routes: Routes = [
       { path: 'list-admin', component: PackListAComponent },
       { path: 'update/:id', component: PackUpdateComponent },
 
-      // Lazy-loaded routes from both files
+      // Lazy-loaded routes
       {
         path: 'transport',
         canActivate: [AuthGuard],

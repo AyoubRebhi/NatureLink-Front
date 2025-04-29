@@ -166,3 +166,71 @@ html, body {
       width: 100% !important;
     }
   }
+/* Add these styles to your existing CSS */
+
+/* Payments Icon Styling */
+.btn-icon {
+  position: relative;
+  padding: 0.5rem;
+  margin-left: 0.5rem;
+  color: #fff;
+  background-color: transparent;
+  border: none;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+}
+
+.btn-icon:hover {
+  color: #4CAF50;
+  transform: translateY(-2px);
+}
+
+.btn-icon i {
+  font-size: 1.25rem;
+}
+
+/* Badge styling */
+.badge.bg-danger {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  font-size: 0.6rem;
+  padding: 0.25em 0.4em;
+  min-width: 1.2em;
+  height: 1.2em;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Adjust navbar items alignment */
+.navbar-nav {
+  display: flex;
+  align-items: center;
+}
+
+/* For mobile view */
+@media (max-width: 992px) {
+  .btn-icon {
+    margin-left: 0;
+    margin-right: 1rem;
+  }
+  
+  .auth-buttons, .logged-in-section {
+    margin-top: 1rem;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .auth-buttons a, .logged-in-section button {
+    width: 100%;
+    text-align: center;
+    margin: 0.25rem 0;
+  }
+}

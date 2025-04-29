@@ -23,16 +23,7 @@ export class UserService {
       catchError(this.handleError)
     );
   }
-  getPendingUsers(): Observable<PendingUser[]> {
-    return this.http.get<PendingUser[]>(`${this.apiUrl}/users/admin/pending-users`);
-  }
-  approvePendingUser(pendingUserId: number): Observable<User> {
-    return this.http.post<User>(`${this.apiUrl}/users/admin/approve/${pendingUserId}`, {});
-  }
-
-  rejectPendingUser(pendingUserId: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/users/admin/reject/${pendingUserId}`);
-  }
+  
 
   private getAuthHeaders(): HttpHeaders {
     const token = this.authService.getAuthToken();

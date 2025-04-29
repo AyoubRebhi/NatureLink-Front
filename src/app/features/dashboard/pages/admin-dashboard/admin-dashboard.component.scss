@@ -1,0 +1,101 @@
+.admin-dashboard {
+    padding: 2rem;
+    
+    .loading {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 2rem;
+    }
+  
+    .error-message {
+      color: #dc3545;
+      padding: 1rem;
+      background: #f8d7da;
+      border-radius: 4px;
+      margin: 1rem 0;
+    }
+  
+    .user-table {
+      width: 100%;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      
+      mat-header-row {
+        background: #f8f9fa;
+      }
+      
+      mat-row {
+        &:hover {
+          background: #f8f9fa;
+        }
+      }
+    }
+  
+    .no-users {
+      text-align: center;
+      padding: 2rem;
+      color: #6c757d;
+      
+      mat-icon {
+        font-size: 3rem;
+        height: 3rem;
+        width: 3rem;
+        margin-bottom: 1rem;
+      }
+    }
+    .action-buttons {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+    
+    .action-button {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      border-radius: 20px;
+      padding: 0 16px;
+      
+      mat-icon {
+        font-size: 18px;
+        height: 18px;
+        width: 18px;
+      }
+    
+      span {
+        font-weight: 500;
+      }
+    
+      &:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+      }
+    
+      &:active {
+        transform: translateY(0);
+      }
+    }
+    
+    /* Status badge styling */
+    .status-badge {
+      padding: 6px 12px;
+      border-radius: 15px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      
+      &.blocked {
+        background-color: #ffebee;
+        color: #c62828;
+        border: 1px solid #ffcdd2;
+      }
+      
+      &:not(.blocked) {
+        background-color: #e8f5e9;
+        color: #2e7d32;
+        border: 1px solid #c8e6c9;
+      }
+    }
+  }

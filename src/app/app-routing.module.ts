@@ -25,6 +25,7 @@ import { RestaurantDetailComponent } from './pages/Restaurant/restaurant-detail/
 import { RestaurantFrontListComponent } from './pages/Restaurant/restaurant-front-list/restaurant-front-list.component';
 import { VisitFrontComponent } from './pages/Visit/visit-front/visit-front.component';
 import { TransportsComponent } from './pages/transports/transports.component';
+import { ProfileComponent } from './pages/profile/profile.component';
 
 const routes: Routes = [
   {
@@ -46,11 +47,16 @@ const routes: Routes = [
       { path: 'test', component: SpeechComponent },
       { path: 'recommandation', component: TraveComponent },
       { path: 'monuments', component: MonumentFrontComponent },
-      { path: 'visit', component:VisitFrontComponent  },
+      { path: 'visit', component: VisitFrontComponent },
       { path: 'restaurants', component: RestaurantFrontListComponent },
       { path: 'restaurants/:id', component: RestaurantDetailComponent },
-      { path: 'transports' , component: TransportsComponent},
-     
+      { path: 'transports', component: TransportsComponent },
+      { 
+        path: 'profile', 
+        component: ProfileComponent,
+        canActivate: [AuthGuard] 
+      },
+
       // Lazy-loaded modules for frontend
       {
         path: 'events',
@@ -118,12 +124,16 @@ const routes: Routes = [
     path: 'activity',
     loadChildren: () => import('./features/activity/activity.module').then(m => m.ActivityModule)
   },
-  {
-    path: 'payments',
+  { 
+    path: 'payments', 
     component: PaymentsComponent,
-    canActivate: [AuthGuard]
+    canActivate: [AuthGuard] 
   },
-  { path: 'addclothing', component: AddClothingComponent },
+  { 
+    path: 'addclothing', 
+    component: AddClothingComponent,
+    canActivate: [AuthGuard] 
+  },
 
   // Wildcard route for 404
   { path: '**', component: NotFoundComponent }

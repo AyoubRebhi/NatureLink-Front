@@ -79,27 +79,55 @@ export class HomeComponent {
       }
     }
   ];
-  services = [
-    {
-      icon: 'fa-user',
-      title: 'Event Management',
-      description: 'Comprehensive event planning and coordination services for all your travel needs.',
-    },
-    {
-      icon: 'fa-hotel',
-      title: 'House Reservation',
-      description: 'Easy booking and management of vacation rentals and holiday accommodations.',
-    },
-    {
-      icon: 'fa-bus',
-      title: 'Transportation',
-      description: 'Reliable transport solutions with schedules, routes, and competitive pricing.',
-    },
-    {
-      icon: 'fa-map',
-      title: 'Activity Reservation',
-      description: 'Book exciting activities and experiences for your trip with ease.',
-      route: '/activities'  // Add this route property
-    }
-  ];
+  // home.component.ts
+services = [
+  {
+    icon: 'fa-car',
+    title: 'Transport',
+    description: 'Choose the perfect vehicle for any trip',
+    route: '/transport'
+  },
+  {
+    icon: 'fa-map-marked-alt',
+    title: 'Activities',
+    description: 'Book curated adventures based on your mood',
+    route: '/activities'
+  },
+  {
+    icon: 'fa-calendar-alt',
+    title: 'Events',
+    description: 'Join concerts, exhibitions, and festivals',
+    route: '/events'
+  },
+  {
+    icon: 'fa-utensils',
+    title: 'Restaurants',
+    description: 'Dine at the best-rated local places',
+    route: '/restaurants'
+  },
+  {
+    icon: 'fa-hotel',
+    title: 'Logement',
+    description: 'Find comfortable and trusted accommodations',
+    route: '/accommodations'
+  },
+  {
+    icon: 'fa-landmark',
+    title: 'Monuments',
+    description: 'Explore Tunisia s rich cultural heritage',
+    route: '/monuments'
+  },
+  {
+    icon: 'fa-users',
+    title: 'Community',
+    description: 'Share experiences, reviews, and stories',
+    route: '/community'
+  },
+  {
+    icon: 'fa-robot',
+    title: 'AI Assistance',
+    description: 'Get personalized suggestions with smart recommendations',
+    route: '/ai-assistant'
+  }
+];
 }
