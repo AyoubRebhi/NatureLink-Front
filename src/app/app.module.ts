@@ -90,6 +90,7 @@ import { AuthService } from './core/services/auth.service';
 import { AuthGuard } from './core/guards/auth.guard';
 import { JwtInterceptor } from './core/services/jwt.interceptor';
 import { SharedModule } from './shared/shared.module';
+import { TransportsComponent } from './pages/transports/transports.component';
 
 @NgModule({
   declarations: [
@@ -126,7 +127,8 @@ import { SharedModule } from './shared/shared.module';
     PostUserComponent,
     CarbonCalculatorComponent,
     SpeechComponent,
-    TraveComponent
+    TraveComponent,
+    TransportsComponent
   ],
   imports: [
     BrowserModule,

@@ -24,6 +24,7 @@ import { MonumentFrontComponent } from './pages/Monument/monument-front/monument
 import { RestaurantDetailComponent } from './pages/Restaurant/restaurant-detail/restaurant-detail.component';
 import { RestaurantFrontListComponent } from './pages/Restaurant/restaurant-front-list/restaurant-front-list.component';
 import { VisitFrontComponent } from './pages/Visit/visit-front/visit-front.component';
+import { TransportsComponent } from './pages/transports/transports.component';
 
 const routes: Routes = [
   {
@@ -48,6 +49,7 @@ const routes: Routes = [
       { path: 'visit', component:VisitFrontComponent  },
       { path: 'restaurants', component: RestaurantFrontListComponent },
       { path: 'restaurants/:id', component: RestaurantDetailComponent },
+      { path: 'transports' , component: TransportsComponent},
      
       // Lazy-loaded modules for frontend
       {
