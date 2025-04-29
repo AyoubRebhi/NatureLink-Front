@@ -4,6 +4,7 @@ import { ActivityService } from '../../../../core/services/activity.service';
 import { Activity } from '../../../../core/models/activity.model';
 import * as L from 'leaflet';
 import { ToastrService } from 'ngx-toastr';
+import { AuthService } from 'src/app/core/services/auth.service';
 
 @Component({
   selector: 'app-add-activity',
@@ -14,7 +15,7 @@ export class AddActivityComponent implements AfterViewInit {
   activity: Activity = {
     name: '',
     description: '',
-    providerId: 1,
+    providerId: this.authService.currentUserValue?.id ||0,
     location: '',
     duration: 0,
     price: 0,
@@ -47,7 +48,8 @@ export class AddActivityComponent implements AfterViewInit {
   constructor(
     private activityService: ActivityService,
     private router: Router,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private authService: AuthService // Add this to constructor
   ) { }
 
   ngAfterViewInit(): void {

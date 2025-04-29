@@ -76,7 +76,7 @@ const routes: Routes = [
     path: 'admin',
     component: DashboardLayoutComponent,
     canActivate: [AuthGuard],
-    data: { roles: [Role.ADMIN, Role.AGENCE] },
+    data: { roles: [Role.ADMIN, Role.AGENCE, Role.PROVIDER] },
     children: [
       {
         path: '',

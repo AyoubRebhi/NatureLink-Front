@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivityService } from '../../../../core/services/activity.service';
 import { Activity } from '../../../../core/models/activity.model';
 import { Router } from '@angular/router';
+import { AuthService } from 'src/app/core/services/auth.service';
 
 @Component({
   selector: 'app-list-activity',
@@ -12,21 +13,33 @@ export class ListActivityComponent implements OnInit {
   activities: Activity[] = [];
   filteredActivities: Activity[] = [];
   searchTerm: string = '';
+  currentUserId: number | null = null;
 
   constructor(
     private activityService: ActivityService,
-    private router: Router
+    private router: Router,
+    private authService: AuthService // Inject AuthService
+
   ) {}
 
   ngOnInit(): void {
+    this.currentUserId = this.authService.getCurrentUserId();
     this.loadActivities();
   }
 
   loadActivities(): void {
+    if (!this.currentUserId) {
+      console.error('No current user ID available');
+      return;
+    }
+
+    // Option 1: Filter on the client side (if API returns all activities)
     this.activityService.getAllActivities().subscribe({
       next: (data) => {
-        this.activities = data;
-        this.filteredActivities = data;
+        this.activities = data.filter(activity => 
+          activity.providerId === this.currentUserId
+        );
+        this.filteredActivities = [...this.activities];
       },
       error: (err) => {
         console.error('Error fetching activities:', err);

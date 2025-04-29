@@ -129,6 +129,8 @@ const routes: Routes = [
       },
       {
         path: 'activity',
+        canActivate: [AuthGuard],
+        data: { roles: [Role.PROVIDER] },
         loadChildren: () => import('../activity/activity.module').then(m => m.ActivityModule)
       }
     ]

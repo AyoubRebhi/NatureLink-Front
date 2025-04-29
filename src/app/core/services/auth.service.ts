@@ -140,7 +140,11 @@ export class AuthService {
     } else if (role === Role.AGENCE) {
       console.log('Redirecting agency to transport dashboard');
       targetRoute = '/admin/transport'; // Redirect to transport list
-    } else {
+    } else if (role === Role.PROVIDER) {
+      console.log('Redirecting agency to activity dashboard');
+      targetRoute = '/admin/activity'; // Redirect to transport list
+    } 
+    else {
       console.log('Redirecting regular user to home');
     }
 
