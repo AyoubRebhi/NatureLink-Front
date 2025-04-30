@@ -26,6 +26,7 @@ export class LogementDetailBackComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     const id = +this.route.snapshot.paramMap.get('id')!;
     this.logementService.getLogementById(id).subscribe((data) => {
+      console.log('Received logement:', data); // 👈
       this.logement = data;
 
       if (this.logement?.location) {

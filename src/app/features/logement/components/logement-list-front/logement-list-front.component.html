@@ -39,19 +39,96 @@
 </div>
 
 
-  <div class="search-filters">
+<div class="search-filters">
+  <input
+    type="text"
+    class="form-control"
+    placeholder="Search by name or location"
+    [(ngModel)]="searchQuery"
+    (input)="applyFilters()"
+  />
+  
+  <select class="form-control" [(ngModel)]="selectedType" (change)="applyFilters()">
+    <option value="">All Types</option>
+    <option *ngFor="let type of logementTypes" [value]="type">{{ type }}</option>
+  </select>
+  
+  <!-- Add these price range inputs -->
+  <div class="price-range">
     <input
-      type="text"
+      type="number"
       class="form-control"
-      placeholder="Search by name or location"
-      [(ngModel)]="searchQuery"
+      placeholder="Min price (DT)"
+      [(ngModel)]="minPrice"
       (input)="applyFilters()"
+      min="0"
     />
-    <select class="form-control" [(ngModel)]="selectedType" (change)="applyFilters()">
-      <option value="">All Types</option>
-      <option *ngFor="let type of logementTypes" [value]="type">{{ type }}</option>
-    </select>
+    <input
+      type="number"
+      class="form-control"
+      placeholder="Max price (DT)"
+      [(ngModel)]="maxPrice"
+      (input)="applyFilters()"
+      min="0"
+    />
   </div>
+</div>
+  <button class="btn btn-secondary mb-3 ms-2" (click)="loadFavoriteLogements()">
+    ❤️ My Favorites
+  </button>
+
+<!-- Favorite Logements Modal -->
+<div class="modal fade show d-block" *ngIf="showFavoritesModal" tabindex="-1" style="background: rgba(0,0,0,0.5);">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">My Favorite Logements</h5>
+        <button type="button" class="btn-close" aria-label="Close" (click)="showFavoritesModal = false"></button>
+      </div>
+      <div class="modal-body">
+        <div *ngIf="favoriteLogements.length === 0" class="text-center text-muted">
+          <p>No favorite logements found.</p>
+        </div>
+
+        <div *ngFor="let logement of favoriteLogements" class="favorite-card mb-4 p-3 border rounded shadow-sm bg-white">
+          <h5 class="fw-bold mb-2">{{ logement.titre }}</h5>
+          <p class="text-muted">{{ logement.location }}</p>
+
+          <div class="image-slider position-relative mb-3">
+            <img
+              *ngIf="logement.images && logement.images.length > 0; else defaultImage"
+              [src]="'http://localhost:9000/uploads/' + logement.images[currentImageIndex[logement.id!]]"
+              alt="Logement Image"
+              class="logement-image w-100 rounded"
+            />
+            <ng-template #defaultImage>
+              <img src="assets/img/defaultLogement.png" alt="Default" class="logement-image w-100 rounded" />
+            </ng-template>
+
+            <!-- Navigation buttons -->
+            <button
+              class="slider-btn left"
+              *ngIf="logement.images && logement.images.length > 1"
+              (click)="prevSlide(logement.id!, logement.images.length)">
+              &#10094;
+            </button>
+            <button
+              class="slider-btn right"
+              *ngIf="logement.images && logement.images.length > 1"
+              (click)="nextSlide(logement.id!, logement.images.length)">
+              &#10095;
+            </button>
+          </div>
+
+          <div class="d-flex gap-2">
+            <button class="btn btn-sm btn-primary" (click)="bookLogement(logement.id!)">Book</button>
+            <button class="btn btn-sm btn-outline-danger" (click)="toggleFavorite(logement.id)">Remove from Favorites</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
   <div *ngIf="logements.length > 0; else noData" class="logement-list">
     <div *ngFor="let logement of filteredLogements" class="logement-card">
@@ -78,7 +155,7 @@
           </button>
         </div>
       </div>
-
+      
       <!-- Logement Info -->
       <div class="logement-info">
         <h3>{{ logement.titre }}</h3>
@@ -107,7 +184,12 @@
               >
                 <i class="fa fa-book me-2"></i> Book Now
               </button>
+              <button (click)="toggleFavorite(logement.id!)" class="favorite-btn">
+                <i [ngClass]="isFavorite(logement.id!) ? 'fas fa-heart' : 'far fa-heart'"></i>
+              </button>
+              
       </div>
+
     </div>
   </div>
 

@@ -1,7 +1,7 @@
 <div *ngIf="logement; else noDetails" class="logement-detail-wrapper">
 
     <!-- Image Slider -->
-    <div class="image-slider-container" *ngIf="logement?.images?.length">
+    <div class="image-slider-container" *ngIf="logement.images?.length">
       <div class="slider">
         <button class="nav-btn left" (click)="prevSlide()">&#10094;</button>
   
@@ -12,7 +12,7 @@
   
       <!-- Thumbnails -->
       <div class="thumbnails">
-        <img *ngFor="let img of logement?.images; let i = index"
+        <img *ngFor="let img of logement.images; let i = index"
              [src]="'http://localhost:9000/uploads/' + img"
              (click)="selectImage(i)"
              [class.active]="i === currentImageIndex"

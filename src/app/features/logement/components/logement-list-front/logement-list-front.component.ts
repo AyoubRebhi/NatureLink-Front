@@ -1,4 +1,3 @@
-// logement-list-front.component.ts
 import { Component, OnInit } from '@angular/core';
 import { LogementService } from '../../../../core/services/logement.service';
 import { Logement } from '../../../../core/models/logement.model';
@@ -8,6 +7,7 @@ import { environment } from 'src/environments/environment';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { AuthService } from 'src/app/core/services/auth.service';
 import { Router } from '@angular/router';
+import { FavoriteService } from 'src/app/core/services/favorite.service';
 
 @Component({
   selector: 'app-logement-list-front',
@@ -22,7 +22,7 @@ export class LogementListFrontComponent implements OnInit {
   mapUrl: SafeResourceUrl | null = null;
   searchQuery: string = '';
   selectedType: string = '';
-  notificationDistanceLimit = 100; // 5 km
+  notificationDistanceLimit = 100;
   userLatitude: number | null = null;
   userLongitude: number | null = null;
   showNotif: boolean = true;
@@ -32,22 +32,44 @@ export class LogementListFrontComponent implements OnInit {
   searchResults: Logement[] = [];
   imageFiles: File[] = [];
   imagePreviews: string[] = [];
+  userId: number | null = null;
+  favorites: Set<number> = new Set();
+  showFavoritesModal: boolean = false;
+  favoriteLogements: Logement[] = [];
+  minPrice: number | null = null;
+  maxPrice: number | null = null;
 
   constructor(
     private logementService: LogementService,
     private sanitizer: DomSanitizer,
     private http: HttpClient,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private favoriteService: FavoriteService
   ) {}
 
-  ngOnInit(): void {
-    // Check if user is authenticated
-    if (!this.authService.isAuthenticated()) {
-      this.router.navigate(['/login'], {
-        queryParams: { returnUrl: this.router.url }
+    ngOnInit(): void {
+      if (!this.authService.isAuthenticated()) {
+        this.router.navigate(['/login'], {
+          queryParams: { returnUrl: this.router.url }
+        });
+        return;
+      }
+    
+      this.userId = this.authService.getCurrentUserId();
+      if (this.userId != null) {
+        this.loadFavorites(); // Load favorites when component initializes
+      }
+
+    this.userId = this.authService.getCurrentUserId();
+    if (this.userId != null) {
+      this.favoriteService.getFavorites(this.userId).subscribe({
+        next: (favorites) => {
+          // Store the favorite logement IDs in a set
+          this.favorites = new Set(favorites.map(fav => fav.logementId));
+        },
+        error: (err) => console.error('Error loading favorites:', err),
       });
-      return;
     }
 
     navigator.geolocation.getCurrentPosition(
@@ -58,16 +80,70 @@ export class LogementListFrontComponent implements OnInit {
       },
       (error) => {
         console.error('Geolocation error:', error);
-        this.loadLogements(); // Fallback if location fails
+        this.loadLogements();
       }
     );
   }
+  loadFavorites(): void {
+    this.favoriteService.getFavorites(this.userId!).subscribe({
+      next: (favorites) => {
+        this.favorites = new Set(favorites.map(fav => fav.logementId));
+      },
+      error: (err) => console.error('Error loading favorites:', err),
+    });
+  }
+
+isFavorite(logementId: number | undefined): boolean {
+  if (!logementId) return false;
+  return this.favorites.has(logementId);
+}
+toggleFavorite(logementId: number | undefined): void {
+  if (logementId === undefined || this.userId == null) return;
+
+  if (this.isFavorite(logementId)) {
+    this.favoriteService.removeFavorite(this.userId, logementId).subscribe({
+      next: () => {
+        this.favorites.delete(logementId);
+      },
+      error: (err) => console.error('Error removing favorite:', err)
+    });
+  } else {
+    this.favoriteService.addFavorite(this.userId, logementId).subscribe({
+      next: () => {
+        this.favorites.add(logementId);
+      },
+      error: (err) => console.error('Error adding favorite:', err)
+    });
+  }
+}
+  // Method to load the favorite logements
+  loadFavoriteLogements(): void {
+    if (!this.userId) return;
+  
+    this.favoriteService.getFavorites(this.userId).subscribe({
+      next: (favorites) => {
+        this.favoriteLogements = favorites.map(fav => fav.logement);
+        
+        this.favoriteLogements.forEach(l => {
+          if (l.id !== undefined) {
+            this.currentImageIndex[l.id] = 0;
+          }
+        });
+  
+        this.showFavoritesModal = true;
+      },
+      error: (err) => {
+        console.error('Error fetching favorites:', err);
+      }
+    });
+  }
+  
 
   loadLogements(): void {
     this.logementService.getAllLogements().subscribe({
       next: async (data) => {
         this.logements = data;
-        // Update logements with missing lat/lng
+
         for (const logement of this.logements) {
           if (!logement.latitude || !logement.longitude) {
             const coords = await this.getCoordinatesFromLocation(logement.location || '');
@@ -75,10 +151,9 @@ export class LogementListFrontComponent implements OnInit {
               logement.latitude = coords.lat;
               logement.longitude = coords.lng;
             }
-            console.log('Geocoded coords for logement', logement.titre, coords);
           }
         }
-        // Distance-based notifications
+
         this.notifications = this.logements.filter((logement) => {
           if (
             logement.latitude != null &&
@@ -98,7 +173,7 @@ export class LogementListFrontComponent implements OnInit {
         });
 
         this.filteredLogements = [...this.logements];
-        // Init image indices
+
         this.logements.forEach((logement) => {
           if (logement.id !== undefined && logement.images?.length) {
             this.currentImageIndex[logement.id] = 0;
@@ -110,17 +185,45 @@ export class LogementListFrontComponent implements OnInit {
   }
 
   applyFilters(): void {
-    const query = this.searchQuery.toLowerCase();
-    this.filteredLogements = this.logements.filter((logement) => {
-      const matchesQuery =
-        logement.titre?.toLowerCase().includes(query) ||
-        logement.location?.toLowerCase().includes(query);
-      const matchesType =
-        !this.selectedType || logement.type === this.selectedType;
-
-      return matchesQuery && matchesType;
-    });
+  const query = this.searchQuery.toLowerCase();
+  
+  this.filteredLogements = this.logements.filter((logement) => {
+    // Text search filter
+    const matchesQuery =
+      logement.titre?.toLowerCase().includes(query) ||
+      logement.location?.toLowerCase().includes(query);
+    
+    // Type filter
+    const matchesType =
+      !this.selectedType || logement.type === this.selectedType;
+    
+    // Price range filter
+    const matchesPrice = this.matchesPriceRange(logement.price);
+    
+    return matchesQuery && matchesType && matchesPrice;
+  });
+}
+// Add this helper method to check price range
+private matchesPriceRange(price: number | undefined): boolean {
+  if (price === undefined) return false;
+  
+  // If no price filters are set, include all logements
+  if (this.minPrice === null && this.maxPrice === null) {
+    return true;
   }
+  
+  // Check min price
+  if (this.minPrice !== null && price < this.minPrice) {
+    return false;
+  }
+  
+  // Check max price
+  if (this.maxPrice !== null && price > this.maxPrice) {
+    return false;
+  }
+  
+  return true;
+}
 
   bookLogement(logementId: number): void {
     const userId = this.authService.getCurrentUserId();
@@ -170,7 +273,6 @@ export class LogementListFrontComponent implements OnInit {
 
     this.http.post<any>('http://localhost:5000/search', formData).subscribe({
       next: (response) => {
-        console.log('Image search response:', response);
         if (response.matches && response.matches.length > 0) {
           const imageNames: string[] = response.matches.map((match: any) => match.image_name);
           let params = new HttpParams();
@@ -182,7 +284,6 @@ export class LogementListFrontComponent implements OnInit {
             { params }
           ).subscribe({
             next: (logements) => {
-              console.log('Filtered logements from image search:', logements);
               this.filteredLogements = logements;
             },
             error: (err) => {
@@ -190,7 +291,6 @@ export class LogementListFrontComponent implements OnInit {
             }
           });
         } else {
-          console.error('No matches found!');
           this.filteredLogements = [];
         }
       },
@@ -218,12 +318,11 @@ export class LogementListFrontComponent implements OnInit {
 
   getCoordinatesFromLocation(location: string): Promise<{ lat: number, lng: number } | null> {
     const encodedLocation = encodeURIComponent(location);
-    const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodedLocation}&key=${environment.googleMapsApiKey}`;
-
+    const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodedLocation}&key=YOUR_GOOGLE_MAPS_API_KEY`;
     return this.http.get<any>(url).toPromise().then(response => {
       if (response.status === 'OK' && response.results.length > 0) {
-        const coords = response.results[0].geometry.location;
-        return { lat: coords.lat, lng: coords.lng };
+        const location = response.results[0].geometry.location;
+        return { lat: location.lat, lng: location.lng };
       }
       return null;
     }).catch(() => null);

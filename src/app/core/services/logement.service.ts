@@ -19,6 +19,7 @@ export class LogementService {
     return this.http.get<Logement>(`${this.apiUrl}/${id}`);
   }
 
+  
   addLogement(logement: Logement): Observable<Logement> {
     return this.http.post<Logement>(this.apiUrl, logement);
   }
@@ -28,10 +29,15 @@ export class LogementService {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
-  getLogementsByUser(): Observable<Logement[]> {
+ /* getLogementsByUser(): Observable<Logement[]> {
     const userId = 5; // Static for now
     return this.http.get<Logement[]>(`${this.apiUrl}/proprietaire/${userId}`);
-  }
+  }*/
+
+    getLogementsByUser(userId: number): Observable<Logement[]> {
+      return this.http.get<Logement[]>(`${this.apiUrl}/proprietaire/${userId}`);
+    }
+    
   updateLogementWithImage(id: number, formData: FormData): Observable<any> {
     return this.http.put(`${this.apiUrl}/upload/${id}`, formData);
   }

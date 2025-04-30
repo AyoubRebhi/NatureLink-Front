@@ -8,7 +8,7 @@ import { CommonModule } from '@angular/common';
 
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { GoogleMapsModule } from '@angular/google-maps';
-//import { PickerModule } from '@ctrl/ngx-emoji-mart';
+import { PickerModule } from '@ctrl/ngx-emoji-mart';
 
 // Angular Material Modules
 import { MatButtonModule } from '@angular/material/button';
@@ -138,7 +138,7 @@ import { SharedModule } from './shared/shared.module';
     CommonModule,
     //NgbModule, // <-- This is the correct import (from @ng-bootstrap/ng-bootstrap)
     // Angular Material
-    //PickerModule
+    PickerModule,
     MatButtonModule,
     MatDialogModule,
     MatFormFieldModule,

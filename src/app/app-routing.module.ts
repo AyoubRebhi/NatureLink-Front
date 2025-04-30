@@ -108,6 +108,20 @@ const routes: Routes = [
     path: 'dashboardUser',
     loadChildren: () => import('./features/dashboard-user/dashboard-user.module').then(m => m.DashboardUserModule)
   },
+
+  /*{
+    path: 'provider',
+    component: DashboardLayoutComponent,
+    canActivate: [AuthGuard],
+    data: { roles: [Role.PROVIDER] },
+    children: [
+      {
+    
+        path: 'dashboardUser',
+        loadChildren: () => import('./features/dashboard-user/dashboard-user.module').then(m => m.DashboardUserModule)
+      }, 
+    ]
+    },*/
   {
     path: 'auth',
     loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule)

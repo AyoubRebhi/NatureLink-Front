@@ -4,7 +4,7 @@ import { EquipementService } from 'src/app/core/services/equipement.service';
 import { Router } from '@angular/router';
 import { Equipement } from 'src/app/core/models/equipement.model';
 import { HttpClient } from '@angular/common/http';  // Import HttpClient
-
+import { AuthService } from 'src/app/core/services/auth.service';
 @Component({
   selector: 'app-logement-create-user',
   templateUrl: './logement-create-user.component.html',
@@ -37,7 +37,9 @@ export class LogementCreateUserComponent implements OnInit {
     private logementService: LogementService,
     private equipementService: EquipementService,
     private router: Router,
-    private http: HttpClient  // Inject HttpClient
+    private http: HttpClient,
+    private authService: AuthService // Add this
+    // Inject HttpClient
   ) {}
 
   onImagesSelected(event: any) {
@@ -123,8 +125,13 @@ export class LogementCreateUserComponent implements OnInit {
     }
   
     // Set proprietaireId (replace with actual logic if dynamic)
-    formData.append('proprietaireId', '5');
-  
+    const userId = this.authService.getCurrentUserId();
+    if (userId) {
+      formData.append('proprietaireId', userId.toString());
+    } else {
+      console.error('User ID not found. Cannot submit logement.');
+      return; // prevent submission if ID is missing
+    }  
     // Add selected existing equipement IDs
     this.logement.equipementIds.forEach((id: number) => {
       formData.append('equipementIds', id.toString());
