@@ -22,14 +22,14 @@ export class ReservationCreateComponent implements OnInit, OnDestroy {
   clientNames: string[] = [''];
   dateDebut: Date = new Date();
   dateFin: Date = new Date();
-  selectedStatut: StatutReservation = StatutReservation.PENDING;
-  statutOptions: StatutReservation[] = Object.values(StatutReservation);
   numRooms: number = 1;
   selectedType: TypeReservation = TypeReservation.ACTIVITE;
   typeSpecificId: number = 1;
   packId: number | null = null;
   hasLogement: boolean = false;
-  TypeReservation = TypeReservation; // Expose enum to template
+  reservationTime: string = '';
+  tablePreference: string = '';
+  TypeReservation = TypeReservation;
 
   today: string;
   isLoading: boolean = false;
@@ -47,12 +47,6 @@ export class ReservationCreateComponent implements OnInit, OnDestroy {
     private cdr: ChangeDetectorRef
   ) {
     this.today = new Date().toISOString().split('T')[0];
-    const cachedStatutOptions = localStorage.getItem('statutOptions');
-    if (cachedStatutOptions) {
-      this.statutOptions = JSON.parse(cachedStatutOptions);
-    } else {
-      localStorage.setItem('statutOptions', JSON.stringify(this.statutOptions));
-    }
   }
 
   ngOnInit(): void {
@@ -118,6 +112,10 @@ export class ReservationCreateComponent implements OnInit, OnDestroy {
   }
 
   onNumClientsChange(): void {
+    if (this.selectedType === TypeReservation.RESTAURANT && this.numClients > 4) {
+      this.numClients = 4;
+      this.errorMessage = 'Restaurant reservations are limited to 4 guests maximum.';
+    }
     this.numClientsSubject.next(this.numClients);
   }
 
@@ -132,6 +130,7 @@ export class ReservationCreateComponent implements OnInit, OnDestroy {
       }
       this.clientNames = newClientNames;
     }
+    this.cdr.detectChanges();
   }
 
   trackByIndex(index: number): number {
@@ -151,33 +150,64 @@ export class ReservationCreateComponent implements OnInit, OnDestroy {
     }
 
     // Validations
-    if (this.dateFin < this.dateDebut) {
+    if (this.selectedType === TypeReservation.RESTAURANT) {
+      if (!this.reservationTime) {
+        this.errorMessage = 'Veuillez sélectionner une heure de réservation.';
+        this.cdr.detectChanges();
+        return;
+      }
+      if (this.numClients > 4) {
+        this.errorMessage = 'Les réservations de restaurant sont limitées à 4 personnes maximum.';
+        this.cdr.detectChanges();
+        return;
+      }
+      // Set dateFin to match dateDebut for restaurant reservations
+      this.dateFin = new Date(this.dateDebut);
+    } else if (this.dateFin < this.dateDebut) {
       this.errorMessage = 'La date de fin doit être postérieure à la date de début.';
+      this.cdr.detectChanges();
       return;
     }
+
     if (this.clientNames.some(name => !name.trim())) {
       this.errorMessage = 'Veuillez remplir tous les noms des clients.';
+      this.cdr.detectChanges();
       return;
     }
     if (this.selectedType === TypeReservation.LOGEMENT && this.numRooms < 1) {
       this.errorMessage = 'Veuillez entrer un nombre valide de chambres.';
+      this.cdr.detectChanges();
       return;
     }
     if (this.selectedType === TypeReservation.PACK && this.hasLogement && this.numRooms < 1) {
       this.errorMessage = 'Veuillez entrer un nombre valide de chambres pour ce pack.';
+      this.cdr.detectChanges();
       return;
     }
     if (!this.typeSpecificId || this.typeSpecificId <= 0) {
       this.errorMessage = 'Veuillez entrer un ID valide pour le type de réservation.';
+      this.cdr.detectChanges();
       return;
     }
 
-    // Build reservation object dynamically
+    // Combine dateDebut with reservationTime for restaurant reservations
+    let effectiveDateDebut = new Date(this.dateDebut);
+    if (this.selectedType === TypeReservation.RESTAURANT && this.reservationTime) {
+      const [hours, minutes] = this.reservationTime.split(':').map(Number);
+      effectiveDateDebut.setHours(hours, minutes, 0, 0);
+    }
+
+    // Set status based on reservation type
+    const statut = this.selectedType === TypeReservation.EVENT || this.selectedType === TypeReservation.RESTAURANT
+      ? StatutReservation.CONFIRMED
+      : StatutReservation.PENDING;
+
+    // Build reservation object
     const reservation: Reservation = {
       userId: userId,
-      dateDebut: new Date(this.dateDebut),
+      dateDebut: effectiveDateDebut,
       dateFin: new Date(this.dateFin),
-      statut: this.selectedStatut,
+      statut: statut,
       typeres: this.selectedType,
       numClients: this.numClients,
       clientNames: this.clientNames.map(name => name.trim()),
@@ -192,14 +222,27 @@ export class ReservationCreateComponent implements OnInit, OnDestroy {
 
     console.log('Reservation Payload:', JSON.stringify(reservation, null, 2));
     this.isLoading = true;
+    this.cdr.detectChanges();
 
     this.reservationService.addReservation(reservation).subscribe({
-      next: (response) => {
+      next: (response: Reservation) => {
         console.log('Réservation créée avec succès:', response);
         this.isLoading = false;
+
+        // Store restaurant-specific fields in localStorage
+        if (this.selectedType === TypeReservation.RESTAURANT && response.id) {
+          const restaurantDetails = {
+            reservationTime: this.reservationTime,
+            tablePreference: this.tablePreference || 'No preference'
+          };
+          localStorage.setItem(`reservation_${response.id}`, JSON.stringify(restaurantDetails));
+          console.log(`Stored restaurant details for reservation ${response.id}:`, restaurantDetails);
+        }
+
         alert('Réservation créée avec succès !');
         this.resetForm();
         this.router.navigate(['/reservation/reservation-list']);
+        this.cdr.detectChanges();
       },
       error: (error) => {
         console.error('Error creating reservation:', error);
@@ -214,6 +257,7 @@ export class ReservationCreateComponent implements OnInit, OnDestroy {
           this.errorMessage = 'Échec de la création de la réservation. Veuillez réessayer.';
           alert(`⚠️ ${this.errorMessage}`);
         }
+        this.cdr.detectChanges();
       }
     });
   }
@@ -223,13 +267,15 @@ export class ReservationCreateComponent implements OnInit, OnDestroy {
     this.clientNames = [''];
     this.dateDebut = new Date();
     this.dateFin = new Date();
-    this.selectedStatut = StatutReservation.PENDING;
     this.numRooms = 1;
     this.selectedType = TypeReservation.ACTIVITE;
     this.typeSpecificId = 1;
     this.packId = null;
     this.hasLogement = false;
+    this.reservationTime = '';
+    this.tablePreference = '';
     this.errorMessage = null;
+    this.cdr.detectChanges();
   }
 
   goBackToList(): void {

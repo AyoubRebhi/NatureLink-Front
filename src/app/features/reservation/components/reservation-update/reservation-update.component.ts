@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ReservationService } from 'src/app/core/services/reservation.service';
 import { PackService } from 'src/app/core/services/pack.service';
@@ -7,6 +8,11 @@ import { StatutReservation } from 'src/app/core/models/statut-reservation.model'
 import { TypeReservation } from 'src/app/core/models/type-reservation.model';
 import { AuthService } from 'src/app/core/services/auth.service';
 
+interface EnhancedReservation extends Reservation {
+  reservationTime?: string;
+  tablePreference?: string;
+}
+
 @Component({
   selector: 'app-update-reservation',
   templateUrl: './reservation-update.component.html',
@@ -14,6 +20,9 @@ import { AuthService } from 'src/app/core/services/auth.service';
 })
 export class ReservationUpdateComponent implements OnInit {
   reservationId: number = 0;
+  isLoading: boolean = false;
+  reservationForm: FormGroup;
+  TypeReservation = TypeReservation; // Expose enum to template
 
   // Form Fields
   dateDebut: string = '';
@@ -24,9 +33,11 @@ export class ReservationUpdateComponent implements OnInit {
   numClients: number = 1;
   numRooms?: number;
   clientNames: string[] = [];
-  reservationType: TypeReservation = TypeReservation.PACK; // Default to PACK
+  reservationType: TypeReservation = TypeReservation.PACK;
+  reservationTime: string = '';
+  tablePreference: string = ''; // Added for restaurant reservations
 
-  // Type-specific IDs (retained from API)
+  // Type-specific IDs
   logementId?: number;
   transportId?: number;
   restaurantId?: number;
@@ -34,16 +45,19 @@ export class ReservationUpdateComponent implements OnInit {
   eventId?: number;
   packId?: number;
 
-  // Store original reservation for reference
-  originalReservation?: Reservation;
+  // Store original reservation
+  originalReservation?: EnhancedReservation;
 
   constructor(
+    private fb: FormBuilder,
     private reservationService: ReservationService,
     private packService: PackService,
     private router: Router,
     private route: ActivatedRoute,
     private authService: AuthService
-  ) {}
+  ) {
+    this.reservationForm = this.fb.group({});
+  }
 
   ngOnInit(): void {
     if (!this.authService.isAuthenticated()) {
@@ -58,10 +72,31 @@ export class ReservationUpdateComponent implements OnInit {
       return;
     }
 
+    this.initializeForm();
     this.loadReservation();
   }
 
+  private initializeForm(): void {
+    this.reservationForm = this.fb.group({
+      numClients: [this.numClients, [Validators.required, Validators.min(1)]],
+      dateDebut: [this.dateDebut, Validators.required],
+      dateFin: [this.dateFin],
+      numRooms: [this.numRooms, [Validators.min(1)]],
+      reservationTime: [this.reservationTime],
+      tablePreference: [this.tablePreference],
+      selectedStatut: [this.selectedStatut, Validators.required]
+    });
+
+    // Add controls for client names
+    this.clientNames.forEach((name, i) => {
+      this.reservationForm.addControl(`clientName${i}`, this.fb.control(name, Validators.required));
+    });
+
+    this.updateValidatorsBasedOnType();
+  }
+
   private loadReservation(): void {
+    this.isLoading = true;
     this.reservationService.getReservationById(this.reservationId).subscribe({
       next: (reservation) => {
         if (reservation.userId !== this.userId) {
@@ -70,38 +105,71 @@ export class ReservationUpdateComponent implements OnInit {
           return;
         }
 
-        this.originalReservation = reservation;
-
-        console.log('API response for reservation:', reservation); // Debug API response
-
-        // Populate form fields
-        this.dateDebut = this.formatDateForInput(reservation.dateDebut);
-        this.dateFin = this.formatDateForInput(reservation.dateFin);
-        this.selectedStatut = reservation.statut || StatutReservation.CONFIRMED;
-        this.numClients = reservation.numClients || 1;
-        this.clientNames = [...(reservation.clientNames || [''])];
-        this.numRooms = reservation.numRooms;
-        this.reservationType = this.getValidReservationType(reservation.typeres, reservation.packId);
-        this.logementId = reservation.logementId;
-        this.transportId = reservation.transportId;
-        this.restaurantId = reservation.restaurantId;
-        this.activityId = reservation.activityId;
-        this.eventId = reservation.eventId;
-        this.packId = reservation.packId;
-
-        console.log('Set reservationType:', this.reservationType);
-        console.log('Set packId:', this.packId);
-       
-        if (this.reservationType === TypeReservation.PACK && !this.packId) {
-          console.warn('PACK reservation loaded but packId is missing. Backend will use stored value.');
+        // Enhance reservation with localStorage data for restaurant reservations
+        const enhancedReservation: EnhancedReservation = { ...reservation };
+        if (reservation.typeres === TypeReservation.RESTAURANT) {
+          const storedDetails = localStorage.getItem(`reservation_${reservation.id}`);
+          if (storedDetails) {
+            const { reservationTime, tablePreference } = JSON.parse(storedDetails);
+            enhancedReservation.reservationTime = reservationTime || '';
+            enhancedReservation.tablePreference = tablePreference || '';
+          }
         }
+
+        this.originalReservation = enhancedReservation;
+        this.populateFormFields(enhancedReservation);
+        this.isLoading = false;
       },
       error: (err) => {
         console.error('Error loading reservation:', err);
         alert('Failed to load reservation details.');
         this.router.navigate(['/reservation/reservation-list']);
+        this.isLoading = false;
       }
     });
+  }
+
+  private populateFormFields(reservation: EnhancedReservation): void {
+    this.dateDebut = this.formatDateForInput(reservation.dateDebut);
+    this.dateFin = this.formatDateForInput(reservation.dateFin);
+    this.selectedStatut = reservation.statut || StatutReservation.CONFIRMED;
+    this.numClients = reservation.numClients || 1;
+    this.clientNames = [...(reservation.clientNames || [''])];
+    this.numRooms = reservation.numRooms;
+    this.reservationType = this.getValidReservationType(reservation.typeres, reservation.packId);
+    this.reservationTime = reservation.reservationTime || '';
+    this.tablePreference = reservation.tablePreference || '';
+
+    // Set type-specific IDs
+    this.logementId = reservation.logementId;
+    this.transportId = reservation.transportId;
+    this.restaurantId = reservation.restaurantId;
+    this.activityId = reservation.activityId;
+    this.eventId = reservation.eventId;
+    this.packId = reservation.packId;
+
+    // Update form values
+    this.reservationForm.patchValue({
+      numClients: this.numClients,
+      dateDebut: this.dateDebut,
+      dateFin: this.dateFin,
+      numRooms: this.numRooms,
+      reservationTime: this.reservationTime,
+      tablePreference: this.tablePreference,
+      selectedStatut: this.selectedStatut
+    });
+
+    // Reinitialize client name controls
+    this.clientNames.forEach((name, i) => {
+      if (!this.reservationForm.get(`clientName${i}`)) {
+        this.reservationForm.addControl(`clientName${i}`, this.fb.control(name, Validators.required));
+      } else {
+        this.reservationForm.get(`clientName${i}`)?.setValue(name);
+      }
+    });
+
+    // Update validators based on reservation type
+    this.updateValidatorsBasedOnType();
   }
 
   private getValidReservationType(typeres: string | undefined | null, packId: number | undefined): TypeReservation {
@@ -109,51 +177,70 @@ export class ReservationUpdateComponent implements OnInit {
     if (typeres && validTypes.includes(typeres as TypeReservation)) {
       return typeres as TypeReservation;
     }
-    if (packId) {
-      console.log('Using PACK as typeres due to packId presence:', packId);
-      return TypeReservation.PACK;
-    }
-    console.warn('No valid typeres or packId. Defaulting to PACK');
-    return TypeReservation.PACK;
+    return packId ? TypeReservation.PACK : TypeReservation.PACK;
   }
 
-  // Check if any client names are invalid (empty or whitespace)
+  private updateValidatorsBasedOnType(): void {
+    const reservationTimeControl = this.reservationForm.get('reservationTime');
+    const dateFinControl = this.reservationForm.get('dateFin');
+    const numClientsControl = this.reservationForm.get('numClients');
+
+    if (this.reservationType === TypeReservation.RESTAURANT) {
+      reservationTimeControl?.setValidators([Validators.required]);
+      dateFinControl?.clearValidators();
+      numClientsControl?.setValidators([Validators.required, Validators.min(1), Validators.max(4)]);
+    } else {
+      reservationTimeControl?.clearValidators();
+      dateFinControl?.setValidators([Validators.required]);
+      numClientsControl?.setValidators([Validators.required, Validators.min(1)]);
+    }
+
+    reservationTimeControl?.updateValueAndValidity();
+    dateFinControl?.updateValueAndValidity();
+    numClientsControl?.updateValueAndValidity();
+  }
+
   hasInvalidClientNames(): boolean {
     return this.clientNames.some(name => !name.trim());
   }
 
-  // Format date to YYYY-MM-DD for input[type=date]
   private formatDateForInput(date: Date | string): string {
     const d = new Date(date);
-    if (isNaN(d.getTime())) {
-      console.warn('Invalid date:', date);
-      return new Date().toISOString().split('T')[0]; // Fallback to today
-    }
-    return d.toISOString().split('T')[0];
+    return isNaN(d.getTime()) ? new Date().toISOString().split('T')[0] : d.toISOString().split('T')[0];
   }
 
-  // Get minimum date for date inputs (today)
   getMinDate(): string {
     return new Date().toISOString().split('T')[0];
   }
 
-  // Get minimum end date (start date or today, whichever is later)
   getMinEndDate(): string {
     const startDate = new Date(this.dateDebut);
     const today = new Date();
-    const minDate = startDate > today ? startDate : today;
-    return this.formatDateForInput(minDate);
+    return this.formatDateForInput(startDate > today ? startDate : today);
   }
 
-  addClientField() {
+  addClientField(): void {
+    if (this.reservationType === TypeReservation.RESTAURANT && this.clientNames.length >= 4) {
+      return;
+    }
     this.clientNames.push('');
-    this.numClients = this.clientNames.length;
+    this.reservationForm.addControl(`clientName${this.clientNames.length - 1}`, this.fb.control('', Validators.required));
+    this.reservationForm.get('numClients')?.setValue(this.clientNames.length);
   }
 
-  removeClientField(index: number) {
+  removeClientField(index: number): void {
     if (this.clientNames.length > 1) {
       this.clientNames.splice(index, 1);
-      this.numClients = this.clientNames.length;
+      this.reservationForm.removeControl(`clientName${index}`);
+      // Reindex remaining controls
+      for (let i = index; i < this.clientNames.length; i++) {
+        const control = this.reservationForm.get(`clientName${i + 1}`);
+        if (control) {
+          this.reservationForm.addControl(`clientName${i}`, control);
+          this.reservationForm.removeControl(`clientName${i + 1}`);
+        }
+      }
+      this.reservationForm.get('numClients')?.setValue(this.clientNames.length);
     }
   }
 
@@ -162,13 +249,19 @@ export class ReservationUpdateComponent implements OnInit {
   }
 
   updateReservation(): void {
+    if (this.reservationForm.invalid) {
+      this.markAllAsTouched();
+      alert('Please fill in all required fields correctly.');
+      return;
+    }
+
     if (!this.userId) {
       alert('Please log in to update the reservation.');
       this.router.navigate(['/login'], { queryParams: { returnUrl: this.router.url } });
       return;
     }
 
-    if (new Date(this.dateDebut) > new Date(this.dateFin)) {
+    if (this.reservationType !== TypeReservation.RESTAURANT && new Date(this.dateDebut) > new Date(this.dateFin)) {
       alert('Start date cannot be later than end date.');
       return;
     }
@@ -178,47 +271,71 @@ export class ReservationUpdateComponent implements OnInit {
       return;
     }
 
-    // Warn about missing packId but allow submission
-    if (this.reservationType === TypeReservation.PACK && (this.packId === undefined || this.packId === null)) {
-      console.warn('PACK reservation loaded but packId is missing. Backend will use stored value.');
+    if (this.reservationType === TypeReservation.RESTAURANT && this.clientNames.length > 4) {
+      alert('Restaurant reservations are limited to 4 persons maximum.');
+      return;
     }
+
+    this.isLoading = true;
+
+    // Combine dateDebut with reservationTime for restaurant reservations
+    let effectiveDateDebut = new Date(this.dateDebut);
+    if (this.reservationType === TypeReservation.RESTAURANT && this.reservationTime) {
+      const [hours, minutes] = this.reservationTime.split(':').map(Number);
+      effectiveDateDebut.setHours(hours, minutes, 0, 0);
+    }
+
+    // Set dateFin to dateDebut for restaurant reservations
+    const effectiveDateFin = this.reservationType === TypeReservation.RESTAURANT
+      ? new Date(effectiveDateDebut)
+      : new Date(this.dateFin);
 
     const updatedReservation: Reservation = {
       id: this.reservationId,
       userId: this.userId,
-      dateDebut: new Date(this.dateDebut),
-      dateFin: new Date(this.dateFin),
+      dateDebut: effectiveDateDebut,
+      dateFin: effectiveDateFin,
       statut: this.selectedStatut,
-      numClients: this.numClients,
+      numClients: this.clientNames.length,
       clientNames: this.clientNames.map(name => name.trim()),
       numRooms: this.reservationType === TypeReservation.LOGEMENT ? this.numRooms : undefined,
       typeres: this.reservationType,
-      logementId: this.reservationType === TypeReservation.LOGEMENT ? this.logementId : undefined,
-      transportId: this.reservationType === TypeReservation.TRANSPORT ? this.transportId : undefined,
-      restaurantId: this.reservationType === TypeReservation.RESTAURANT ? this.restaurantId : undefined,
-      activityId: this.reservationType === TypeReservation.ACTIVITE ? this.activityId : undefined,
-      eventId: this.reservationType === TypeReservation.EVENT ? this.eventId : undefined,
-      packId: this.reservationType === TypeReservation.PACK ? this.packId : undefined
+      logementId: this.logementId,
+      transportId: this.transportId,
+      restaurantId: this.restaurantId,
+      activityId: this.activityId,
+      eventId: this.eventId,
+      packId: this.packId
     };
 
-    console.log('Submitting updated reservation:', updatedReservation);
-
+    // Update the reservation
     this.reservationService.updateReservation(this.reservationId, updatedReservation).subscribe({
       next: (response) => {
-        console.log('Reservation updated successfully:', response);
+        // Save restaurant-specific fields to localStorage
+        if (this.reservationType === TypeReservation.RESTAURANT) {
+          const restaurantDetails = {
+            reservationTime: this.reservationTime,
+            tablePreference: this.tablePreference || 'No preference'
+          };
+          localStorage.setItem(`reservation_${this.reservationId}`, JSON.stringify(restaurantDetails));
+          console.log(`Stored restaurant details for reservation ${this.reservationId}:`, restaurantDetails);
+        }
+
         alert('Reservation updated successfully!');
         this.router.navigate(['/reservation/reservation-list']);
+        this.isLoading = false;
       },
       error: (error) => {
         console.error('Error updating reservation:', error);
-        if (error.error && error.error.message) {
-          alert(`⚠️ ${error.error.message}`);
-        } else if (error.status === 500 && error.error) {
-          alert(`⚠️ ${error.error}`);
-        } else {
-          alert('❌ Failed to update reservation. Please try again.');
-        }
+        alert(error.error?.message || 'Failed to update reservation. Please try again.');
+        this.isLoading = false;
       }
+    });
+  }
+
+  private markAllAsTouched(): void {
+    Object.values(this.reservationForm.controls).forEach(control => {
+      control.markAsTouched();
     });
   }
 

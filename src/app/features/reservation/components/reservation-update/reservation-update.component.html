@@ -1,76 +1,186 @@
-<div class="container py-5 mt-5 pt-5">
-  <h2 class="text-center mb-4">Update Reservation</h2>
-  <form (ngSubmit)="updateReservation()" class="bg-white bg-opacity-75 p-4 rounded shadow-lg">
-    <!-- Client Names -->
-    <div class="form-group mb-3" *ngFor="let clientName of clientNames; let i = index; trackBy: trackByIndex">
-      <label for="clientName{{i}}" class="form-label">Client Name {{i + 1}}:</label>
-      <input 
-        type="text" 
-        id="clientName{{i}}" 
-        [(ngModel)]="clientNames[i]" 
-        name="clientName{{i}}" 
-        class="form-control" 
-        required 
-        placeholder="Enter client name" />
-      <button *ngIf="clientNames.length > 1" type="button" (click)="removeClientField(i)" class="btn btn-danger btn-sm mt-1">
-        Remove
-      </button>
+<div class="reservation-container">
+  <div class="reservation-card">
+    <div class="reservation-header">
+      <h2 class="reservation-title">Update Reservation</h2>
+      <p class="reservation-subtitle">Modify your booking details below</p>
     </div>
 
-    <!-- Add more client input field -->
-    <button type="button" (click)="addClientField()" class="btn btn-secondary mb-3">Add Client</button>
+    <form #reservationForm="ngForm" (ngSubmit)="updateReservation()" class="reservation-form">
+      <div class="form-grid">
+       
+        <!-- Client Names -->
+        <div class="form-section">
+          <div class="client-list-header">
+            <h3 class="section-title">Client Information</h3>
+            <button
+              type="button"
+              (click)="addClientField()"
+              class="add-client-btn"
+              [disabled]="clientNames.length >= 4 && reservationType === TypeReservation.RESTAURANT"
+            >
+              <i class="fas fa-plus"></i> Add Client
+            </button>
+          </div>
+          
+          <div class="client-fields">
+            <div class="form-group" *ngFor="let clientName of clientNames; let i = index; trackBy: trackByIndex">
+              <div class="client-field-group">
+                <label [for]="'clientName' + i" class="form-label">Client {{i + 1}} Name</label>
+                <div class="input-wrapper">
+                  <input
+                    type="text"
+                    [id]="'clientName' + i"
+                    [(ngModel)]="clientNames[i]"
+                    [name]="'clientName' + i"
+                    class="form-input"
+                    required
+                    placeholder="Enter client's full name"
+                  />
+                  <i class="input-icon">👤</i>
+                </div>
+                <button *ngIf="clientNames.length > 1" type="button" (click)="removeClientField(i)" class="remove-client-btn">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+              <div *ngIf="reservationForm.controls['clientName' + i]?.errors?.['required'] && reservationForm.controls['clientName' + i]?.touched" class="error-message">
+                Client name is required
+              </div>
+            </div>
+          </div>
+          
+          <div *ngIf="reservationType === TypeReservation.RESTAURANT && clientNames.length >= 4" class="info-message">
+            <i class="fas fa-info-circle"></i> Restaurant reservations are limited to 4 persons
+          </div>
+        </div>
 
-    <!-- Date Début -->
-    <div class="form-group mb-3">
-      <label for="dateDebut" class="form-label">Date Début:</label>
-      <input 
-        type="date" 
-        id="dateDebut"
-        class="form-control" 
-        [(ngModel)]="dateDebut" 
-        name="dateDebut"
-        required
-      />
-    </div>
+        <!-- Date Range Section -->
+        <div class="form-section date-range-section">
+          <div class="date-range-header">
+            <h3 class="section-title">{{ reservationType === TypeReservation.RESTAURANT ? 'Dining Details' : 'Booking Dates' }}</h3>
+          </div>
+          
+          <div class="date-range-grid">
+            <div class="form-group">
+              <label for="dateDebut" class="form-label">{{ reservationType === TypeReservation.RESTAURANT ? 'Dining Date' : 'Start Date' }}</label>
+              <div class="input-wrapper">
+                <input
+                  type="date"
+                  id="dateDebut"
+                  [(ngModel)]="dateDebut"
+                  name="dateDebut"
+                  class="form-input"
+                  required
+                  [min]="getMinDate()"
+                />
+                <i class="input-icon">📅</i>
+              </div>
+              <div *ngIf="reservationForm.controls['dateDebut']?.errors?.['required'] && reservationForm.controls['dateDebut']?.touched" class="error-message">
+                Please select a valid date
+              </div>
+            </div>
 
-    <!-- Date Fin -->
-    <div class="form-group mb-3">
-      <label for="dateFin" class="form-label">Date Fin:</label>
-      <input 
-        type="date" 
-        id="dateFin"
-        class="form-control" 
-        [(ngModel)]="dateFin" 
-        name="dateFin"
-        required
-      />
-    </div>
+            <div class="form-group" *ngIf="reservationType !== TypeReservation.RESTAURANT">
+              <label for="dateFin" class="form-label">End Date</label>
+              <div class="input-wrapper">
+                <input
+                  type="date"
+                  id="dateFin"
+                  [(ngModel)]="dateFin"
+                  name="dateFin"
+                  class="form-input"
+                  required
+                  [min]="dateDebut || getMinDate()"
+                />
+                <i class="input-icon">📅</i>
+              </div>
+              <div *ngIf="reservationForm.controls['dateFin']?.errors?.['required'] && reservationForm.controls['dateFin']?.touched" class="error-message">
+                Please select a valid end date
+              </div>
+            </div>
 
-    <!-- Number of Rooms (only for logement) -->
-    <div *ngIf="logementId" class="form-group mb-3">
-      <label for="numRooms">Number of Rooms:</label>
-      <input
-        type="number"
-        id="numRooms"
-        [(ngModel)]="numRooms"
-        name="numRooms"
-        class="form-control"
-        required
-        min="1"
-        placeholder="Enter the number of rooms"
-      />
-    </div>
+            <!-- Time Selection for Restaurant -->
+            <div class="form-group" *ngIf="reservationType === TypeReservation.RESTAURANT">
+              <label for="reservationTime" class="form-label">Dining Time</label>
+              <div class="input-wrapper">
+                <input
+                  type="time"
+                  id="reservationTime"
+                  [(ngModel)]="reservationTime"
+                  name="reservationTime"
+                  class="form-input"
+                  required
+                  min="11:00"
+                  max="22:00"
+                />
+                <i class="input-icon">⏰</i>
+              </div>
+              <div *ngIf="reservationForm.controls['reservationTime']?.errors?.['required'] && reservationForm.controls['reservationTime']?.touched" class="error-message">
+                Please select a dining time between 11:00 AM and 10:00 PM
+              </div>
+            </div>
 
-    <!-- Submit Button -->
-    <div class="form-group text-center">
-      <button type="submit" class="btn btn-success" [disabled]="hasInvalidClientNames() || !dateDebut || !dateFin">
-        Update Reservation
-      </button>
-    </div>
-  </form>
+            <!-- Table Preference for Restaurant -->
+            <div class="form-group" *ngIf="reservationType === TypeReservation.RESTAURANT">
+              <label for="tablePreference" class="form-label">Table Preference</label>
+              <div class="input-wrapper">
+                <select
+                  id="tablePreference"
+                  [(ngModel)]="tablePreference"
+                  name="tablePreference"
+                  class="form-input"
+                >
+                  <option value="">No preference</option>
+                  <option value="window">Window table</option>
+                  <option value="quiet">Quiet area</option>
+                  <option value="outdoor">Outdoor seating</option>
+                </select>
+                <i class="input-icon">🍽️</i>
+              </div>
+            </div>
+          </div>
+        </div>
 
-  <!-- Back Button -->
-  <div class="form-group text-center mt-4">
-    <button class="btn btn-secondary" (click)="goBackToList()">Back to Reservations List</button>
+        <!-- Number of Rooms (only for logement) -->
+        <div class="form-section" *ngIf="logementId">
+          <div class="form-group">
+            <label for="numRooms" class="form-label">Number of Rooms</label>
+            <div class="input-wrapper">
+              <input
+                type="number"
+                id="numRooms"
+                [(ngModel)]="numRooms"
+                name="numRooms"
+                class="form-input"
+                required
+                min="1"
+                placeholder="Enter number of rooms needed"
+              />
+              <i class="input-icon">🛏️</i>
+            </div>
+            <div *ngIf="reservationForm.controls['numRooms']?.errors?.['required'] && reservationForm.controls['numRooms']?.touched" class="error-message">
+              Please enter number of rooms
+            </div>
+            <div *ngIf="reservationForm.controls['numRooms']?.errors?.['min'] && reservationForm.controls['numRooms']?.touched" class="error-message">
+              Minimum 1 room required
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form Actions -->
+      <div class="form-actions">
+        <button
+          type="submit"
+          class="submit-btn"
+          [disabled]="isLoading || hasInvalidClientNames() || !dateDebut || (!dateFin && reservationType !== TypeReservation.RESTAURANT) || reservationForm.invalid"
+        >
+          <span *ngIf="isLoading" class="spinner"></span>
+          {{ isLoading ? 'Updating...' : 'Update Reservation' }}
+        </button>
+        <button type="button" class="back-btn" (click)="goBackToList()">
+          Cancel
+        </button>
+      </div>
+    </form>
   </div>
 </div>
