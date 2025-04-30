@@ -101,7 +101,7 @@ export class BoutiqueAddComponent implements OnInit, AfterViewInit  {
       // Call the service to save the event
       this.boutiqueservice.createBoutique(this.newBoutique).subscribe(response => {
         console.log('Event added:', response);
-        this.router.navigate(['/admin/boutiques/list_boutiques']);
+        this.router.navigate(['/admin/boutiques/list-boutiques']);
       });
     } else {
       // Mark all fields as touched to trigger validation
@@ -116,18 +116,18 @@ export class BoutiqueAddComponent implements OnInit, AfterViewInit  {
       const reader = new FileReader();
   
       reader.onload = () => {
-        this.base64Image = reader.result as string; // Store the base64 string
+        this.base64Image = reader.result as string; 
         console.log("Base64 Image:", this.base64Image);
       };
   
-      reader.readAsDataURL(file); // Convert file to base64
+      reader.readAsDataURL(file); 
     }
   }
   onAdresseFieldFocus(): void {
     this.showMap = true;
   
     setTimeout(() => {
-      this.initMap(); // Initialize after DOM updates
+      this.initMap(); 
     }, 100);
   }
 }

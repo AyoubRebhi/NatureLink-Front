@@ -1,4 +1,6 @@
 <div class="event-management-container">
+  <button class="book-now" [routerLink]="['/admin/events/Add']" *ngIf="isAdminView">➕ Add Event</button>
+
   <div class="carousel" *ngIf="recommendedEvents.length > 0">
     <h3>Top 3 événements recommandés :</h3>
     <div *ngFor="let event of recommendedEvents; let i = index" class="carousel-item" [ngClass]="{'active': i === currentIndex}">
@@ -15,9 +17,12 @@
   <h2 class="title">Upcoming Events</h2>
   <p class="subtitle">Browse various ongoing events</p>
   <div class="search-container">
-    <input type="search" [(ngModel)]="searchQuery" id="form1" placeholder="Search Events" />
+    <div class="search-wrapper">
+     <input type="search" class="search-input" [(ngModel)]="searchQuery" id="form1" placeholder="Search Events" />
+   </div>
   </div>
-  <!-- Tabs Section -->
+  
+  
   <div class="event-tabs">
     <div
       *ngFor="let tab of tabs"
@@ -26,7 +31,17 @@
       class="tab">
       {{ tab.label }} <br /> <span></span>
     </div>
+
+      
+    <!-- Ajouter date picker -->
+    <div class="date-picker-container">
+      <input type="date" [(ngModel)]="customDate" />
+      <button (click)="goToCustomDate()">Go</button>
+    </div>
+    
   </div>
+  
+
 
   <!-- Popup d'entrée utilisateur -->
   <div *ngIf="showUserInputPopup && !isAdminView" class="popup-overlay">
@@ -65,8 +80,14 @@
     </button>
   </div>
 
-  <button class="book-now" [routerLink]="['/admin/events/Add']" *ngIf="isAdminView">➕ Add Event</button>
   <button (click)="generatePDF()" class="btn btn-primary" *ngIf="isAdminView">
     Export Events as PDF
   </button>
+
+  
+  <!-- Excel export -->
+   <button (click)="exportToExcel()" class="btn btn-success" *ngIf="isAdminView">
+    Export Events as Excel
+  </button>
+  
 </div>

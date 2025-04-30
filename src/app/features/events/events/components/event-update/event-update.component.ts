@@ -10,7 +10,8 @@ import { FormBuilder,FormGroup,Validators } from '@angular/forms';
 })
 export class EventUpdateComponent implements OnInit {
   eventForm!: FormGroup;
-
+  selectedImage: File | null = null;
+  base64Image: string = '';
   eventId!: number;
   event: any = {
     id: 0,
@@ -24,7 +25,7 @@ export class EventUpdateComponent implements OnInit {
   constructor(
     private eventService: EventServiceService,
     private route: ActivatedRoute,
-    private router: Router,
+    private router: Router, //this too au contructor aussi
     private fb: FormBuilder 
   ) {}
 
@@ -43,7 +44,7 @@ export class EventUpdateComponent implements OnInit {
       participants: [1, [Validators.required, Validators.min(1)]]
     });
 
-    // Load event data and populate form
+   
     this.eventService.getEventById(this.eventId).subscribe((eventData:any) => {
       this.eventForm.patchValue({
         title: eventData.title,
@@ -70,11 +71,29 @@ export class EventUpdateComponent implements OnInit {
       description: formValues.description,
       location: `${formValues.fromLocation} - ${formValues.toLocation}`,
       date: `${formValues.startDate} to ${formValues.endDate}`,
-      nbrplace: String(formValues.participants)
+      nbrplace: String(formValues.participants),
+      //Ajouter cette parte 
+      image : this.base64Image
     };
 
     this.eventService.updateEvent(this.eventId, updatedEvent).subscribe(() => {
       this.router.navigate(['/admin/events/management']);
     });
+  }
+  //Ajouter cet methode 
+  handleUpload(event: any) {
+    const file = event.target.files[0];
+    this.selectedImage = file;
+  
+    if (file) {
+      const reader = new FileReader();
+  
+      reader.onload = () => {
+        this.base64Image = reader.result as string; // Store the base64 string
+        console.log("Base64 Image:", this.base64Image);
+      };
+  
+      reader.readAsDataURL(file); // Convert file to base64
+    }
   }
 }

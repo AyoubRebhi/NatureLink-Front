@@ -23,7 +23,7 @@
   justify-content: center;
   gap: 10px;
   margin-bottom: 20px;
-
+margin-left: 20%;
   .tab {
     background: #f0f0f0;
     padding: 15px 20px;
@@ -300,4 +300,84 @@ button.prev {
 
 button.next {
   right: 10px;
+}
+.date-picker-container {
+  margin-right: auto;
+  display: flex;
+  align-items: center;
+  gap: 0px;
+  padding: 0px;
+  input[type="date"] {
+    padding: 6px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+  }
+
+  button {
+    background-color: #3c8dbc;
+    color: white;
+    padding: 6px 10px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+
+  button:hover {
+    background-color: #2b6a99;
+  }
+}
+
+.event-tabs {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.search-container {
+  display: flex;
+  justify-content: center;
+  margin: 40px 0;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 16px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.05);
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.search-input {
+  padding: 14px 20px 14px 45px; /* espace pour l'icône */
+  font-size: 20px;
+  border: 2px solid #3c8dbc;
+  border-radius: 12px;
+  width: 80%;
+  max-width: 700px;
+  outline: none;
+  transition: width 0.4s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.search-input::placeholder {
+  color: #aaa;
+  font-style: italic;
+}
+
+.search-input:focus {
+  width: 80%; /* agrandissement progressif */
+  border-color: #1a73e8;
+  box-shadow: 0 0 12px rgba(26, 115, 232, 0.3);
+}
+.search-wrapper {
+  position: relative;
+  width: 50%;
+  max-width: 600px;
+}
+
+.search-icon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #888;
+  font-size: 18px;
 }

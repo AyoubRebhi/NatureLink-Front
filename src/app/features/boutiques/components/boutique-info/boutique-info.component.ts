@@ -13,7 +13,7 @@ import { HttpClient } from '@angular/common/http';
 export class BoutiqueInfoComponent implements OnInit {
   boutiqueId!: number;
   products: Produit[] = [];
-  boutiqueDetails: any;
+  boutiqueDetails: any={};
   isLoading = true;
   isAdminView = false;
 
@@ -44,6 +44,9 @@ export class BoutiqueInfoComponent implements OnInit {
   loadBoutiqueDetails(): void {
     this.boutiqueservice.getBoutiqueById(this.boutiqueId).subscribe({
       next: (boutique) => {
+        if (!boutique) {
+          throw new Error('Boutique not found');
+        }
         this.boutiqueDetails = boutique;
         if (this.boutiqueDetails && this.boutiqueDetails.adresse) {
           let address = this.boutiqueDetails.adresse.trim();
@@ -61,6 +64,7 @@ export class BoutiqueInfoComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error loading boutique details:', err);
+        this.boutiqueDetails = null; // or set to some default object
       }
     });
   }
@@ -89,6 +93,7 @@ export class BoutiqueInfoComponent implements OnInit {
       });
     }
   }
+  
 
   geocodeAdresseAndDisplayMap(adresse: string): void {
     const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(adresse)}`;

@@ -4,6 +4,7 @@ import { Boutique } from 'src/app/core/models/boutique.module';
 import { Produit } from 'src/app/core/models/produit.module';
 import { BoutiqueService } from 'src/app/core/services/boutique.service';
 import { ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-boutique-product-add',
   templateUrl: './boutique-product-add.component.html',
@@ -21,7 +22,7 @@ export class BoutiqueProductAddComponent {
     };
     boutiqueId!: number;
 
-    constructor(private route:ActivatedRoute,private fb:FormBuilder,private boutiqueservice:BoutiqueService ){}
+    constructor(private router :Router,private route:ActivatedRoute,private fb:FormBuilder,private boutiqueservice:BoutiqueService ){}
     ngOnInit(): void {
       this.initializeForm();
       this.route.params.subscribe(params => {
@@ -37,8 +38,8 @@ export class BoutiqueProductAddComponent {
   onSubmit(): void {
     if (this.BoutiqueForm.valid) {
       this.newBoutique.nom=this.BoutiqueForm.value.nom;
-      this.newBoutique.cost=this.BoutiqueForm.value.email;
-      this.newBoutique.offre=this.BoutiqueForm.value.Telephone;
+      this.newBoutique.cost=this.BoutiqueForm.value.cost;//this one
+      this.newBoutique.offre=this.BoutiqueForm.value.offre;//this one
       this.newBoutique.image=this.base64Image;
       console.log('Form submitted:', this.BoutiqueForm.value);
       console.log('Event object:', this.newBoutique);
@@ -46,6 +47,8 @@ export class BoutiqueProductAddComponent {
       // Call the service to save the event
       this.boutiqueservice.createProduitById(this.boutiqueId,this.newBoutique,).subscribe(response => {
         console.log('Event added:', response);
+        this.router.navigate(['/admin/boutiques/boutique-info',this.boutiqueId, 'products']); // <-- Redirection ici
+
       });
     } else {
       // Mark all fields as touched to trigger validation
@@ -60,11 +63,11 @@ export class BoutiqueProductAddComponent {
       const reader = new FileReader();
   
       reader.onload = () => {
-        this.base64Image = reader.result as string; // Store the base64 string
+        this.base64Image = reader.result as string; 
         console.log("Base64 Image:", this.base64Image);
       };
   
-      reader.readAsDataURL(file); // Convert file to base64
+      reader.readAsDataURL(file); 
     }
   }
 

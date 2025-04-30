@@ -3,7 +3,10 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { EventServiceService } from 'src/app/core/services/event-service.service';
 import { AuthService } from 'src/app/core/services/auth.service';
 import { FilterByTitlePipe } from 'src/app/shared01/pipes/filter-by-title.pipe';
-import { jsPDF } from 'jspdf';
+import { jsPDF } from 'jspdf';//Ajouter
+import * as XLSX from 'xlsx';//Ajouter
+import * as FileSaver from 'file-saver';//Ajouter
+
 
 @Component({
   selector: 'app-event-m',
@@ -16,6 +19,8 @@ export class EventMComponent implements OnInit {
   tabs = this.generateDateTabs(5);
   selectedTab = this.tabs[0];
   currentIndex: number = 0;
+  noEventsForSelectedDate: boolean = false;
+
 
   isAdminView = false;
   userInput: string = '';
@@ -47,17 +52,43 @@ export class EventMComponent implements OnInit {
     this.showUserInputPopup = false;
   }
 
+  //changer ce methode
   submitRecommendation() {
     if (!this.userInput.trim()) {
       alert("Veuillez entrer un centre d'intérêt.");
       return;
     }
-
+  
     this.eventservice.recommendEvents(this.userInput, this.events).subscribe(
       (res) => {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); 
         this.recommendedEvents = res
-          .sort((a: any, b: any) => b.similarity - a.similarity)
-          .slice(0, 3);
+  .sort((a: any, b: any) => b.similarity - a.similarity)
+  .filter((event: any) => {
+    if (!event.date) return false;
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Normalize today to midnight
+
+    // Clean up spacing
+    const dateParts = event.date.trim().split(' to ').map((s: string) => s.trim());
+
+    // Parse start and end dates
+    const startDate = new Date(dateParts[0]);
+    startDate.setHours(0, 0, 0, 0);
+
+    let endDate = startDate;
+    if (dateParts.length > 1 && dateParts[1]) {
+      endDate = new Date(dateParts[1]);
+      endDate.setHours(0, 0, 0, 0);
+    }
+
+    const isUpcoming = endDate >= today;
+    console.log(`Event: ${event.title}, Start: ${startDate}, End: ${endDate}, Upcoming: ${isUpcoming}`);
+    return isUpcoming;
+  })
+  .slice(0, 3);
         this.closeUserInputPopup();
         console.log('Top 3 recommended events:', this.recommendedEvents);
       },
@@ -66,8 +97,6 @@ export class EventMComponent implements OnInit {
         alert('Échec de la recommandation.');
       }
     );
-
-    console.log('this.userInput:', this.userInput);
   }
 
   private generateDateTabs(count: number): { label: string, date: string }[] {
@@ -132,6 +161,8 @@ export class EventMComponent implements OnInit {
         JSON.stringify(event).toLowerCase().includes(query)
       );
     }
+    this.noEventsForSelectedDate = this.filteredEvents.length === 0;
+
   }
 
   downloadPDF() {
@@ -149,8 +180,22 @@ export class EventMComponent implements OnInit {
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
     let y = 20;
-
-    const eventsToExport = this.filteredEvents.length ? this.filteredEvents : this.events;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // normalize
+    
+    const filteredEvents = (this.filteredEvents.length ? this.filteredEvents : this.events).filter(event => {
+      if (!event.date) return false;
+      const [startStr, endStr] = event.date.split(' to ');
+      const startDate = new Date(startStr);
+      const endDate = new Date(endStr || startStr);
+    
+      startDate.setHours(0, 0, 0, 0);
+      endDate.setHours(0, 0, 0, 0);
+    
+      return endDate >= today;
+    });
+    
+    const eventsToExport =  filteredEvents;
 
     doc.setFontSize(18);
     const title = 'Event List';
@@ -228,4 +273,58 @@ export class EventMComponent implements OnInit {
   prev() {
     this.currentIndex = (this.currentIndex - 1 + this.events.length) % this.events.length;
   }
+  customDate: string = '';
+
+  goToCustomDate() {
+    if (!this.customDate) return;
+  
+    const alreadyExists = this.tabs.some(tab => tab.date === this.customDate);
+    const label = new Date(this.customDate).toLocaleDateString('fr-FR', {
+      weekday: 'short',
+      month: 'short',
+      day: 'numeric',
+    });
+  
+    if (!alreadyExists) {
+      this.tabs.push({
+        label: label,
+        date: this.customDate,
+      });
+    }
+  
+    this.selectedTab = this.tabs.find(tab => tab.date === this.customDate)!;
+  }
+  
+  exportToExcel(): void {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+  
+    const filteredEvents = (this.filteredEvents.length ? this.filteredEvents : this.events).filter(event => {
+      if (!event.date) return false;
+      const [startStr, endStr] = event.date.split(' to ');
+      const startDate = new Date(startStr);
+      const endDate = new Date(endStr || startStr);
+  
+      startDate.setHours(0, 0, 0, 0);
+      endDate.setHours(0, 0, 0, 0);
+  
+      return endDate >= today;
+    });
+  
+    const exportData = filteredEvents.map(event => ({
+      Title: event.title,
+      Date: event.date,
+      Location: event.location,
+      Description: event.description,
+      Founder: event.founder
+    }));
+  
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData);
+    const workbook: XLSX.WorkBook = { Sheets: { 'Events': worksheet }, SheetNames: ['Events'] };
+    const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+  
+    const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+    FileSaver.saveAs(blob, 'events.xlsx');
+  }
+  
 }

@@ -7,7 +7,7 @@ import { BoutiqueProductAddComponent } from './components/boutique-product-add/b
 import { BoutiqueUpdateComponent } from './components/boutique-update/boutique-update.component';
 const routes: Routes = [
    {path:'boutique-info/:id/products',component:BoutiqueInfoComponent},
-   {path:'list_boutiques',component:ListBoutiquesComponent},
+   {path:'list-boutiques',component:ListBoutiquesComponent},
    {path:'boutique-add',component:BoutiqueAddComponent},
    {path:'product-add/:id',component:BoutiqueProductAddComponent},
    {path:'boutique-update/:id',component: BoutiqueUpdateComponent}
