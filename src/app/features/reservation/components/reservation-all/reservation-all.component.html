@@ -1,250 +1,374 @@
-<div class="admin-layout">
+<div class="admin-container">
   <!-- Admin Header -->
   <app-header-dash></app-header-dash>
 
-  <div class="d-flex">
+  <div class="admin-content-container">
     <!-- Admin Sidebar -->
     <app-sidebar-dash></app-sidebar-dash>
 
     <!-- Main Content -->
-    <div class="dashboard-content p-4" style="flex-grow: 1; background-color: #f5f5f5;">
-      <h2 class="mb-4">All Reservations</h2>
+    <main class="reservation-management">
+      <header class="management-header">
+        <h1 class="page-title">Reservation Management</h1>
+        <div class="controls-container">
+          <div class="search-filter-container">
+            <div class="search-box">
+              <i class="fas fa-search search-icon"></i>
+              <input
+                type="text"
+                class="search-input"
+                placeholder="Search by username..."
+                [(ngModel)]="searchQuery"
+                (input)="filterReservations()"
+              />
+            </div>
+            <select
+              class="type-filter"
+              [(ngModel)]="selectedType"
+              (change)="filterReservations()"
+            >
+              <option value="">All Types</option>
+              <option *ngFor="let type of typeReservations" [value]="type">{{ type }}</option>
+            </select>
+          </div>
+          
+          <!-- Enhanced Stats Button -->
+          <button class="stats-btn" (click)="toggleStatsPopup()">
+            <i class="fas fa-chart-pie"></i> View Statistics
+            <i class="fas fa-chevron-down toggle-icon" [class.rotate]="showStatsPopup"></i>
+          </button>
+        </div>
+      </header>
 
-      <table class="table table-bordered table-hover">
-        <thead class="table-dark">
-          <tr>
-            <th>Reservation #</th>
-            <th>Username</th>
-            <th>Start Date</th>
-            <th>End Date</th>
-            <th>Status</th>
-            <th>Type</th>
-            <th>Number of Rooms</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let reservation of reservations">
-            <!-- Display Sequential Number -->
-            <td>{{ reservation.num }}</td>
+      <div class="stats-modal-backdrop" [class.show]="showStatsPopup" (click)="closeModal()">
+        <div class="stats-modal" [@modalAnimation] *ngIf="showStatsPopup" (click)="$event.stopPropagation()">
+          <div class="modal-glass">
+            <div class="modal-header">
+              <h3>
+                <i class="fas fa-chart-pie pulse"></i>
+                Reservation Statistics
+                <span class="total-count">{{ filteredReservations.length }} Total</span>
+              </h3>
+              <button class="close-btn" (click)="closeModal($event)" aria-label="Close statistics modal">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+            
+            <div class="modal-body">
+              <!-- Chart Controls -->
+              <div class="chart-controls">
+                <button class="chart-toggle-btn" (click)="toggleChartType()">
+                  <i class="fas" [class.fa-circle]="chartConfig.type === 'pie'" [class.fa-dot-circle]="chartConfig.type === 'donut'"></i>
+                  {{ chartConfig.type === 'pie' ? 'Switch to Donut Chart' : 'Switch to Pie Chart' }}
+                </button>
+              </div>
+      
+              <!-- Enhanced Chart Container -->
+              <div class="chart-container">
+                <div class="pie-chart-wrapper">
+                  <div class="pie-chart" [class.donut]="chartConfig.type === 'donut'">
+                    <!-- Enhanced Segments with Tooltips -->
+                    <div *ngFor="let segment of typeDistribution; trackBy: trackBySegment" 
+                         class="pie-segment"
+                         [@segmentAnimation]
+                         [style.transform]="'rotate(' + segment.startAngle + 'deg)'"
+                         [style.backgroundColor]="segment.color.background"
+                         [style.borderColor]="segment.color.hover"
+                         [style.zIndex]="segment.hovered ? 10 : 1"
+                         [class.highlighted]="activeSegment?.index === segment.index"
+                         (mouseenter)="onSegmentHover(segment, true)"
+                         (mouseleave)="onSegmentHover(segment, false)">
+                      
+                      <div class="pie-segment-inner" 
+                           [style.transform]="'rotate(' + segment.angle + 'deg)'"
+                           [style.filter]="segment.hovered ? 'brightness(1.1)' : ''">
+                      </div>
+                      
+                      <!-- Tooltip -->
+                      <div class="segment-tooltip" *ngIf="segment.tooltipVisible && chartConfig.showTooltips">
+                        <div class="tooltip-content">
+                          <strong>{{ segment.type }}</strong><br>
+                          {{ segment.count }} ({{ segment.percentage | number:'1.1-1' }}%)
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <!-- Center of Chart -->
+                    <div class="pie-center" [class.active]="!!activeSegment"
+                         [style.width]="chartConfig.type === 'donut' ? (chartConfig.donutWidth - 5) + '%' : '0'"
+                         [style.height]="chartConfig.type === 'donut' ? (chartConfig.donutWidth - 5) + '%' : '0'">
+                      <div *ngIf="activeSegment; else defaultCenter" class="segment-info">
+                        <div class="segment-percentage" [style.color]="activeSegment.color.background">
+                          {{ activeSegment.percentage | number:'1.1-1' }}%
+                        </div>
+                        <div class="segment-type">{{ activeSegment.type }}</div>
+                        <div class="segment-count">{{ activeSegment.count }} reservations</div>
+                      </div>
+                      <ng-template #defaultCenter>
+                        <div class="total">
+                          <div class="total-value">{{ filteredReservations.length }}</div>
+                          <div class="total-label">Total Reservations</div>
+                        </div>
+                      </ng-template>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Enhanced Interactive Legend -->
+                <div class="chart-legend">
+                  <div *ngFor="let segment of typeDistribution; trackBy: trackBySegment" 
+                       class="legend-item"
+                       [class.active]="activeSegment?.index === segment.index"
+                       (mouseenter)="onLegendHover(segment, true)"
+                       (mouseleave)="onLegendHover(segment, false)">
+                    <div class="legend-color" 
+                         [style.backgroundColor]="segment.color.background"
+                         [style.boxShadow]="'0 0 0 2px ' + (activeSegment?.index === segment.index ? segment.color.hover : 'transparent')">
+                    </div>
+                    <div class="legend-text">
+                      <div class="legend-label">{{ segment.type }}</div>
+                      <div class="legend-details">
+                        <span class="legend-percentage" [style.color]="segment.color.background">
+                          {{ segment.percentage | number:'1.1-1' }}%
+                        </span>
+                        <span class="legend-count">{{ segment.count }}</span>
+                      </div>
+                    </div>
+                    <div class="legend-arrow">
+                      <i class="fas fa-chevron-right"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Enhanced Summary Cards -->
+              <div class="stats-summary" @fadeIn>
+                <div *ngFor="let stat of typeDistribution | slice:0:4; trackBy: trackBySegment" 
+                     class="stat-card"
+                     [style.borderLeftColor]="stat.color.background"
+                     (mouseenter)="onLegendHover(stat, true)"
+                     (mouseleave)="onLegendHover(stat, false)">
+                  <div class="stat-value" [style.color]="stat.color.background">
+                    {{ stat.percentage | number:'1.1-1' }}%
+                  </div>
+                  <div class="stat-label">{{ stat.type }}</div>
+                  <div class="stat-count">{{ stat.count }} reservations</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div><div class="stats-modal-backdrop" [class.show]="showStatsPopup" (click)="closeModal()">
+  <div class="stats-modal" [@modalAnimation] *ngIf="showStatsPopup" (click)="$event.stopPropagation()">
+    <div class="modal-glass">
+      <div class="modal-header">
+        <h3>
+          <i class="fas fa-chart-pie pulse"></i>
+          Reservation Statistics
+          <span class="total-count">{{ filteredReservations.length }} Total</span>
+        </h3>
+        <button class="close-btn" (click)="closeModal($event)" aria-label="Close statistics modal">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      
+      <div class="modal-body">
+        <!-- Chart Controls -->
+        <div class="chart-controls">
+          <button class="chart-toggle-btn" (click)="toggleChartType()">
+            <i class="fas" [class.fa-circle]="chartConfig.type === 'pie'" [class.fa-dot-circle]="chartConfig.type === 'donut'"></i>
+            {{ chartConfig.type === 'pie' ? 'Switch to Donut Chart' : 'Switch to Pie Chart' }}
+          </button>
+        </div>
 
-            <!-- Display First Username -->
-            <td>{{ reservation.username }}</td>
-
-            <td>{{ reservation.dateDebut | date: 'shortDate' }}</td>
-            <td>{{ reservation.dateFin | date: 'shortDate' }}</td>
-            <td>{{ reservation.statut }}</td>
-            <td>
-              <span *ngIf="reservation.activityId">Activity</span>
-              <span *ngIf="reservation.transportId">Transport</span>
-              <span *ngIf="reservation.logementId">Logement</span>
-              <span *ngIf="reservation.restaurantId">Restaurant</span>
-              <span *ngIf="!reservation.activityId && !reservation.transportId && !reservation.logementId && !reservation.restaurantId">
-                Unknown
-              </span>
-            </td>
-
-            <!-- Display Number of Rooms only for "Logement" reservations -->
-            <td *ngIf="reservation.logementId">{{ reservation.numRooms ?? 'N/A' }}</td>
-          </tr>
-        </tbody>
-      </table>
+        <!-- Enhanced Chart Container -->
+        <div class="chart-container">
+          <div class="pie-chart-wrapper">
+            <div class="pie-chart" [class.donut]="chartConfig.type === 'donut'">
+              <!-- Enhanced Segments with Tooltips -->
+              <div *ngFor="let segment of typeDistribution; trackBy: trackBySegment" 
+                   class="pie-segment"
+                   [@segmentAnimation]
+                   [style.transform]="'rotate(' + segment.startAngle + 'deg)'"
+                   [style.backgroundColor]="segment.color.background"
+                   [style.borderColor]="segment.color.hover"
+                   [style.zIndex]="segment.hovered ? 10 : 1"
+                   [class.highlighted]="activeSegment?.index === segment.index"
+                   (mouseenter)="onSegmentHover(segment, true)"
+                   (mouseleave)="onSegmentHover(segment, false)">
+                
+                <div class="pie-segment-inner" 
+                     [style.transform]="'rotate(' + segment.angle + 'deg)'"
+                     [style.filter]="segment.hovered ? 'brightness(1.1)' : ''">
+                </div>
+                
+                <!-- Tooltip -->
+                <div class="segment-tooltip" *ngIf="segment.tooltipVisible && chartConfig.showTooltips">
+                  <div class="tooltip-content">
+                    <strong>{{ segment.type }}</strong><br>
+                    {{ segment.count }} ({{ segment.percentage | number:'1.1-1' }}%)
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Center of Chart -->
+              <div class="pie-center" [class.active]="!!activeSegment"
+                   [style.width]="chartConfig.type === 'donut' ? (chartConfig.donutWidth - 5) + '%' : '0'"
+                   [style.height]="chartConfig.type === 'donut' ? (chartConfig.donutWidth - 5) + '%' : '0'">
+                <div *ngIf="activeSegment; else defaultCenter" class="segment-info">
+                  <div class="segment-percentage" [style.color]="activeSegment.color.background">
+                    {{ activeSegment.percentage | number:'1.1-1' }}%
+                  </div>
+                  <div class="segment-type">{{ activeSegment.type }}</div>
+                  <div class="segment-count">{{ activeSegment.count }} reservations</div>
+                </div>
+                <ng-template #defaultCenter>
+                  <div class="total">
+                    <div class="total-value">{{ filteredReservations.length }}</div>
+                    <div class="total-label">Total Reservations</div>
+                  </div>
+                </ng-template>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Enhanced Interactive Legend -->
+          <div class="chart-legend">
+            <div *ngFor="let segment of typeDistribution; trackBy: trackBySegment" 
+                 class="legend-item"
+                 [class.active]="activeSegment?.index === segment.index"
+                 (mouseenter)="onLegendHover(segment, true)"
+                 (mouseleave)="onLegendHover(segment, false)">
+              <div class="legend-color" 
+                   [style.backgroundColor]="segment.color.background"
+                   [style.boxShadow]="'0 0 0 2px ' + (activeSegment?.index === segment.index ? segment.color.hover : 'transparent')">
+              </div>
+              <div class="legend-text">
+                <div class="legend-label">{{ segment.type }}</div>
+                <div class="legend-details">
+                  <span class="legend-percentage" [style.color]="segment.color.background">
+                    {{ segment.percentage | number:'1.1-1' }}%
+                  </span>
+                  <span class="legend-count">{{ segment.count }}</span>
+                </div>
+              </div>
+              <div class="legend-arrow">
+                <i class="fas fa-chevron-right"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Enhanced Summary Cards -->
+        <div class="stats-summary" @fadeIn>
+          <div *ngFor="let stat of typeDistribution | slice:0:4; trackBy: trackBySegment" 
+               class="stat-card"
+               [style.borderLeftColor]="stat.color.background"
+               (mouseenter)="onLegendHover(stat, true)"
+               (mouseleave)="onLegendHover(stat, false)">
+            <div class="stat-value" [style.color]="stat.color.background">
+              {{ stat.percentage | number:'1.1-1' }}%
+            </div>
+            <div class="stat-label">{{ stat.type }}</div>
+            <div class="stat-count">{{ stat.count }} reservations</div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
-  <style>
-    /* Main Content Container */
-.dashboard-content {
-  padding: 2rem !important;
-  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%) !important;
-  margin: 1.5rem;
-  border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  position: relative;
-  overflow: hidden;
-  min-height: calc(100vh - 100px); /* Adjust based on your header height */
-}
+      <!-- Reservation Table -->
+      <div class="reservation-table-container">
+        <table class="reservation-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Username</th>
+              <th>Start Date</th>
+              <th>End Date</th>
+              <th>Status</th>
+              <th>Type</th>
+              <th>Rooms</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let reservation of pagedReservations">
+              <td>{{ reservation.num }}</td>
+              <td>{{ reservation.username }}</td>
+              <td>{{ reservation.dateDebut | date: 'mediumDate' }}</td>
+              <td>{{ reservation.dateFin | date: 'mediumDate' }}</td>
+              <td>
+                <span class="status-badge" [ngClass]="getStatusClass(reservation.statut)">
+                  {{ reservation.statut }}
+                </span>
+              </td>
+              <td>
+                <span class="type-badge">{{ getReservationType(reservation) }}</span>
+              </td>
+              <td>{{ reservation.logementId ? (reservation.numRooms ?? 'N/A') : 'N/A' }}</td>
+              <td>
+                <button class="action-btn delete-btn" (click)="deleteReservation(reservation.id)">
+                  <i class="fas fa-trash-alt"></i> Delete
+                </button>
+              </td>
+            </tr>
+            <tr *ngIf="filteredReservations.length === 0">
+              <td colspan="8" class="no-results">No reservations found</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-/* Dynamic Background Effect */
-.dashboard-content::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle, rgba(52, 152, 219, 0.15) 0%, rgba(255, 255, 255, 0) 70%);
-  animation: pulse 15s infinite ease-in-out;
-  z-index: 0;
-  pointer-events: none;
-}
-
-.dashboard-content::after {
-  content: '';
-  position: absolute;
-  bottom: -50%;
-  right: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle, rgba(46, 204, 113, 0.15) 0%, rgba(255, 255, 255, 0) 70%);
-  animation: pulse 20s infinite ease-in-out reverse;
-  z-index: 0;
-  pointer-events: none;
-}
-
-/* Animation for dynamic background */
-@keyframes pulse {
-  0% {
-    transform: scale(1) rotate(0deg);
-    opacity: 0.5;
-  }
-  50% {
-    transform: scale(1.2) rotate(45deg);
-    opacity: 0.8;
-  }
-  100% {
-    transform: scale(1) rotate(0deg);
-    opacity: 0.5;
-  }
-}
-
-/* Header Styling */
-.dashboard-content h2 {
-  color: #2c3e50;
-  font-weight: 700;
-  margin-bottom: 2rem;
-  position: relative;
-  z-index: 1;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  background: linear-gradient(90deg, #3498db, #2ecc71);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-/* Table Styling */
-.table {
-  position: relative;
-  z-index: 1;
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 12px;
-  overflow: hidden;
-  backdrop-filter: blur(5px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-.table-dark {
-  background: linear-gradient(90deg, #2c3e50 0%, #34495e 100%);
-  color: white;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.table th {
-  padding: 1.2rem;
-  font-weight: 600;
-  border: none;
-  position: relative;
-}
-
-.table th::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background: linear-gradient(90deg, #3498db, #2ecc71);
-  opacity: 0.3;
-}
-
-.table td {
-  padding: 1.2rem;
-  vertical-align: middle;
-  color: #2c3e50;
-  border-color: rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease;
-}
-
-.table-hover tbody tr:hover {
-  background: rgba(52, 152, 219, 0.1);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-}
-
-/* Special Type Styling */
-td span {
-  padding: 0.5rem 1rem;
-  border-radius: 20px;
-  font-size: 0.9rem;
-  font-weight: 500;
-  display: inline-block;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-td span:hover {
-  transform: scale(1.05);
-  filter: brightness(1.1);
-}
-
-td span:contains('Activity') {
-  background: linear-gradient(45deg, #3498db, #66b3ff);
-  color: white;
-}
-
-td span:contains('Transport') {
-  background: linear-gradient(45deg, #8e44ad, #b974d6);
-  color: white;
-}
-
-td span:contains('Logement') {
-  background: linear-gradient(45deg, #e67e22, #f5b041);
-  color: white;
-}
-
-td span:contains('Restaurant') {
-  background: linear-gradient(45deg, #27ae60, #52d791);
-  color: white;
-}
-
-td span:contains('Unknown') {
-  background: linear-gradient(45deg, #7f8c8d, #95a5a6);
-  color: white;
-}
-
-/* Row Animation */
-tbody tr {
-  animation: slideIn 0.5s ease-out;
-}
-
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateX(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .dashboard-content {
-    margin: 1rem;
-    padding: 1.5rem !important;
-  }
-
-  .table {
-    font-size: 0.9rem;
-  }
-
-  .table th,
-  .table td {
-    padding: 0.8rem;
-  }
-}
-  </style>
+      <!-- Pagination -->
+      <div class="pagination-container" *ngIf="filteredReservations.length > 0">
+        <div class="pagination-info">
+          Showing {{ getFirstItemNumber() }} to {{ getLastItemNumber() }} of {{ filteredReservations.length }} entries
+        </div>
+        <div class="pagination-controls">
+          <button 
+            class="pagination-btn" 
+            [disabled]="currentPage === 1"
+            (click)="goToPage(1)"
+          >
+            <i class="fas fa-angle-double-left"></i>
+          </button>
+          <button 
+            class="pagination-btn" 
+            [disabled]="currentPage === 1"
+            (click)="previousPage()"
+          >
+            <i class="fas fa-angle-left"></i>
+          </button>
+          
+          <div class="page-numbers">
+            <button 
+              *ngFor="let page of getDisplayedPages()" 
+              class="pagination-btn" 
+              [class.active]="page === currentPage"
+              (click)="goToPage(page)"
+            >
+              {{ page }}
+            </button>
+          </div>
+          
+          <button 
+            class="pagination-btn" 
+            [disabled]="currentPage === totalPages"
+            (click)="nextPage()"
+          >
+            <i class="fas fa-angle-right"></i>
+          </button>
+          <button 
+            class="pagination-btn" 
+            [disabled]="currentPage === totalPages"
+            (click)="goToPage(totalPages)"
+          >
+            <i class="fas fa-angle-double-right"></i>
+          </button>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>

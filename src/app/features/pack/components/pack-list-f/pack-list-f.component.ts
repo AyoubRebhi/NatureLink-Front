@@ -5,7 +5,7 @@ import { PackDTO } from 'src/app/core/models/pack.model';
 import { RatingDTO } from 'src/app/core/models/rating.model';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { AuthService } from 'src/app/core/services/auth.service';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-front-list',
@@ -20,6 +20,7 @@ export class FrontListComponent implements OnInit {
   userId?: number;
   loading: boolean = false;
   errorMessage: string | null = null;
+  highlightPackId: number | null = null;
   showChat: boolean = false;
   chatbotMessages: { role: 'user' | 'bot', text: string }[] = [];
   userMessage: string = '';
@@ -31,7 +32,8 @@ export class FrontListComponent implements OnInit {
     private packService: PackService,
     private sanitizer: DomSanitizer,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
@@ -50,6 +52,10 @@ export class FrontListComponent implements OnInit {
       return;
     }
 
+    this.route.queryParams.subscribe(params => {
+      this.highlightPackId = params['highlightPackId'] ? +params['highlightPackId'] : null;
+    });
+
     this.fetchPacks();
   }
 
@@ -64,6 +70,17 @@ export class FrontListComponent implements OnInit {
             this.packService.getAverageRating(pack.id!).subscribe({
               next: (avgRating) => {
                 pack.averageRating = avgRating;
+                if (this.highlightPackId && pack.id === this.highlightPackId) {
+                  setTimeout(() => {
+                    const element = document.getElementById(`pack-${pack.id}`);
+                    if (element) {
+                      element.classList.add('highlight-zoom');
+                      setTimeout(() => {
+                        element.classList.remove('highlight-zoom');
+                      }, 1000);
+                    }
+                  }, 500);
+                }
               },
               error: (error: HttpErrorResponse) => {
                 console.error(`Error fetching average rating for pack ${pack.id}:`, error);
@@ -91,6 +108,7 @@ export class FrontListComponent implements OnInit {
     }
     this.router.navigate(['/reservation/create'], { queryParams: { packId: pack.id, type: 'PACK' } });
   }
+
   getStarRating(rating: number): string[] {
     const fullStars = Math.floor(rating);
     const hasHalfStar = rating % 1 >= 0.5;

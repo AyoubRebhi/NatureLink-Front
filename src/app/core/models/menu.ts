@@ -6,4 +6,3 @@ export interface Menu {
   image?: string;
   restaurantId?: number;
 }
-

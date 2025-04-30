@@ -18,6 +18,7 @@
             <button type="button" class="btn-close" (click)="errorMessage = ''" aria-label="Fermer"></button>
           </div>
 
+
           <!-- Formulaire -->
           <form [formGroup]="menuForm" (ngSubmit)="onSubmit()" enctype="multipart/form-data" novalidate>
             <!-- Plats -->
@@ -38,6 +39,7 @@
               </div>
             </div>
 
+
             <!-- Prix Moyen -->
             <div class="mb-3">
               <label for="prixMoyen" class="form-label">Prix Moyen (€) <span class="text-danger">*</span></label>
@@ -57,6 +59,7 @@
               </div>
             </div>
 
+
             <!-- Détails des ingrédients -->
             <div class="mb-3">
               <label for="ingredientsDetails" class="form-label">Ingrédients (séparés par des virgules) <span class="text-danger">*</span></label>
@@ -74,6 +77,7 @@
                 <span *ngIf="menuForm.get('ingredientsDetails')?.errors?.['maxlength']">Maximum 500 caractères</span>
               </div>
             </div>
+
 
             <!-- Image -->
             <div class="mb-3">
@@ -100,6 +104,7 @@
               </div>
             </div>
 
+
             <!-- Boutons -->
             <div class="d-flex justify-content-between mt-4">
               <button
@@ -125,4 +130,7 @@
     </div>
   </div>
 </div>
+
+
+
 

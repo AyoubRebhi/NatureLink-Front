@@ -1,123 +1,77 @@
-<div id="menuForm" class="container my-4">
-  <div class="row justify-content-center">
-    <div class="col-lg-8">
-      <div class="card shadow-sm">
-        <div class="card-header bg-primary text-white">
-          <h4 class="mb-0">
-            <i class="bi bi-menu-button-wide me-2"></i>
-            {{ isEditMode ? 'Modifier le Menu' : 'Ajouter un Nouveau Menu' }}
-          </h4>
+<div class="container mt-5">
+  <h2 class="mb-4 text-primary">{{ isEditMode ? 'Edit Menu' : 'Add Menu' }}</h2>
+
+
+  <!-- Success Popup -->
+  <div *ngIf="successMessage" class="alert alert-success alert-dismissible fade show position-fixed top-50 start-50 translate-middle" role="alert" style="z-index: 1050;">
+    {{ successMessage }}
+  </div>
+
+
+  <!-- Error Message -->
+  <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
+    {{ errorMessage }}
+    <button type="button" class="btn-close" (click)="errorMessage = ''" aria-label="Close"></button>
+  </div>
+
+
+  <form [formGroup]="menuForm" (ngSubmit)="onSubmit()" enctype="multipart/form-data" novalidate>
+    <div class="row g-3">
+      <!-- Dishes -->
+      <div class="col-md-6">
+        <label for="plats" class="form-label">Dish <span class="text-danger">*</span></label>
+        <input type="text" id="plats" formControlName="plats" class="form-control" [ngClass]="{'is-invalid': isFieldInvalid('plats')}" placeholder="E.g., Margherita Pizza">
+        <div *ngIf="isFieldInvalid('plats')" class="invalid-feedback">
+          The dish name is required.
         </div>
-        <div class="card-body">
-          <!-- Messages d'alerte -->
-          <div *ngIf="successMessage" class="alert alert-success alert-dismissible fade show">
-            {{ successMessage }}
-            <button type="button" class="btn-close" (click)="successMessage = ''" aria-label="Fermer"></button>
-          </div>
-          <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show">
-            {{ errorMessage }}
-            <button type="button" class="btn-close" (click)="errorMessage = ''" aria-label="Fermer"></button>
-          </div>
+      </div>
 
-          <!-- Formulaire -->
-          <form [formGroup]="menuForm" (ngSubmit)="onSubmit()" enctype="multipart/form-data" novalidate>
-            <div class="row">
-              <!-- Plats -->
-              <div class="col-lg-12 mb-3">
-                <label for="plats" class="form-label">
-                  Plats <span class="text-danger">*</span>
-                </label>
-                <input
-                  type="text"
-                  id="plats"
-                  formControlName="plats"
-                  class="form-control"
-                  maxlength="100"
-                  placeholder="Ex: Pizza Margherita"
-                  [ngClass]="{'is-invalid': menuForm.get('plats')?.invalid && menuForm.get('plats')?.touched}" />
-                <div *ngIf="menuForm.get('plats')?.invalid && menuForm.get('plats')?.touched" class="invalid-feedback">
-                  <small *ngIf="menuForm.get('plats')?.errors?.['required']">Ce champ est requis.</small>
-                  <small *ngIf="menuForm.get('plats')?.errors?.['maxlength']">Maximum 100 caractères.</small>
-                </div>
-              </div>
 
-              <!-- Prix Moyen -->
-              <div class="col-lg-6 mb-3">
-                <label for="prixMoyen" class="form-label">
-                  Prix Moyen (€) <span class="text-danger">*</span>
-                </label>
-                <input
-                  type="number"
-                  id="prixMoyen"
-                  formControlName="prixMoyen"
-                  class="form-control"
-                  placeholder="Ex: 15.99"
-                  min="0"
-                  step="0.01"
-                  [ngClass]="{'is-invalid': menuForm.get('prixMoyen')?.invalid && menuForm.get('prixMoyen')?.touched}" />
-                <div *ngIf="menuForm.get('prixMoyen')?.invalid && menuForm.get('prixMoyen')?.touched" class="invalid-feedback">
-                  <small *ngIf="menuForm.get('prixMoyen')?.errors?.['required']">Ce champ est requis.</small>
-                  <small *ngIf="menuForm.get('prixMoyen')?.errors?.['min']">Le prix doit être positif.</small>
-                </div>
-              </div>
+      <!-- Average Price -->
+      <div class="col-md-6">
+        <label for="prixMoyen" class="form-label">Average Price (€) <span class="text-danger">*</span></label>
+        <input type="number" id="prixMoyen" formControlName="prixMoyen" class="form-control" min="0" step="0.01" [ngClass]="{'is-invalid': isFieldInvalid('prixMoyen')}" placeholder="E.g., 15.99">
+        <div *ngIf="isFieldInvalid('prixMoyen')" class="invalid-feedback">
+          The average price is required and must be a positive number.
+        </div>
+      </div>
 
-              <!-- Ingrédients -->
-              <div class="col-lg-12 mb-3">
-                <label for="ingredientsDetails" class="form-label">
-                  Ingrédients (séparés par des virgules) <span class="text-danger">*</span>
-                </label>
-                <textarea
-                  id="ingredientsDetails"
-                  formControlName="ingredientsDetails"
-                  class="form-control"
-                  rows="4"
-                  placeholder="Ex: farine de blé, lait, tomates, basilic"
-                  [ngClass]="{'is-invalid': menuForm.get('ingredientsDetails')?.invalid && menuForm.get('ingredientsDetails')?.touched}"></textarea>
-                <div *ngIf="menuForm.get('ingredientsDetails')?.invalid && menuForm.get('ingredientsDetails')?.touched" class="invalid-feedback">
-                  <small *ngIf="menuForm.get('ingredientsDetails')?.errors?.['required']">Ce champ est requis.</small>
-                  <small *ngIf="menuForm.get('ingredientsDetails')?.errors?.['maxlength']">Maximum 500 caractères.</small>
-                </div>
-              </div>
 
-              <!-- Image -->
-              <div class="col-lg-12 mb-3">
-                <label for="image" class="form-label">
-                  Image <span class="text-danger">*</span>
-                </label>
-                <input
-                  type="file"
-                  id="image"
-                  class="form-control"
-                  (change)="onImageSelected($event)"
-                  accept="image/*" />
-                <div *ngIf="!selectedImage && menuForm.touched && !isEditMode" class="invalid-feedback d-block">
-                  Veuillez sélectionner une image.
-                </div>
-                <small *ngIf="selectedImage" class="form-text text-muted">
-                  Fichier sélectionné : {{ selectedImage.name }}
-                </small>
-              </div>
-            </div>
+      <!-- Ingredients -->
+      <div class="col-md-12">
+        <label for="ingredients" class="form-label">Ingredients <span class="text-danger">*</span></label>
+        <textarea id="ingredients" formControlName="ingredients" rows="4" class="form-control" [ngClass]="{'is-invalid': isFieldInvalid('ingredients')}" placeholder="E.g., wheat flour, milk, tomatoes, basil"></textarea>
+        <div *ngIf="isFieldInvalid('ingredients')" class="invalid-feedback">
+          Ingredients are required.
+        </div>
+      </div>
 
-            <!-- Boutons d'action -->
-            <div class="d-flex justify-content-end mt-4">
-              <button
-                type="button"
-                class="btn btn-secondary me-2"
-                (click)="goBack()"
-                [disabled]="isLoading">
-                Annuler
-              </button>
-              <button
-                type="submit"
-                class="btn btn-success"
-                [disabled]="isLoading">
-                {{ isLoading ? 'Enregistrement...' : (isEditMode ? 'Modifier' : 'Ajouter') }}
-              </button>
-            </div>
-          </form>
+
+      <!-- Image -->
+      <div class="col-md-6">
+        <label for="image" class="form-label">Image <span class="text-danger">*</span></label>
+        <input type="file" id="image" class="form-control mb-3" (change)="onImageSelected($event)" accept="image/*">
+
+
+        <div class="border rounded p-2 bg-light text-center">
+          <img [src]="imagePreviewUrl" alt="Menu image preview" class="img-fluid rounded" style="max-height: 200px;" *ngIf="imagePreviewUrl">
+          <div *ngIf="!imagePreviewUrl" class="text-muted py-4">No image selected</div>
         </div>
       </div>
     </div>
-  </div>
+
+
+    <div class="mt-4 text-end">
+      <button type="submit" class="btn btn-success" [disabled]="menuForm.invalid || isLoading">
+        <span *ngIf="isLoading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        <i *ngIf="!isLoading" class="bi bi-check-circle"></i>
+        {{ isLoading ? 'Adding...' : (isEditMode ? 'Edit' : 'Add') }}
+      </button>
+      <button type="button" class="btn btn-secondary ms-2" (click)="goBack()" [disabled]="isLoading">
+        <i class="bi bi-arrow-left-circle"></i> Back
+      </button>
+    </div>
+  </form>
 </div>
+
+

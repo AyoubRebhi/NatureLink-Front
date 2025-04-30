@@ -1,293 +1,242 @@
+<div class="pack-creation-container">
+  <div class="header">
+    <h2 class="creation-header">Modify Your Pack</h2>
+    <button class="back-button" (click)="goBack()">
+      ← Back to List
+    </button>
+  </div>
 
-<div class="container">
-  <!-- Header -->
-  <h2>Create New Pack</h2>
+<div class="pack-creation-container">
+  <h2 class="creation-header">Create New Pack</h2>
 
-  <!-- Error Message -->
-  <div *ngIf="errorMessage" class="error-message">
+  <!-- Messages -->
+  <div *ngIf="errorMessage" class="alert-message error">
+    <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 20 20" fill="currentColor">
+      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+    </svg>
     {{ errorMessage }}
   </div>
 
-  <!-- Success Message -->
-  <div *ngIf="successMessage" class="success-message">
+  <div *ngIf="successMessage" class="alert-message success">
+    <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 20 20" fill="currentColor">
+      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+    </svg>
     {{ successMessage }}
   </div>
 
-  <!-- Form Container -->
-  <form (ngSubmit)="submitForm()" #packForm="ngForm" class="form-container">
-    <!-- Nom -->
-    <div class="form-group">
-      <label class="form-label">Pack Name</label>
-      <input 
-        type="text" 
-        class="form-input"
-        [(ngModel)]="pack.nom" 
-        name="nom" 
-        required 
-        placeholder="Enter pack name"
-      />
-    </div>
-
-    <!-- Prix -->
-    <div class="form-group">
-      <label class="form-label">Price (TND)</label>
-      <input 
-        type="number" 
-        class="form-input"
-        [(ngModel)]="pack.prix" 
-        name="prix" 
-        required 
-        placeholder="Enter price"
-      />
-    </div>
-
-    <!-- Description -->
-    <div class="form-group">
-      <label class="form-label">Description</label>
-      <textarea 
-        class="form-textarea"
-        [(ngModel)]="pack.description" 
-        name="description" 
-        required
-        placeholder="Enter pack description"
-      ></textarea>
-    </div>
-
-    <!-- Dropdown Lists -->
-    <div class="id-list-container">
+  <form (ngSubmit)="submitForm()" #packForm="ngForm" class="creation-form">
+    <!-- Basic Info -->
+    <div class="form-section">
+      <h3 class="section-title">Basic Information</h3>
+      
       <div class="form-group">
-        <label class="form-label">Logements (Select multiple)</label>
-        <select 
-          multiple
-          class="form-select"
-          [(ngModel)]="pack.logements"
-          name="logements"
-          aria-label="Select logements"
-        >
-          <option *ngIf="!logements.length" disabled>No logements available</option>
-          <option *ngFor="let logement of logements" [value]="logement.id">
-            {{ logement.titre }}
-          </option>
-        </select>
+        <label class="form-label">Pack Name *</label>
+        <input 
+          type="text" 
+          class="form-input"
+          [(ngModel)]="pack.nom" 
+          name="nom" 
+          required 
+          placeholder="e.g., Summer Adventure Package"
+        />
       </div>
 
       <div class="form-group">
-        <label class="form-label">Restaurants (Select multiple)</label>
-        <select 
-          multiple
-          class="form-select"
-          [(ngModel)]="pack.restaurants"
-          name="restaurants"
-          aria-label="Select restaurants"
-        >
-          <option *ngIf="!restaurants.length" disabled>No restaurants available</option>
-          <option *ngFor="let restaurant of restaurants" [value]="restaurant.id">
-            {{ restaurant.nom }}
-          </option>
-        </select>
+        <label class="form-label">Price (TND) *</label>
+        <input 
+          type="number" 
+          class="form-input"
+          [(ngModel)]="pack.prix" 
+          name="prix" 
+          required 
+          placeholder="Enter price"
+        />
       </div>
 
       <div class="form-group">
-        <label class="form-label">Activities (Select multiple)</label>
-        <select 
-          multiple
-          class="form-select"
-          [(ngModel)]="pack.activities"
-          name="activities"
-          aria-label="Select activities"
-        >
-          <option *ngIf="!activities.length" disabled>No activities available</option>
-          <option *ngFor="let activity of activities" [value]="activity.id">
-            {{ activity.name }}
-          </option>
-        </select>
+        <label class="form-label">Description *</label>
+        <textarea 
+          class="form-textarea"
+          [(ngModel)]="pack.description" 
+          name="description" 
+          required
+          placeholder="Describe what makes this pack special..."
+        ></textarea>
       </div>
-
-      <div class="form-group">
-        <label class="form-label">Transports (Select multiple)</label>
-        <select 
-          multiple
-          class="form-select"
-          [(ngModel)]="pack.transports"
-          name="transports"
-          aria-label="Select transports"
-        >
-          <option *ngIf="!transports.length" disabled>No transports available</option>
-          <option *ngFor="let transport of transports" [value]="transport.id">
-            {{ transport.id }} - {{ transport.type }}
-          </option>
-        </select>
-      </div>
-
     </div>
 
-    <!-- Submit Button -->
-    <button 
-      type="submit" 
-      class="submit-button"
-      [disabled]="!packForm.valid"
-    >
-      Create Pack
-    </button>
+    <!-- Components -->
+    <div class="form-section">
+      <h3 class="section-title">Pack Components</h3>
+      <p class="section-subtitle">Select at least two categories</p>
+
+      <div class="component-grid">
+        <!-- Logements -->
+        <div class="component-card">
+          <div class="card-header">
+            <h4>Accommodations</h4>
+            <span class="badge">{{ (pack.logements || []).length }} selected</span>
+          </div>
+          <div class="checkbox-list">
+            <div *ngFor="let logement of getPaginatedItems(logements, 'logements')" class="checkbox-item">
+              <input 
+                type="checkbox" 
+                [id]="'logement-' + logement.id"
+                [checked]="logement.id !== undefined && (pack.logements || []).includes(logement.id)"
+                (change)="logement.id !== undefined && toggleSelection('logements', logement.id)"
+              >
+              <label [for]="'logement-' + logement.id">{{ logement.titre }}</label>
+            </div>
+            <div *ngIf="!logements.length" class="empty-state">
+              No accommodations available
+            </div>
+          </div>
+          <div class="pagination-controls" *ngIf="logements.length > itemsPerPage">
+            <button (click)="prevPage('logements')" [disabled]="currentPages['logements'] <= 1">
+              &lt; Previous
+            </button>
+            <span>Page {{ currentPages['logements'] }} of {{ totalPages('logements') }}</span>
+            <button (click)="nextPage('logements')" [disabled]="currentPages['logements'] >= totalPages('logements')">
+              Next &gt;
+            </button>
+          </div>
+        </div>
+
+        <!-- Restaurants -->
+        <div class="component-card">
+          <div class="card-header">
+            <h4>Restaurants</h4>
+            <span class="badge">{{ (pack.restaurants || []).length }} selected</span>
+          </div>
+          <div class="checkbox-list">
+            <div *ngFor="let restaurant of getPaginatedItems(restaurants, 'restaurants')" class="checkbox-item">
+              <input 
+                type="checkbox" 
+                [id]="'restaurant-' + restaurant.id"
+                [checked]="restaurant.id !== undefined && (pack.restaurants || []).includes(restaurant.id)"
+                (change)="restaurant.id !== undefined && toggleSelection('restaurants', restaurant.id)"
+              >
+              <label [for]="'restaurant-' + restaurant.id">{{ restaurant.nom }}</label>
+            </div>
+            <div *ngIf="!restaurants.length" class="empty-state">
+              No restaurants available
+            </div>
+          </div>
+          <div class="pagination-controls" *ngIf="restaurants.length > itemsPerPage">
+            <button (click)="prevPage('restaurants')" [disabled]="currentPages['restaurants'] <= 1">
+              &lt; Previous
+            </button>
+            <span>Page {{ currentPages['restaurants'] }} of {{ totalPages('restaurants') }}</span>
+            <button (click)="nextPage('restaurants')" [disabled]="currentPages['restaurants'] >= totalPages('restaurants')">
+              Next &gt;
+            </button>
+          </div>
+        </div>
+
+        <!-- Activities -->
+        <div class="component-card">
+          <div class="card-header">
+            <h4>Activities</h4>
+            <span class="badge">{{ (pack.activities || []).length }} selected</span>
+          </div>
+          <div class="checkbox-list">
+            <div *ngFor="let activity of getPaginatedItems(activities, 'activities')" class="checkbox-item">
+              <input 
+                type="checkbox" 
+                [id]="'activity-' + activity.id"
+                [checked]="activity.id !== undefined && (pack.activities || []).includes(activity.id)"
+                (change)="activity.id !== undefined && toggleSelection('activities', activity.id)"
+              >
+              <label [for]="'activity-' + activity.id">{{ activity.name }}</label>
+            </div>
+            <div *ngIf="!activities.length" class="empty-state">
+              No activities available
+            </div>
+          </div>
+          <div class="pagination-controls" *ngIf="activities.length > itemsPerPage">
+            <button (click)="prevPage('activities')" [disabled]="currentPages['activities'] <= 1">
+              &lt; Previous
+            </button>
+            <span>Page {{ currentPages['activities'] }} of {{ totalPages('activities') }}</span>
+            <button (click)="nextPage('activities')" [disabled]="currentPages['activities'] >= totalPages('activities')">
+              Next &gt;
+            </button>
+          </div>
+        </div>
+
+        <!-- Transports -->
+        <div class="component-card">
+          <div class="card-header">
+            <h4>Transports</h4>
+            <span class="badge">{{ (pack.transports || []).length }} selected</span>
+          </div>
+          <div class="checkbox-list">
+            <div *ngFor="let transport of getPaginatedItems(transports, 'transports')" class="checkbox-item">
+              <input 
+                type="checkbox" 
+                [id]="'transport-' + transport.id"
+                [checked]="transport.id !== undefined && (pack.transports || []).includes(transport.id)"
+                (change)="transport.id !== undefined && toggleSelection('transports', transport.id)"
+              >
+              <label [for]="'transport-' + transport.id">{{ transport.id }} - {{ transport.type }}</label>
+            </div>
+            <div *ngIf="!transports.length" class="empty-state">
+              No transports available
+            </div>
+          </div>
+          <div class="pagination-controls" *ngIf="transports.length > itemsPerPage">
+            <button (click)="prevPage('transports')" [disabled]="currentPages['transports'] <= 1">
+              &lt; Previous
+            </button>
+            <span>Page {{ currentPages['transports'] }} of {{ totalPages('transports') }}</span>
+            <button (click)="nextPage('transports')" [disabled]="currentPages['transports'] >= totalPages('transports')">
+              Next &gt;
+            </button>
+          </div>
+        </div>
+
+        <!-- Events -->
+        <div class="component-card">
+          <div class="card-header">
+            <h4>Events</h4>
+            <span class="badge">{{ (pack.evenements || []).length }} selected</span>
+          </div>
+          <div class="checkbox-list">
+            <div *ngFor="let evenement of getPaginatedItems(evenements, 'evenements')" class="checkbox-item">
+              <input 
+                type="checkbox" 
+                [id]="'event-' + evenement.id"
+                [checked]="evenement.id !== undefined && (pack.evenements || []).includes(evenement.id)"
+                (change)="evenement.id !== undefined && toggleSelection('evenements', evenement.id)"
+              >
+              <label [for]="'event-' + evenement.id">{{ evenement.title }}</label>
+            </div>
+            <div *ngIf="!evenements.length" class="empty-state">
+              No events available
+            </div>
+          </div>
+          <div class="pagination-controls" *ngIf="evenements.length > itemsPerPage">
+            <button (click)="prevPage('evenements')" [disabled]="currentPages['evenements'] <= 1">
+              &lt; Previous
+            </button>
+            <span>Page {{ currentPages['evenements'] }} of {{ totalPages('evenements') }}</span>
+            <button (click)="nextPage('evenements')" [disabled]="currentPages['evenements'] >= totalPages('evenements')">
+              Next &gt;
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Submit -->
+    <div class="form-actions">
+      <button 
+        type="submit" 
+        class="submit-button"
+        [disabled]="!packForm.valid"
+      >
+        Create Pack
+      </button>
+    </div>
   </form>
 </div>
-<style> 
-.container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
-  font-family: Arial, Helvetica, sans-serif;
-}
-
-/* Form container */
-.form-container {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-/* Form group (label + input/select/textarea) */
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-/* Labels */
-.form-label {
-  font-weight: bold;
-  color: #333;
-  font-size: 16px;
-}
-
-/* Text inputs and textarea */
-.form-input,
-.form-textarea {
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 16px;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.form-input:focus,
-.form-textarea:focus {
-  border-color: #007bff;
-  outline: none;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
-}
-
-.form-textarea {
-  min-height: 100px;
-  resize: vertical;
-}
-
-/* Dropdown container */
-.id-list-container {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-/* Select dropdowns */
-.form-select {
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 16px;
-  height: 150px; /* Fixed height for multiple select */
-  width: 100%;
-  background-color: #fff;
-  box-sizing: border-box;
-}
-
-.form-select:focus {
-  border-color: #007bff;
-  outline: none;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
-}
-
-.form-select option {
-  padding: 8px;
-  font-size: 16px;
-}
-
-/* Submit button */
-.submit-button {
-  padding: 12px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 16px;
-  transition: background-color 0.2s;
-}
-
-.submit-button:hover {
-  background-color: #0056b3;
-}
-
-.submit-button:disabled {
-  background-color: #6c757d;
-  cursor: not-allowed;
-}
-
-/* Error and success messages */
-.error-message {
-  color: #dc3545;
-  padding: 10px;
-  border: 1px solid #dc3545;
-  border-radius: 4px;
-  margin-bottom: 20px;
-  font-size: 14px;
-}
-
-.success-message {
-  color: #28a745;
-  padding: 10px;
-  border: 1px solid #28a745;
-  border-radius: 4px;
-  margin-bottom: 20px;
-  font-size: 14px;
-}
-
-/* Header */
-h2 {
-  color: #333;
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-/* Responsive design */
-@media (max-width: 600px) {
-  .container {
-    padding: 15px;
-  }
-
-  .form-input,
-  .form-textarea,
-  .form-select {
-    font-size: 14px;
-  }
-
-  .form-select {
-    height: 120px; /* Smaller height on mobile */
-  }
-
-  .submit-button {
-    font-size: 14px;
-    padding: 10px;
-  }
-
-  .form-label {
-    font-size: 14px;
-  }
-
-  h2 {
-    font-size: 20px;
-  }
-}
-
-</style>

@@ -7,6 +7,11 @@ import { AuthService } from 'src/app/core/services/auth.service';
 import { StatutReservation } from 'src/app/core/models/statut-reservation.model';
 import { PackService } from 'src/app/core/services/pack.service';
 
+interface EnhancedReservation extends Reservation {
+  reservationTime?: string;
+  tablePreference?: string;
+}
+
 interface ReservationStats {
   totalReservations: number;
   byType: { [key in TypeReservation]: number };
@@ -21,9 +26,8 @@ interface ReservationStats {
   styleUrls: ['./reservation-list.component.scss']
 })
 export class ReservationListComponent implements OnInit {
-  reservations: Reservation[] = [];
-  filteredReservations: Reservation[] = [];
-  private deletedReservations: Reservation[] = []; // Store deleted reservations locally
+  reservations: EnhancedReservation[] = [];
+  filteredReservations: EnhancedReservation[] = [];
   reservationStats: ReservationStats = {
     totalReservations: 0,
     byType: {
@@ -38,7 +42,7 @@ export class ReservationListComponent implements OnInit {
     totalClients: 0,
     mostFrequentType: ''
   };
-  selectedReservation?: Reservation;
+  selectedReservation?: EnhancedReservation;
   searchQuery: string = '';
   selectedType: TypeReservation | '' = '';
   showModal: boolean = false;
@@ -87,10 +91,8 @@ export class ReservationListComponent implements OnInit {
           return;
         }
 
-        // Log raw data
         console.log(`Raw ${this.showUpcoming ? 'upcoming' : 'history'} reservations:`, JSON.stringify(data, null, 2));
 
-        // Map reservations and validate dates
         let mappedReservations = data
           .map(reservation => this.mapReservation(reservation))
           .filter(reservation => {
@@ -101,30 +103,25 @@ export class ReservationListComponent implements OnInit {
             return isValid;
           });
 
-        // Update statuses for EN_ATTENTE reservations
         this.updateReservationStatuses(mappedReservations, now).then(() => {
           if (this.showUpcoming) {
-            // Filter upcoming reservations (dateDebut > now)
             this.reservations = mappedReservations.filter(res => {
-              const isUpcoming = res.dateDebut > now && res.statut !== StatutReservation.CANCELLED;
+              const isUpcoming = res.dateDebut >= now && res.statut !== StatutReservation.CANCELLED;
               if (!isUpcoming) {
                 console.warn('Non-upcoming or cancelled reservation found in upcoming list:', res);
               }
               return isUpcoming;
             });
           } else {
-            // History view: filter for past CANCELLED reservations, include deleted
-            const backendReservations = mappedReservations.filter(res => {
-              const isPastAndCanceled = res.dateFin < now && res.statut === StatutReservation.CANCELLED;
-              return isPastAndCanceled;
+            this.reservations = mappedReservations.filter(res => {
+              const isHistory = res.statut === StatutReservation.CANCELLED || 
+                               (res.statut === StatutReservation.CONFIRMED && res.dateFin < now);
+              return isHistory;
             });
-            this.reservations = [...backendReservations, ...this.deletedReservations.filter(res => res.dateFin < now)];
           }
 
-          // Log mapped reservations
           console.log(`Mapped ${this.showUpcoming ? 'upcoming' : 'history'} reservations:`, JSON.stringify(this.reservations, null, 2));
 
-          // Fetch pack names for pack reservations
           const packReservations = this.reservations.filter(r => r.packId);
           if (packReservations.length > 0) {
             this.fetchPackNames(packReservations);
@@ -143,19 +140,15 @@ export class ReservationListComponent implements OnInit {
     });
   }
 
-  private async updateReservationStatuses(reservations: Reservation[], now: Date): Promise<void> {
+  private async updateReservationStatuses(reservations: EnhancedReservation[], now: Date): Promise<void> {
     const updatePromises = reservations.map(res => {
       let newStatus: StatutReservation | undefined;
-      if (res.statut === 'EN_ATTENTE' as any) {
-        if (res.dateFin < now) {
-          newStatus = StatutReservation.CANCELLED;
-        } else if (res.dateDebut > now) {
-          newStatus = StatutReservation.PENDING;
-        }
+
+      if (res.statut === StatutReservation.PENDING && res.dateDebut < now) {
+        newStatus = StatutReservation.CANCELLED;
       }
 
       if (newStatus) {
-        // Update backend
         const updatedRes = { ...res, statut: newStatus };
         return this.reservationService.updateReservation(res.id!, updatedRes).toPromise()
           .then(() => {
@@ -164,7 +157,6 @@ export class ReservationListComponent implements OnInit {
           })
           .catch(error => {
             console.error(`Error updating reservation ${res.id} to ${newStatus}:`, error);
-            // Fallback: Update locally
             res.statut = newStatus!;
             console.log(`Fallback: Locally updated reservation ${res.id} to ${newStatus}`);
           });
@@ -175,11 +167,9 @@ export class ReservationListComponent implements OnInit {
     await Promise.all(updatePromises);
   }
 
-  private mapReservation(reservation: any): Reservation {
-    // Keep EN_ATTENTE as is for updateReservationStatuses to handle
-    let statut: StatutReservation | 'EN_ATTENTE' = reservation.statut as StatutReservation;
+  private mapReservation(reservation: any): EnhancedReservation {
+    let statut: StatutReservation = reservation.statut as StatutReservation;
 
-    // Determine reservation type
     let typeres: TypeReservation | undefined;
     if (reservation.typeres && Object.values(TypeReservation).includes(reservation.typeres)) {
       typeres = reservation.typeres as TypeReservation;
@@ -199,7 +189,6 @@ export class ReservationListComponent implements OnInit {
       console.warn('Unknown reservation type:', reservation);
     }
 
-    // Ensure dates are valid Date objects
     const dateDebut = reservation.dateDebut
       ? new Date(reservation.dateDebut)
       : new Date();
@@ -211,7 +200,7 @@ export class ReservationListComponent implements OnInit {
       console.warn('Invalid dates in reservation:', reservation);
     }
 
-    return {
+    const enhancedReservation: EnhancedReservation = {
       id: reservation.id,
       userId: reservation.userId,
       dateDebut,
@@ -229,9 +218,21 @@ export class ReservationListComponent implements OnInit {
       numRooms: reservation.numRooms || 0,
       typeres
     };
+
+    // Load restaurant-specific fields from localStorage
+    if (typeres === TypeReservation.RESTAURANT && reservation.id) {
+      const storedDetails = localStorage.getItem(`reservation_${reservation.id}`);
+      if (storedDetails) {
+        const { reservationTime, tablePreference } = JSON.parse(storedDetails);
+        enhancedReservation.reservationTime = reservationTime;
+        enhancedReservation.tablePreference = tablePreference || 'No preference';
+      }
+    }
+
+    return enhancedReservation;
   }
 
-  private fetchPackNames(packReservations: Reservation[]): void {
+  private fetchPackNames(packReservations: EnhancedReservation[]): void {
     const packIds = [...new Set(packReservations.map(r => r.packId))] as number[];
     
     packIds.forEach(packId => {
@@ -315,11 +316,10 @@ export class ReservationListComponent implements OnInit {
       return matchesSearch && matchesType;
     });
 
-    // Log filtered reservations
     console.log('Filtered reservations:', JSON.stringify(this.filteredReservations, null, 2));
   }
 
-  selectReservation(reservation: Reservation): void {
+  selectReservation(reservation: EnhancedReservation): void {
     this.selectedReservation = reservation;
     this.showModal = true;
     this.selectedPackDetails = null;
@@ -388,30 +388,28 @@ export class ReservationListComponent implements OnInit {
       return;
     }
 
-    if (confirm('Are you sure you want to delete this reservation?')) {
+    if (confirm('Are you sure you want to cancel this reservation?')) {
       const reservation = this.reservations.find(r => r.id === id);
       if (!reservation) {
         alert('Reservation not found.');
         return;
       }
 
-      // Store a copy in deletedReservations with CANCELLED status
-      const deletedRes = { ...reservation, statut: StatutReservation.CANCELLED };
-      this.deletedReservations.push(deletedRes);
-      console.log(`Stored deleted reservation ${id} as CANCELLED in local memory`);
+      // Remove localStorage entry for restaurant reservations
+      if (reservation.typeres === TypeReservation.RESTAURANT) {
+        localStorage.removeItem(`reservation_${id}`);
+      }
 
-      // Delete from backend
-      this.reservationService.deleteReservation(id).subscribe({
+      const updatedRes = { ...reservation, statut: StatutReservation.CANCELLED };
+      this.reservationService.updateReservation(id, updatedRes).subscribe({
         next: () => {
-          console.log(`Reservation ${id} deleted from backend`);
+          console.log(`Reservation ${id} updated to CANCELLED`);
           this.loadReservations();
           this.selectedReservation = undefined;
         },
         error: (error) => {
-          console.error('Error deleting reservation:', error);
-          alert('Failed to delete reservation');
-          // Remove from deletedReservations if deletion fails
-          this.deletedReservations = this.deletedReservations.filter(r => r.id !== id);
+          console.error('Error updating reservation to CANCELLED:', error);
+          alert('Failed to cancel reservation');
         }
       });
     }

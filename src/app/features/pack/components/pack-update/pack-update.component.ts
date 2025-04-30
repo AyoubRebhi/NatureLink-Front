@@ -3,6 +3,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { PackService } from 'src/app/core/services/pack.service';
 import { Pack, PackDTO } from 'src/app/core/models/pack.model';
 import { HttpErrorResponse } from '@angular/common/http';
+import { LogementService, Logement } from 'src/app/core/services/logement.service';
+import { RestaurantService, Restaurant } from 'src/app/core/services/restaurant.service';
+import { EventServiceService } from 'src/app/core/services/event-service.service';
+import { Event } from 'src/app/core/models/event.module';
+import { Activity, ActivityService } from 'src/app/core/services/activity.service';
+import { Transport, TransportService } from 'src/app/core/services/transport.service';
 
 @Component({
   selector: 'app-pack-update',
@@ -11,27 +17,34 @@ import { HttpErrorResponse } from '@angular/common/http';
 })
 export class PackUpdateComponent implements OnInit {
   id: number | null = null;
-  pack: Pack | null = null;
+  pack: PackDTO | null = null;
   loading: boolean = true;
   errorMessage: string | null = null;
   submitting: boolean = false;
 
-  // Editable fields for IDs
-  userId: string = '';
-  logementIds: string = '';
-  restaurantIds: string = '';
-  activityIds: string = '';
-  transportIds: string = '';
-  evenementIds: string = '';
+  // Dropdown data
+  logements: Logement[] = [];
+  restaurants: Restaurant[] = [];
+  evenements: Event[] = [];
+  activities: Activity[] = [];
+  transports: Transport[] = [];
+  successMessage: string | null = null;
+
 
   constructor(
     private route: ActivatedRoute,
     private packService: PackService,
+    private logementService: LogementService,
+    private restaurantService: RestaurantService,
+    private eventService: EventServiceService,
+    private activityService: ActivityService,
+    private transportService: TransportService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
     this.loadPack();
+    this.loadDropdownData();
   }
 
   private loadPack(): void {
@@ -46,26 +59,24 @@ export class PackUpdateComponent implements OnInit {
         return;
       }
       console.log('Fetching pack with ID:', this.id);
-      this.loading = true;
       this.packService.getPackById(this.id).subscribe({
         next: (data: Pack) => {
           console.log('Pack data received:', JSON.stringify(data, null, 2));
-          this.pack = data;
-          // Populate ID fields with null checks
-          this.userId = data.user?.id ? data.user.id.toString() : '';
-          this.logementIds = data.logements?.length ? data.logements.map(item => item.id).join(', ') : '';
-          this.restaurantIds = data.restaurants?.length ? data.restaurants.map(item => item.id).join(', ') : '';
-          this.activityIds = data.activities?.length ? data.activities.map(item => item.id).join(', ') : '';
-          this.transportIds = data.transports?.length ? data.transports.map(item => item.id).join(', ') : '';
-          this.evenementIds = data.evenements?.length ? data.evenements.map(item => item.id).join(', ') : '';
-          console.log('Populated fields:', {
-            userId: this.userId,
-            logementIds: this.logementIds,
-            restaurantIds: this.restaurantIds,
-            activityIds: this.activityIds,
-            transportIds: this.transportIds,
-            evenementIds: this.evenementIds
-          });
+          // Map Pack to PackDTO for form binding
+          this.pack = {
+            id: data.id,
+            nom: data.nom,
+            prix: data.prix,
+            description: data.description,
+            logements: data.logements?.map(item => item.id) || [],
+            restaurants: data.restaurants?.map(item => item.id) || [],
+            activities: data.activities?.map(item => item.id) || [],
+            transports: data.transports?.map(item => item.id) || [],
+            evenements: data.evenements?.map(item => item.id) || [],
+            userId: data.user?.id,
+            averageRating: data.averageRating,
+          };
+          console.log('Populated pack:', JSON.stringify(this.pack, null, 2));
           this.loading = false;
         },
         error: (error: HttpErrorResponse) => {
@@ -99,29 +110,109 @@ export class PackUpdateComponent implements OnInit {
     }
   }
 
+  private loadDropdownData(): void {
+    this.logementService.getAllLogements().subscribe({
+      next: (data) => {
+        this.logements = data;
+        console.log('Logements loaded:', JSON.stringify(data, null, 2));
+      },
+      error: (err) => {
+        console.error('Error fetching logements:', err);
+        this.errorMessage = 'Failed to load logements.';
+      }
+    });
+
+    this.restaurantService.getAllRestaurants().subscribe({
+      next: (data) => {
+        this.restaurants = data;
+        console.log('Restaurants loaded:', JSON.stringify(data, null, 2));
+      },
+      error: (err) => {
+        console.error('Error fetching restaurants:', err);
+        this.errorMessage = 'Failed to load restaurants.';
+      }
+    });
+
+    this.eventService.getAllEvents().subscribe({
+      next: (data) => {
+        this.evenements = data;
+        console.log('Events loaded:', JSON.stringify(data, null, 2));
+      },
+      error: (err) => {
+        console.error('Error fetching evenements:', err);
+        this.errorMessage = 'Failed to load evenements.';
+      }
+    });
+
+    this.activityService.getAllActivities().subscribe({
+      next: (data) => {
+        this.activities = data;
+        console.log('Activities loaded:', JSON.stringify(data, null, 2));
+      },
+      error: (err) => {
+        console.error('Error fetching activities:', err);
+        this.errorMessage = 'Failed to load activities.';
+      }
+    });
+
+    this.transportService.getAllTransports().subscribe({
+      next: (data) => {
+        this.transports = data;
+        console.log('Transports loaded:', JSON.stringify(data, null, 2));
+      },
+      error: (err) => {
+        console.error('Error fetching transports:', err);
+        this.errorMessage = 'Failed to load transports.';
+      }
+    });
+  }
+
+  // Helper methods to get selected item details for summary
+  getSelectedLogements(): Logement[] {
+    return this.pack?.logements?.map(id => this.logements.find(l => l.id === id)).filter((l): l is Logement => !!l) || [];
+  }
+
+  getSelectedRestaurants(): Restaurant[] {
+    return this.pack?.restaurants?.map(id => this.restaurants.find(r => r.id === id)).filter((r): r is Restaurant => !!r) || [];
+  }
+
+  getSelectedEvents(): Event[] {
+    return this.pack?.evenements?.map(id => this.evenements.find(e => e.id === id)).filter((e): e is Event => !!e) || [];
+  }
+
+  getSelectedActivities(): Activity[] {
+    return this.pack?.activities?.map(id => this.activities.find(a => a.id === id)).filter((a): a is Activity => !!a) || [];
+  }
+
+  getSelectedTransports(): Transport[] {
+    return this.pack?.transports?.map(id => this.transports.find(t => t.id === id)).filter((t): t is Transport => !!t) || [];
+  }
+
   submitForm(): void {
     if (!this.pack || !this.id) {
       this.errorMessage = 'Cannot submit: Pack data or ID is missing.';
       return;
     }
 
-    this.submitting = true;
-    const packDTO: PackDTO = {
-      id: this.id,
-      nom: this.pack.nom,
-      prix: this.pack.prix,
-      description: this.pack.description,
-      logements: this.logementIds ? this.logementIds.split(',').map(id => parseInt(id.trim())).filter(id => !isNaN(id)) : [],
-      restaurants: this.restaurantIds ? this.restaurantIds.split(',').map(id => parseInt(id.trim())).filter(id => !isNaN(id)) : [],
-      activities: this.activityIds ? this.activityIds.split(',').map(id => parseInt(id.trim())).filter(id => !isNaN(id)) : [],
-      transports: this.transportIds ? this.transportIds.split(',').map(id => parseInt(id.trim())).filter(id => !isNaN(id)) : [],
-      evenements: this.evenementIds ? this.evenementIds.split(',').map(id => parseInt(id.trim())).filter(id => !isNaN(id)) : [],
-      averageRating: this.pack.averageRating
-      
-    };
+    // Validate at least two categories
+    const selectedCategories = [
+      this.pack.logements?.length || 0,
+      this.pack.restaurants?.length || 0,
+      this.pack.activities?.length || 0,
+      this.pack.transports?.length || 0,
+      this.pack.evenements?.length || 0
+    ].filter(count => count > 0).length;
 
-    console.log('Submitting PackDTO:', JSON.stringify(packDTO, null, 2));
-    this.packService.updatePack(this.id, packDTO).subscribe({
+    if (selectedCategories < 2) {
+      this.errorMessage = 'Please select at least two categories (e.g., restaurant and activity).';
+      return;
+    }
+
+    this.submitting = true;
+    this.errorMessage = null;
+
+    console.log('Submitting PackDTO:', JSON.stringify(this.pack, null, 2));
+    this.packService.updatePack(this.id, this.pack).subscribe({
       next: () => {
         console.log('Pack updated successfully, navigating to list');
         this.submitting = false;
@@ -145,8 +236,43 @@ export class PackUpdateComponent implements OnInit {
     console.log('Navigating back to list');
     this.router.navigate(['/admin/list-admin']);
   }
+  itemsPerPage: number = 5; // Items to show per page
+currentPages: { [key: string]: number } = {
+  logements: 1,
+  restaurants: 1,
+  activities: 1,
+  transports: 1,
+  evenements: 1
+};
 
-  getIdsAsString(items: { id: number }[] | undefined): string {
-    return items && items.length > 0 ? items.map(i => i.id).join(', ') : 'None';
+  getPaginatedItems(items: any[], category: string): any[] {
+    const startIndex = (this.currentPages[category] - 1) * this.itemsPerPage;
+    return items.slice(startIndex, startIndex + this.itemsPerPage);
+  }
+  
+  totalPages(category: string): number {
+    return Math.ceil((this.pack?.[category as keyof PackDTO] as any[])?.length / this.itemsPerPage) || 0;
+  }
+  
+  nextPage(category: string): void {
+    if (this.currentPages[category] < this.totalPages(category)) {
+      this.currentPages[category]++;
+    }
+  }
+  
+  prevPage(category: string): void {
+    if (this.currentPages[category] > 1) {
+      this.currentPages[category]--;
+    }
+  }
+  toggleSelection(category: string, id: number): void {
+    const array = this.pack?.[category as keyof PackDTO] as number[] ?? [];
+    const index = array.indexOf(id);
+    
+    if (index === -1) {
+      array.push(id);
+    } else {
+      array.splice(index, 1);
+    }
   }
 }

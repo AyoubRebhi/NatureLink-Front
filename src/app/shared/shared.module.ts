@@ -5,6 +5,7 @@ import { HeaderComponent } from '../layouts/main-layout/header/header.component'
 import { HeaderDashComponent } from '../layouts/dashboard/dashboard-layout/header-dash/header-dash.component';
 import { SidebarDashComponent } from '../layouts/dashboard/dashboard-layout/sidebar-dash/sidebar-dash.component';
 import { RouterModule } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -15,6 +16,8 @@ import { RouterModule } from '@angular/router';
   imports: [
     CommonModule,
     RouterModule,
+    FormsModule,   // << ADD THIS HERE TOO
+
   ],
   exports: [
     HeaderComponent,

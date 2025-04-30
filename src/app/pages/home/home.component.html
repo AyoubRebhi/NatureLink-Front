@@ -1,3 +1,23 @@
+<!-- Best Pack Popup -->
+<div *ngIf="showPopup && bestPack" class="best-pack-popup">
+    <div class="popup-content">
+        <button class="close-btn" (click)="closePopup($event)">×</button>
+        <div (click)="navigateToPacks()">
+            <h3>Top-Rated Pack!</h3>
+            <h4>{{ bestPack.nom }}</h4>
+            <p>{{ bestPack.description }}</p>
+            <div class="rating">
+                <span *ngFor="let star of [1,2,3,4,5]" 
+                      class="fa fa-star"
+                      [class.text-primary]="star <= (bestPack.averageRating || 0)"
+                      [class.text-muted]="star > (bestPack.averageRating || 0)"></span>
+            </div>
+            <p class="price">{{ bestPack.prix }} TND</p>
+            <button class="btn btn-primary btn-sm">Discover Now</button>
+        </div>
+    </div>
+</div>
+
 <!-- About Start -->
 <div class="container-xxl py-5">
     <div class="container">
@@ -84,7 +104,7 @@
             <!-- Step 3 -->
             <div class="col-lg-4 col-sm-6 text-center pt-4 wow fadeInUp" data-wow-delay="0.5s">
                 <div class="position-relative border border-primary pt-5 pb-4 px-4">
-                    <div class="d-inline-flex align-items-center justify-content-center bg-primary rounded-circle positionabsolute top-0 start-50 translate-middle shadow" style="width: 100px; height: 100px;">
+                    <div class="d-inline-flex align-items-center justify-content-center bg-primary rounded-circle position-absolute top-0 start-50 translate-middle shadow" style="width: 100px; height: 100px;">
                         <i class="fa fa-credit-card fa-3x text-white"></i>
                     </div>
                     <h5 class="mt-4">Pay Online</h5>

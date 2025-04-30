@@ -4,13 +4,16 @@ import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Restaurant } from '../models/restaurant';
 
+
 @Injectable({
   providedIn: 'root'
 })
 export class RestaurantService {
   private apiUrl = 'http://localhost:9000/restaurants'; // Matches server.port=9000
 
+
   constructor(private http: HttpClient) {}
+
 
   getAllRestaurants(): Observable<Restaurant[]> {
     return this.http.get<Restaurant[]>(this.apiUrl).pipe(
@@ -18,11 +21,13 @@ export class RestaurantService {
     );
   }
 
+
   getRestaurantById(id: number): Observable<Restaurant> {
     return this.http.get<Restaurant>(`${this.apiUrl}/${id}`).pipe(
       catchError(this.handleError)
     );
   }
+
 
   createRestaurant(formData: FormData): Observable<Restaurant> {
     return this.http.post<Restaurant>(`${this.apiUrl}/upload`, formData).pipe(
@@ -30,11 +35,13 @@ export class RestaurantService {
     );
   }
 
+
   updateRestaurant(id: number, formData: FormData): Observable<Restaurant> {
     return this.http.put<Restaurant>(`${this.apiUrl}/${id}`, formData).pipe(
       catchError(this.handleError)
     );
   }
+
 
   deleteRestaurant(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
@@ -43,15 +50,19 @@ export class RestaurantService {
   }
 
 
+
+
   getImage(filename: string): string {
     return `${this.apiUrl}/image/${filename}`;
   }
+
 
   getRestaurantsOpenNow(): Observable<Restaurant[]> {
     return this.http.get<Restaurant[]>(`${this.apiUrl}/open-now`).pipe(
       catchError(this.handleError)
     );
   }
+
 
   getRestaurantsOpenBetween(start: string, end: string): Observable<Restaurant[]> {
     const params = new HttpParams()
@@ -61,6 +72,7 @@ export class RestaurantService {
       catchError(this.handleError)
     );
   }
+
 
   private handleError(error: HttpErrorResponse): Observable<never> {
     let errorMessage = 'Une erreur est survenue. Veuillez réessayer plus tard.';
@@ -75,5 +87,6 @@ export class RestaurantService {
     return throwError(() => new Error(errorMessage));
   }
 }
+
 
 export { Restaurant };

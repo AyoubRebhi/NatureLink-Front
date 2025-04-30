@@ -5,6 +5,7 @@ import { Menu } from 'src/app/core/models/menu';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { MenuAllergenChatbotComponent } from 'src/app/features/dashboard/menu/menu-allergen-chatbot/menu-allergen-chatbot.component';
 
+
 @Component({
   selector: 'app-menu-list',
   templateUrl: './menu-list.component.html',
@@ -21,6 +22,7 @@ export class MenuListComponent implements OnInit {
   menuIdToDelete: number | null = null;
   isFiltered = false;
 
+
   constructor(
     public menuService: MenuService,
     private route: ActivatedRoute,
@@ -30,16 +32,17 @@ export class MenuListComponent implements OnInit {
     this.restaurantId = +this.route.snapshot.paramMap.get('restaurantId')! || 0;
   }
 
+
   ngOnInit(): void {
     if (this.restaurantId <= 0) {
       this.errorMessage = 'Identifiant de restaurant invalide';
       this.isLoading = false;
       return;
     }
-    console.log('Restaurant ID:', this.restaurantId);
     this.loadMenus();
     this.loadSpecialMenus();
   }
+
 
   loadMenus(): void {
     this.isLoading = true;
@@ -58,12 +61,11 @@ export class MenuListComponent implements OnInit {
     });
   }
 
+
   loadSpecialMenus(): void {
-    // Placeholder: Replace with actual logic to fetch special/popular menus
-    // For now, assume the first 3 menus are "special" for demonstration
     this.menuService.getMenusByRestaurant(this.restaurantId).subscribe({
       next: (data) => {
-        this.specialMenus = data.slice(0, 3); // Example: Take first 3 menus
+        this.specialMenus = data.slice(0, 3); // Exemple : Prendre les 3 premiers menus
       },
       error: (error) => {
         console.error('Erreur lors de la récupération des menus spéciaux : ', error);
@@ -71,12 +73,14 @@ export class MenuListComponent implements OnInit {
     });
   }
 
+
   onSearchChange(): void {
     if (!this.searchTerm) {
       this.filteredMenus = [...this.menus];
       this.isFiltered = false;
       return;
     }
+
 
     const term = this.searchTerm.toLowerCase();
     this.filteredMenus = this.menus.filter(menu =>
@@ -86,10 +90,12 @@ export class MenuListComponent implements OnInit {
     this.isFiltered = true;
   }
 
+
   openDeleteModal(content: TemplateRef<any>, menuId: number): void {
     this.menuIdToDelete = menuId;
     this.modalService.open(content);
   }
+
 
   confirmDelete(): void {
     if (this.menuIdToDelete !== null) {
@@ -109,6 +115,7 @@ export class MenuListComponent implements OnInit {
     }
   }
 
+
   openAllergenChatbot(): void {
     const modalRef = this.modalService.open(MenuAllergenChatbotComponent, { size: 'lg' });
     modalRef.componentInstance.restaurantId = this.restaurantId;
@@ -118,24 +125,28 @@ export class MenuListComponent implements OnInit {
     });
   }
 
+
   resetFilter(): void {
     this.filteredMenus = [...this.menus];
     this.isFiltered = false;
     this.searchTerm = '';
   }
 
+
   navigateToAddMenu(): void {
     this.router.navigate([`/admin/restaurants/details/${this.restaurantId}/menus/new`]);
   }
+
 
   navigateToEditMenu(menuId: number): void {
     this.router.navigate([`/admin/restaurants/details/${this.restaurantId}/menus/${menuId}/edit`]);
   }
 
+
   getImage(filename: string | undefined): string {
-    console.log();
     return filename ? this.menuService.getImage(filename) : 'assets/images/default-menu.jpg';
   }
+
 
   onImageError(event: Event): void {
     const imgElement = event.target as HTMLImageElement;

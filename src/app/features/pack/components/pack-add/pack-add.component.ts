@@ -4,7 +4,8 @@ import { PackService } from 'src/app/core/services/pack.service';
 import { Router } from '@angular/router';
 import { LogementService, Logement } from 'src/app/core/services/logement.service';
 import { RestaurantService, Restaurant } from 'src/app/core/services/restaurant.service';
-import { EventServiceService  } from 'src/app/core/services/event-service.service';
+import { EventServiceService } from 'src/app/core/services/event-service.service';
+import { Event } from 'src/app/core/models/event.module';
 import { Activity, ActivityService } from 'src/app/core/services/activity.service';
 import { Transport, TransportService } from 'src/app/core/services/transport.service';
 
@@ -34,7 +35,7 @@ export class PackAddComponent implements OnInit {
 
   loading = false;
   errorMessage: string | null = null;
-  successMessage: string | null = null;
+    successMessage: string | null = null;
 
   constructor(
     private packService: PackService,
@@ -68,7 +69,10 @@ export class PackAddComponent implements OnInit {
     });
 
     this.eventService.getAllEvents().subscribe({
-      next: (data) => (this.evenements = data),
+      next: (data) => {
+        console.log('Events:', data); // Optional: for debugging
+        this.evenements = data;
+      },
       error: (err) => {
         console.error('Error fetching evenements:', err);
         this.errorMessage = 'Failed to load evenements.';
@@ -111,6 +115,8 @@ export class PackAddComponent implements OnInit {
     this.errorMessage = null;
     this.successMessage = null;
 
+    console.log('Submitting pack:', this.pack); // Optional: for debugging
+
     this.packService.addPack(this.pack).subscribe({
       next: () => {
         this.loading = false;
@@ -124,4 +130,49 @@ export class PackAddComponent implements OnInit {
       }
     });
   }
+  toggleSelection(category: string, id: number): void {
+    const array = this.pack[category as keyof PackDTO] as number[];
+    const index = array.indexOf(id);
+    
+    if (index === -1) {
+      array.push(id);
+    } else {
+      array.splice(index, 1);
+    }
+  }
+  // Add these properties to your component class
+itemsPerPage: number = 5; // Items to show per page
+currentPages: { [key: string]: number } = {
+  logements: 1,
+  restaurants: 1,
+  activities: 1,
+  transports: 1,
+  evenements: 1
+};
+
+// Add these methods to your component class
+getPaginatedItems(items: any[], category: string): any[] {
+  const startIndex = (this.currentPages[category] - 1) * this.itemsPerPage;
+  return items.slice(startIndex, startIndex + this.itemsPerPage);
+}
+
+totalPages(category: string): number {
+  return Math.ceil((this.pack[category as keyof PackDTO] as any[]).length / this.itemsPerPage);
+}
+
+nextPage(category: string): void {
+  if (this.currentPages[category] < this.totalPages(category)) {
+    this.currentPages[category]++;
+  }
+}
+
+prevPage(category: string): void {
+  if (this.currentPages[category] > 1) {
+    this.currentPages[category]--;
+  }
+}
+goBack(): void {
+  console.log('Navigating back to list');
+  this.router.navigate(['/admin/list-admin']);
+}
 }

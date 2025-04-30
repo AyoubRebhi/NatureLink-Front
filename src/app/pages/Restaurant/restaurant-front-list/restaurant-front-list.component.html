@@ -67,13 +67,9 @@
                 <a [routerLink]="['/restaurants', resto.id]" class="btn btn-outline-success w-100">
                   <i class="bi bi-eye me-1"></i> View Details
                 </a>
-                <button
-                  class="btn btn-primary w-100"
-                  (click)="bookRestaurant(resto.id!)"
-                  [disabled]="!isAuthenticated()"
-                >
-                  <i class="bi bi-book me-1"></i> Book
-                </button>
+                <a [routerLink]="['/reservation/create']" [queryParams]="{ type: 'RESTAURANT', id: resto.id }" class="btn btn-success w-100">
+                  <i class="bi bi-book me-1"></i> Book a Table
+                </a>
               </div>
             </div>
           </div>
@@ -115,16 +111,12 @@
             <strong>Capacité:</strong> {{ resto.capacite }}
           </p>
           <div class="mt-auto d-flex gap-2">
-            <a [routerLink]="['/restaurants', resto.id]" class="btn btn-outline-success btn-sm w-100">
+            <a [routerLink]="['/restaurants', resto.id]" class="btn btn-outline-success btn-sm">
               <i class="bi bi-eye me-1"></i> View Details
             </a>
-            <button
-              class="btn btn-primary btn-sm w-100"
-              (click)="bookRestaurant(resto.id!)"
-              [disabled]="!isAuthenticated()"
-            >
-              <i class="bi bi-book me-1"></i> Book
-            </button>
+            <a [routerLink]="['/reservation/create']" [queryParams]="{ type: 'RESTAURANT', id: resto.id }" class="btn btn-success btn-sm">
+              <i class="bi bi-book me-1"></i> Book a Table
+            </a>
           </div>
         </div>
       </div>
