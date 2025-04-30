@@ -3,6 +3,8 @@ import { Logement } from '../../../../core/models/logement.model';
 import { LogementService } from '../../../../core/services/logement.service';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { environment } from 'src/environments/environment';
+import { AuthService } from 'src/app/core/services/auth.service';
+
 @Component({
   selector: 'app-logement-list-user',
   templateUrl: './logement-list-user.component.html',
@@ -14,28 +16,41 @@ export class LogementListUserComponent implements OnInit, OnDestroy {
   imageInterval: any; // Store interval for auto-play
   selectedLogementForMap: Logement | null = null;
   mapUrl: SafeResourceUrl | null = null;
-  constructor(private logementService: LogementService,
-        private sanitizer: DomSanitizer
-    
+ 
+
+  constructor(
+    private logementService: LogementService,
+    private sanitizer: DomSanitizer,
+    private authService: AuthService
   ) {}
-
+  
   ngOnInit(): void {
-    this.loadLogements();
+    const userId = this.authService.getCurrentUserId();
+    if (userId) {
+      this.loadLogements(); // Backend uses token to get user ID
+    } else {
+      console.error('User not logged in or token invalid');
+    }
   }
-
   loadLogements(): void {
-    this.logementService.getLogementsByUser().subscribe({
+    const userId = this.authService.getCurrentUserId(); // Ensure this returns a number
+    if (!userId) {
+      console.error('User ID not found.');
+      return;
+    }
+  
+    this.logementService.getLogementsByUser(userId).subscribe({
       next: (data) => {
         this.logements = data;
-        // Initialize image index for each logement
         this.logements.forEach(logement => {
           this.currentImageIndex[logement.id!] = 0;
         });
-        this.startAutoPlay(); // Start auto-play for images
+        this.startAutoPlay();
       },
       error: (err) => console.error('Error loading logements:', err)
     });
   }
+  
 
   deleteLogement(id: number): void {
     const confirmed = window.confirm('Are you sure you want to delete this logement?');

@@ -1,4 +1,3 @@
-// front-list.component.ts
 import { Component, OnInit } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { PackService } from 'src/app/core/services/pack.service';
@@ -18,7 +17,7 @@ export class FrontListComponent implements OnInit {
   showRatingModal: boolean = false;
   selectedPack: PackDTO | null = null;
   selectedRating: number = 0;
-  userId?: number; // Set from AuthService
+  userId?: number;
   loading: boolean = false;
   errorMessage: string | null = null;
   showChat: boolean = false;
@@ -36,7 +35,6 @@ export class FrontListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Check if user is authenticated
     if (!this.authService.isAuthenticated()) {
       this.router.navigate(['/login'], {
         queryParams: { returnUrl: this.router.url }
@@ -44,7 +42,6 @@ export class FrontListComponent implements OnInit {
       return;
     }
 
-    // Set userId from AuthService
     this.userId = this.authService.getCurrentUserId() || undefined;
     if (!this.userId) {
       this.router.navigate(['/login'], {
@@ -87,6 +84,13 @@ export class FrontListComponent implements OnInit {
     });
   }
 
+  bookPack(pack: PackDTO): void {
+    if (!this.userId) {
+      this.router.navigate(['/login'], { queryParams: { returnUrl: this.router.url } });
+      return;
+    }
+    this.router.navigate(['/reservation/create'], { queryParams: { packId: pack.id, type: 'PACK' } });
+  }
   getStarRating(rating: number): string[] {
     const fullStars = Math.floor(rating);
     const hasHalfStar = rating % 1 >= 0.5;

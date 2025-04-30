@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { ReservationService } from 'src/app/core/services/reservation.service';
 import { Reservation } from 'src/app/core/models/reservation.model';
 import { StatutReservation } from 'src/app/core/models/statut-reservation.model';
@@ -7,6 +7,9 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { AuthService } from 'src/app/core/services/auth.service';
+import { PackService } from 'src/app/core/services/pack.service';
+import { Pack } from 'src/app/core/models/pack.model';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-reservation-create',
@@ -19,11 +22,14 @@ export class ReservationCreateComponent implements OnInit, OnDestroy {
   clientNames: string[] = [''];
   dateDebut: Date = new Date();
   dateFin: Date = new Date();
-  selectedStatut: StatutReservation = StatutReservation.EN_ATTENTE;
+  selectedStatut: StatutReservation = StatutReservation.PENDING;
   statutOptions: StatutReservation[] = Object.values(StatutReservation);
   numRooms: number = 1;
   selectedType: TypeReservation = TypeReservation.ACTIVITE;
   typeSpecificId: number = 1;
+  packId: number | null = null;
+  hasLogement: boolean = false;
+  TypeReservation = TypeReservation; // Expose enum to template
 
   today: string;
   isLoading: boolean = false;
@@ -34,9 +40,11 @@ export class ReservationCreateComponent implements OnInit, OnDestroy {
 
   constructor(
     private reservationService: ReservationService,
+    private packService: PackService,
     private router: Router,
     private route: ActivatedRoute,
-    private authService: AuthService
+    private authService: AuthService,
+    private cdr: ChangeDetectorRef
   ) {
     this.today = new Date().toISOString().split('T')[0];
     const cachedStatutOptions = localStorage.getItem('statutOptions');
@@ -48,7 +56,6 @@ export class ReservationCreateComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // Check if user is authenticated
     if (!this.authService.isAuthenticated()) {
       this.router.navigate(['/login'], {
         queryParams: { returnUrl: this.router.url }
@@ -56,17 +63,25 @@ export class ReservationCreateComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Subscribe to route query parameters to get type and ID
     this.routeSubscription = this.route.queryParams.subscribe(params => {
+      console.log('Query Params:', params);
+      const packId = parseInt(params['packId'], 10);
       const type = params['type'] as TypeReservation;
       const id = parseInt(params['id'], 10);
 
-      if (type && Object.values(TypeReservation).includes(type)) {
+      if (packId && !isNaN(packId)) {
+        this.packId = packId;
+        this.selectedType = TypeReservation.PACK;
+        this.typeSpecificId = packId;
+        this.fetchPackDetails(packId);
+      } else if (type && Object.values(TypeReservation).includes(type)) {
         this.selectedType = type;
+        if (id && !isNaN(id)) {
+          this.typeSpecificId = id;
+        }
       }
-      if (id && !isNaN(id)) {
-        this.typeSpecificId = id;
-      }
+
+      console.log('Selected Type:', this.selectedType, 'Type Specific ID:', this.typeSpecificId, 'Pack ID:', this.packId);
     });
 
     this.generateClientInputs();
@@ -82,6 +97,24 @@ export class ReservationCreateComponent implements OnInit, OnDestroy {
     if (this.routeSubscription) {
       this.routeSubscription.unsubscribe();
     }
+  }
+
+  private fetchPackDetails(packId: number): void {
+    this.isLoading = true;
+    this.packService.getPackById(packId).subscribe({
+      next: (pack: Pack) => {
+        this.hasLogement = pack.logements && pack.logements.length > 0;
+        console.log('Pack Details:', pack, 'Has Logement:', this.hasLogement);
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      },
+      error: (error: HttpErrorResponse) => {
+        this.errorMessage = 'Failed to load pack details';
+        console.error('Error fetching pack:', error);
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   onNumClientsChange(): void {
@@ -108,7 +141,6 @@ export class ReservationCreateComponent implements OnInit, OnDestroy {
   createReservation(): void {
     this.errorMessage = null;
 
-    // Get the current user's ID
     const userId = this.authService.getCurrentUserId();
     if (!userId) {
       this.errorMessage = 'Utilisateur non connecté. Veuillez vous reconnecter.';
@@ -131,6 +163,10 @@ export class ReservationCreateComponent implements OnInit, OnDestroy {
       this.errorMessage = 'Veuillez entrer un nombre valide de chambres.';
       return;
     }
+    if (this.selectedType === TypeReservation.PACK && this.hasLogement && this.numRooms < 1) {
+      this.errorMessage = 'Veuillez entrer un nombre valide de chambres pour ce pack.';
+      return;
+    }
     if (!this.typeSpecificId || this.typeSpecificId <= 0) {
       this.errorMessage = 'Veuillez entrer un ID valide pour le type de réservation.';
       return;
@@ -145,7 +181,8 @@ export class ReservationCreateComponent implements OnInit, OnDestroy {
       typeres: this.selectedType,
       numClients: this.numClients,
       clientNames: this.clientNames.map(name => name.trim()),
-      numRooms: this.selectedType === TypeReservation.LOGEMENT ? this.numRooms : undefined,
+      numRooms: (this.selectedType === TypeReservation.LOGEMENT || (this.selectedType === TypeReservation.PACK && this.hasLogement)) ? this.numRooms : undefined,
+      packId: this.selectedType === TypeReservation.PACK ? this.typeSpecificId : undefined,
       logementId: this.selectedType === TypeReservation.LOGEMENT ? this.typeSpecificId : undefined,
       transportId: this.selectedType === TypeReservation.TRANSPORT ? this.typeSpecificId : undefined,
       restaurantId: this.selectedType === TypeReservation.RESTAURANT ? this.typeSpecificId : undefined,
@@ -186,10 +223,12 @@ export class ReservationCreateComponent implements OnInit, OnDestroy {
     this.clientNames = [''];
     this.dateDebut = new Date();
     this.dateFin = new Date();
-    this.selectedStatut = StatutReservation.EN_ATTENTE;
+    this.selectedStatut = StatutReservation.PENDING;
     this.numRooms = 1;
     this.selectedType = TypeReservation.ACTIVITE;
     this.typeSpecificId = 1;
+    this.packId = null;
+    this.hasLogement = false;
     this.errorMessage = null;
   }
 

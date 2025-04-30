@@ -143,6 +143,7 @@ import { TransportsComponent } from './pages/transports/transports.component';
     PickerModule,
 
     // Angular Material
+    PickerModule,
     MatButtonModule,
     MatDialogModule,
     MatFormFieldModule,

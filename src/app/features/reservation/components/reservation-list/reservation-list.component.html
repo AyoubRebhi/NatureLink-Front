@@ -51,21 +51,26 @@
         'transport': reservation.transportId,
         'logement': reservation.logementId,
         'restaurant': reservation.restaurantId,
-        'event': reservation.eventId
+        'event': reservation.eventId,
+        'pack': reservation.packId
       }"
     >
-      <div class="card-header">
-        <span class="card-badge">
-          <span *ngIf="reservation.activityId"><i class="fas fa-hiking"></i> Activity</span>
-          <span *ngIf="reservation.transportId"><i class="fas fa-bus"></i> Transport</span>
-          <span *ngIf="reservation.logementId"><i class="fas fa-hotel"></i> Accommodation</span>
-          <span *ngIf="reservation.restaurantId"><i class="fas fa-utensils"></i> Dining</span>
-          <span *ngIf="reservation.eventId"><i class="fas fa-calendar-check"></i> Event</span>
-        </span>
-        <span class="card-status" [ngClass]="reservation.statut.toLowerCase()">
-          {{ reservation.statut }}
-        </span>
-      </div>
+    <div class="card-header">
+      <span class="card-badge" [ngClass]="reservation.typeres?.toLowerCase()">
+        <ng-container [ngSwitch]="reservation.typeres">
+          <span *ngSwitchCase="TypeReservation.ACTIVITE"><i class="fas fa-hiking"></i> Activity</span>
+          <span *ngSwitchCase="TypeReservation.TRANSPORT"><i class="fas fa-bus"></i> Transport</span>
+          <span *ngSwitchCase="TypeReservation.LOGEMENT"><i class="fas fa-hotel"></i> Accommodation</span>
+          <span *ngSwitchCase="TypeReservation.RESTAURANT"><i class="fas fa-utensils"></i> Dining</span>
+          <span *ngSwitchCase="TypeReservation.EVENT"><i class="fas fa-calendar-check"></i> Event</span>
+          <span *ngSwitchCase="TypeReservation.PACK"><i class="fas fa-box-open"></i> Pack</span>
+          <span *ngSwitchDefault><i class="fas fa-question"></i> Unknown</span>
+        </ng-container>
+      </span>
+      <span class="card-status" [ngClass]="reservation.statut.toLowerCase()">
+        {{ reservation.statut }}
+      </span>
+    </div>
       
       <div class="card-body">
         <h3>{{ reservation.clientNames?.[0] ?? 'New Reservation' }}</h3>
@@ -78,11 +83,6 @@
             <i class="fas fa-plane-arrival"></i>
             <span>{{ reservation.dateFin | date: 'MMM d, yyyy' }}</span>
           </div>
-        </div>
-        
-        <div *ngIf="reservation.logementId" class="card-detail">
-          <i class="fas fa-door-open"></i>
-          <span>{{ reservation.numRooms }} room(s)</span>
         </div>
       </div>
       
@@ -137,6 +137,9 @@
           <button class="reservation-type-btn" (click)="selectReservationType(TypeReservation.RESTAURANT)">
             <i class="fas fa-utensils"></i> Dining
           </button>
+          <button class="reservation-type-btn" (click)="selectReservationType(TypeReservation.PACK)">
+            <i class="fas fa-box-open"></i> Pack
+          </button>
         </div>
       </div>
       <div class="modal-footer">
@@ -161,13 +164,15 @@
           'transport': selectedReservation?.transportId,
           'logement': selectedReservation?.logementId,
           'restaurant': selectedReservation?.restaurantId,
-          'event': selectedReservation?.eventId
+          'event': selectedReservation?.eventId,
+          'pack': selectedReservation?.packId
         }">
           <span *ngIf="selectedReservation?.activityId"><i class="fas fa-hiking"></i> Activity</span>
           <span *ngIf="selectedReservation?.transportId"><i class="fas fa-bus"></i> Transport</span>
           <span *ngIf="selectedReservation?.logementId"><i class="fas fa-hotel"></i> Accommodation</span>
           <span *ngIf="selectedReservation?.restaurantId"><i class="fas fa-utensils"></i> Dining</span>
           <span *ngIf="selectedReservation?.eventId"><i class="fas fa-calendar-check"></i> Event</span>
+          <span *ngIf="selectedReservation?.packId"><i class="fas fa-box-open"></i> Pack</span>
         </span>
       </div>
       
@@ -199,14 +204,6 @@
                 <span class="date-value">{{ selectedReservation?.dateFin | date: 'fullDate' }}</span>
               </div>
             </div>
-          </div>
-        </div>
-        
-        <div class="detail-section" *ngIf="selectedReservation?.logementId">
-          <h3><i class="fas fa-hotel"></i> Accommodation Details</h3>
-          <div class="detail-item">
-            <i class="fas fa-door-open"></i>
-            <span>{{ selectedReservation?.numRooms }} room(s)</span>
           </div>
         </div>
         
@@ -400,4 +397,26 @@
       font-size: 14px;
     }
   }
+  /* Add to your existing CSS */
+.reservation-card.pack {
+  border-left: 4px solid #9c27b0; /* Purple accent for packs */
+}
+
+.reservation-card.pack .card-badge {
+  background-color: #9c27b0;
+}
+
+/* Add pack icon styling */
+.fa-box-open {
+  margin-right: 5px;
+}
+.modal-badge.pack {
+  background: rgba(156, 39, 176, 0.1);
+  color: #9c27b0;
+  border: 1px solid rgba(156, 39, 176, 0.3);
+  
+  i {
+    color: #9c27b0;
+  }
+} 
   </style>

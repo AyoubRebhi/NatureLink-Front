@@ -43,7 +43,16 @@
       <input type="number" id="price" class="form-control" [(ngModel)]="logement.price" name="price" required min="1" #priceRef="ngModel">
       <div *ngIf="priceRef.invalid && priceRef.touched" class="text-danger">Price must be at least 1.</div>
     </div>
-
+<!-- Proprietaire -->
+<div class="form-group">
+  <label for="proprietarield">Propriétaire</label>
+  <select id="proprietarield" class="form-control" [(ngModel)]="logement.proprietarield" name="proprietarield" required>
+    <option value="">Select a User</option>
+    <option *ngFor="let user of users" [value]="user.id">
+      {{ user.username }}
+    </option>
+  </select>
+</div>
     <!-- Image Upload -->
     <div class="form-group">
       <label for="images">Upload Images</label>

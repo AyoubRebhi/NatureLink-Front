@@ -1,11 +1,11 @@
 <div class="container">
   <!-- Header -->
-  <h2>Découvrez nos Packs</h2>
+  <h2>Discover Our Packs</h2>
   
   <!-- Loading Indicator -->
   <div *ngIf="loading" class="loading-indicator">
     <div class="spinner"></div>
-    <p>Chargement des packs...</p>
+    <p>Loading packs...</p>
   </div>
 
   <!-- Error Message -->
@@ -30,26 +30,31 @@
         <span class="rating-value">({{ pack.averageRating ? pack.averageRating.toFixed(1) : '0' }})</span>
       </div>
       
-      <button class="rate-button" (click)="openRatingModal(pack)">Noter ce pack</button>
-      <button class="generate-button" (click)="ggenerateImageForPack(pack)">
-        🖼️ Générer une image
-      </button>
+      <div class="pack-actions">
+        <button class="book-button" (click)="bookPack(pack)">
+          📅 Book Now
+        </button>
+        <button class="rate-button" (click)="openRatingModal(pack)">Rate this pack</button>
+        <button class="generate-button" (click)="ggenerateImageForPack(pack)">
+          🖼️ Generate Image
+        </button>
+      </div>
     </div>
   </div>
 
   <!-- No Packs Message -->
   <div *ngIf="packs.length === 0 && !loading" class="empty-state">
-    <p>Aucun pack disponible pour le moment.</p>
+    <p>No packs available at the moment.</p>
   </div>
 
   <!-- Rating Modal Popup -->
   <div *ngIf="showRatingModal" class="modal-overlay">
     <div class="modal-content">
       <div class="modal-header">
-        <h3>Noter {{ selectedPack?.nom }}</h3>
+        <h3>Rate {{ selectedPack?.nom }}</h3>
       </div>
       <div class="modal-body">
-        <p>Sélectionnez votre évaluation</p>
+        <p>Select your rating</p>
         
         <div class="star-rating">
           <span *ngFor="let star of [1,2,3,4,5]; let i = index" 
@@ -60,10 +65,10 @@
         </div>
         
         <div class="rating-description">
-          {{ selectedRating === 0 ? 'Sélectionnez une note' : 
-            selectedRating === 1 ? 'Pas satisfait' :
-            selectedRating === 5 ? 'Excellent !' : 
-            selectedRating + ' étoiles' }}
+          {{ selectedRating === 0 ? 'Select a rating' : 
+            selectedRating === 1 ? 'Not satisfied' :
+            selectedRating === 5 ? 'Excellent!' : 
+            selectedRating + ' stars' }}
         </div>
         
         <div *ngIf="errorMessage" class="error-message">
@@ -71,11 +76,11 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button class="cancel-button" (click)="closeRatingModal()">Annuler</button>
+        <button class="cancel-button" (click)="closeRatingModal()">Cancel</button>
         <button class="submit-button" 
                 (click)="submitRating()" 
                 [disabled]="selectedRating === 0">
-          Soumettre
+          Submit
         </button>
       </div>
     </div>
@@ -93,7 +98,7 @@
   
         <div *ngIf="!generatedImageUrl" class="image-loading">
           <div class="loading-spinner"></div>
-          <p>Génération de l'image en cours...</p>
+          <p>Generating image...</p>
         </div>
   
         <div *ngIf="generatedImageUrl" style="text-align: center;">
@@ -135,7 +140,7 @@
           type="text" 
           [(ngModel)]="userMessage" 
           (keyup.enter)="sendMessage()" 
-          placeholder="Posez votre question..."
+          placeholder="Ask your question..."
           class="message-input"
         >
         <button (click)="sendMessage()" class="send-button">
@@ -150,6 +155,6 @@
   <!-- Floating Chat Button -->
   <button class="chatbot-toggle-button" (click)="toggleChat()">
     <span class="chat-icon">💬</span>
-    <span class="tooltip">Besoin d'aide ?</span>
+    <span class="tooltip">Need help?</span>
   </button>
 </div>
