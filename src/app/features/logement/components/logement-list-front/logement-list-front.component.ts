@@ -271,7 +271,7 @@ private matchesPriceRange(price: number | undefined): boolean {
     const formData = new FormData();
     formData.append('image', file, file.name);
 
-    this.http.post<any>('http://localhost:5000/search', formData).subscribe({
+    this.http.post<any>('http://localhost:5014/search', formData).subscribe({
       next: (response) => {
         if (response.matches && response.matches.length > 0) {
           const imageNames: string[] = response.matches.map((match: any) => match.image_name);
