@@ -137,16 +137,6 @@ export class HomeComponent implements OnInit {
       description: 'Get personalized suggestions with smart recommendations',
       route: '/ai-assistant'
     },
-    {
-      icon: 'fa-user',
-      title: 'Event Management',
-      description: 'Comprehensive event planning and coordination services for all your travel needs.'
-    },
-    {
-      icon: 'fa-bus',
-      title: 'Transportation',
-      description: 'Reliable transport solutions with schedules, routes, and competitive pricing.'
-    }
   ];
 
   constructor(private packService: PackService, private router: Router) {}
