@@ -1,0 +1,149 @@
+<div class="container mt-4">
+  <h2>Update Logement</h2>
+  <form [formGroup]="logementForm" (ngSubmit)="onSubmit()">
+    <!-- Titre -->
+    <div class="form-group mb-2">
+      <label>Titre</label>
+      <input formControlName="titre" class="form-control" />
+      <div *ngIf="logementForm.get('titre')?.invalid && logementForm.get('titre')?.touched" class="text-danger">
+        Titre is required and must contain only letters and valid characters.
+      </div>
+    </div>
+
+    <!-- Description -->
+    <div class="form-group mb-2">
+      <label>Description</label>
+      <textarea formControlName="description" class="form-control"></textarea>
+      <div *ngIf="logementForm.get('description')?.invalid && logementForm.get('description')?.touched" class="text-danger">
+        Description is required.
+      </div>
+    </div>
+
+    <!-- Location -->
+    <div class="form-group mb-2">
+      <label>Location</label>
+      <input formControlName="location" class="form-control" />
+      <div *ngIf="logementForm.get('location')?.invalid && logementForm.get('location')?.touched" class="text-danger">
+        Location is required.
+      </div>
+    </div>
+
+    <!-- Capacity -->
+    <div class="form-group mb-2">
+      <label>Capacity</label>
+      <input type="number" formControlName="capacity" class="form-control" />
+      <div *ngIf="logementForm.get('capacity')?.invalid && logementForm.get('capacity')?.touched" class="text-danger">
+        Capacity must be at least 1.
+      </div>
+    </div>
+
+
+    <!-- Price -->
+    <div class="form-group mb-2">
+      <label>Price</label>
+      <input type="number" formControlName="price" class="form-control" />
+      <div *ngIf="logementForm.get('price')?.invalid && logementForm.get('price')?.touched" class="text-danger">
+        Price must be a positive number.
+      </div>
+    </div>
+
+    <!-- Phone -->
+    <div class="form-group mb-2">
+      <label>Phone</label>
+      <input formControlName="phone" class="form-control" />
+      <div *ngIf="logementForm.get('phone')?.invalid && logementForm.get('phone')?.touched" class="text-danger">
+        Phone must be exactly 8 digits.
+      </div>
+    </div>
+
+    <!-- Email -->
+    <div class="form-group mb-2">
+      <label>Email</label>
+      <input formControlName="email" class="form-control" />
+      <div *ngIf="logementForm.get('email')?.invalid && logementForm.get('email')?.touched" class="text-danger">
+        Please enter a valid email.
+      </div>
+    </div>
+
+    <!-- Social Media -->
+    <div class="form-group mb-2">
+      <label>Social Media</label>
+      <input formControlName="socialMedia" class="form-control" />
+    </div>
+
+    <!-- Single Rooms -->
+    <div class="form-group mb-2">
+      <label>Single Rooms</label>
+      <input type="number" formControlName="singleRooms" class="form-control" />
+    </div>
+
+    <!-- Double Rooms -->
+    <div class="form-group mb-2">
+      <label>Double Rooms</label>
+      <input type="number" formControlName="doubleRooms" class="form-control" />
+    </div>
+
+    <!-- Equipements -->
+    <div class="form-group mb-3">
+      <label>Équipements</label>
+      <div *ngFor="let equipement of allEquipements">
+        <input
+          type="checkbox"
+          [value]="equipement.id"
+          [checked]="logementForm.get('equipements')?.value?.includes(equipement.id)"
+          (change)="onEquipementToggle($event)"
+        />
+        {{ equipement.name }}
+      </div>
+    </div>
+
+    <!-- EXISTING IMAGES -->
+    <div *ngIf="logement.images && logement.images.length > 0" class="mt-3">
+      <label>Existing Images</label>
+      <div class="d-flex flex-wrap">
+        <div *ngFor="let img of logement.images; let i = index" class="position-relative m-2">
+          <img 
+            [src]="'http://localhost:9000/uploads/' + img"
+            alt="Image"
+            onerror="this.src='assets/img-placeholder.jpg'" 
+            style="width: 150px; height: 100px; object-fit: cover; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.2);" />
+          <button type="button"
+                  class="btn btn-sm btn-danger"
+                  style="position: absolute; top: 0; right: 0;"
+                  (click)="removeExistingImage(i)">
+            ×
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- NEW IMAGE UPLOAD INPUT -->
+    <div class="form-group mb-3">
+      <label>Select New Images</label>
+      <input 
+        type="file"
+        (change)="onImagesSelected($event)"
+        class="form-control"
+        multiple
+        accept="image/*">
+    </div>
+
+    <!-- NEW IMAGE PREVIEWS -->
+    <div *ngIf="newImagePreviews.length > 0" class="mt-2 d-flex flex-wrap">
+      <div *ngFor="let preview of newImagePreviews; let i = index" class="position-relative m-2">
+        <img 
+          [src]="preview" 
+          alt="Preview" 
+          style="width: 150px; height: 100px; object-fit: cover; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
+        <button 
+          type="button"
+          (click)="removeNewImage(i)"
+          style="position: absolute; top: -5px; right: -5px; background: red; color: white; border: none; border-radius: 50%; width: 25px; height: 25px; font-weight: bold; cursor: pointer;">
+          ×
+        </button>
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary" [disabled]="logementForm.invalid">Update Logement</button>
+  </form>
+</div>

@@ -1,0 +1,84 @@
+<div class="container">
+  <!-- Destination Navigation Bar -->
+  <div class="destination-nav">
+    <h3>Destinations</h3>
+    <div class="destination-list">
+      <!-- List to be populated -->
+    </div>
+  </div>
+
+  <!-- Loading Indicator -->
+  <div *ngIf="isLoading" class="loading">
+    <p>Loading...</p>
+  </div>
+
+  <!-- Content -->
+  <div *ngIf="!isLoading">
+    <!-- Clothing Section -->
+    <div class="section">
+      <div class="container">
+        <!-- Destination Selection Dropdown -->
+        <div class="destination-selector">
+          <h2>Select a Destination</h2>
+          <select 
+            [(ngModel)]="selectedDestinationId" 
+            (change)="selectDestination(selectedDestinationId)"
+            class="form-select"
+          >
+            <option *ngFor="let destination of destinations" [value]="destination.id">
+              {{ destination.nom }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Loading Indicator -->
+        <div *ngIf="isLoading" class="loading-spinner">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </div>
+
+        <!-- Clothing Section -->
+        <div class="section" *ngIf="!isLoading">
+          <h2>Recommended Clothing</h2>
+          <div *ngIf="clothingItems.length === 0" class="no-items alert alert-info">
+            No clothing found for this destination.
+          </div>
+          <div class="row items-grid">
+            <div *ngFor="let item of clothingItems" class="col-md-4 mb-4">
+              <div class="card item-card h-100">
+                <img *ngIf="item.imageUrl" [src]="'http://localhost:9000'+item.imageUrl" alt="{{ item.name }}" class="card-img-top item-image">
+                <div class="card-body item-details">
+                  <h3 class="card-title">{{ item.name }}</h3>
+                  <p class="card-text">{{ item.description }}</p>
+                  <p class="card-text"><strong>Season:</strong> {{ item.season }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Food Section -->
+        <div class="section" *ngIf="!isLoading">
+          <h2>Recommended Food</h2>
+          <div *ngIf="foodItems.length === 0" class="no-items alert alert-info">
+            No food found for this destination.
+          </div>
+          <div class="row items-grid">
+            <div *ngFor="let item of foodItems" class="col-md-4 mb-4">
+              <div class="card item-card h-100">
+                <img [src]="'http://localhost:9000'+item.imageUrl" alt="{{ item.nom }}" class="card-img-top item-image">
+                <div class="card-body item-details">
+                  <h3 class="card-title">{{ item.nom }}</h3>
+                  <p>{{ item.description }}</p>
+                  <p><strong>Season:</strong> {{ item.season }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

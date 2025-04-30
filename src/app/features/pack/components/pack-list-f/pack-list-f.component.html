@@ -1,0 +1,160 @@
+<div class="container">
+  <!-- Header -->
+  <h2>Discover Our Packs</h2>
+  
+  <!-- Loading Indicator -->
+  <div *ngIf="loading" class="loading-indicator">
+    <div class="spinner"></div>
+    <p>Loading packs...</p>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="errorMessage && !loading" class="error-message">
+    {{ errorMessage }}
+  </div>
+
+  <!-- Pack Grid -->
+  <div *ngIf="packs.length > 0 && !loading" class="pack-grid">
+    <div *ngFor="let pack of packs" class="pack-card" [id]="'pack-' + pack.id">
+      <div class="pack-icon">🎁</div>
+      <h3>{{ pack.nom }}</h3>
+      <p class="price">{{ pack.prix }} TND</p>
+      <p class="description">{{ pack.description }}</p>
+      
+      <div class="rating-display">
+        <span *ngFor="let star of getStarRating(pack?.averageRating || 0)" 
+              [class.filled]="star === '★' || star === '½'"
+              [class.half]="star === '½'">
+          {{ star === '½' ? '½' : star }}
+        </span>
+        <span class="rating-value">({{ pack.averageRating ? pack.averageRating.toFixed(1) : '0' }})</span>
+      </div>
+      
+      <div class="pack-actions">
+        <button class="book-button" (click)="bookPack(pack)">
+          📅 Book Now
+        </button>
+        <button class="rate-button" (click)="openRatingModal(pack)">Rate this pack</button>
+        <button class="generate-button" (click)="ggenerateImageForPack(pack)">
+          🖼️ Generate Image
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- No Packs Message -->
+  <div *ngIf="packs.length === 0 && !loading" class="empty-state">
+    <p>No packs available at the moment.</p>
+  </div>
+
+  <!-- Rating Modal Popup -->
+  <div *ngIf="showRatingModal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Rate {{ selectedPack?.nom }}</h3>
+      </div>
+      <div class="modal-body">
+        <p>Select your rating</p>
+        
+        <div class="star-rating">
+          <span *ngFor="let star of [1,2,3,4,5]; let i = index" 
+                (click)="selectRating(i + 1)" 
+                [class.active]="i < selectedRating">
+            ★
+          </span>
+        </div>
+        
+        <div class="rating-description">
+          {{ selectedRating === 0 ? 'Select a rating' : 
+            selectedRating === 1 ? 'Not satisfied' :
+            selectedRating === 5 ? 'Excellent!' : 
+            selectedRating + ' stars' }}
+        </div>
+        
+        <div *ngIf="errorMessage" class="error-message">
+          {{ errorMessage }}
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="cancel-button" (click)="closeRatingModal()">Cancel</button>
+        <button class="submit-button" 
+                (click)="submitRating()" 
+                [disabled]="selectedRating === 0">
+          Submit
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="showImagePopup" class="image-popup-overlay">
+    <div class="image-popup-content">
+      <div class="image-popup-header">
+        <h3>{{ selectedImagePack?.nom }}</h3>
+        <button class="close-button" (click)="closeImagePopup()">×</button>
+      </div>
+      <div class="image-popup-body">
+        <p class="image-popup-price">{{ selectedImagePack?.prix }} TND</p>
+        <p class="image-popup-description">{{ selectedImagePack?.description }}</p>
+  
+        <div *ngIf="!generatedImageUrl" class="image-loading">
+          <div class="loading-spinner"></div>
+          <p>Generating image...</p>
+        </div>
+  
+        <div *ngIf="generatedImageUrl" style="text-align: center;">
+          <img [src]="generatedImageUrl" alt="Generated Image" style="max-width: 100%; height: auto;"
+               (error)="onImageError($event)" />
+        </div>
+  
+        <div *ngIf="errorMessage" class="alert alert-danger mt-3">
+          {{ errorMessage }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chatbot Interface -->
+  <div class="chatbot-container" [class.active]="showChat">
+    <div class="chatbot-header" (click)="toggleChat()">
+      <div class="chatbot-title">
+        <span class="chatbot-icon">💬</span>
+        <h3>NatureLink Assistant</h3>
+      </div>
+      <span class="toggle-icon">{{ showChat ? '▼' : '▲' }}</span>
+    </div>
+    
+    <div class="chatbot-body" *ngIf="showChat">
+      <div class="chatbot-messages">
+        <div *ngFor="let message of chatbotMessages" 
+             class="message" 
+             [class.user]="message.role === 'user'" 
+             [class.bot]="message.role === 'bot'">
+          <div class="message-content">
+            {{ message.text }}
+          </div>
+        </div>
+      </div>
+      
+      <div class="chatbot-input">
+        <input 
+          type="text" 
+          [(ngModel)]="userMessage" 
+          (keyup.enter)="sendMessage()" 
+          placeholder="Ask your question..."
+          class="message-input"
+        >
+        <button (click)="sendMessage()" class="send-button">
+          <svg viewBox="0 0 24 24" width="20" height="20">
+            <path fill="currentColor" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Floating Chat Button -->
+  <button class="chatbot-toggle-button" (click)="toggleChat()">
+    <span class="chat-icon">💬</span>
+    <span class="tooltip">Need help?</span>
+  </button>
+</div>

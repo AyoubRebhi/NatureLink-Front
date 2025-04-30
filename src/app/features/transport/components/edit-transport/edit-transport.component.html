@@ -1,0 +1,102 @@
+<div class="row">
+  <div class="col-lg-12">
+    <div class="card">
+      <div class="card-body">
+        <form (ngSubmit)="onSubmit()" #transportForm="ngForm" enctype="multipart/form-data">
+          <div class="row">
+            <!-- Type Field -->
+            <div class="col-lg-6 mb-3">
+              <label for="type" class="form-label">Type <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" id="type" required 
+                     [(ngModel)]="transport.type" name="type" #type="ngModel"
+                     [class.is-invalid]="type.invalid && (type.dirty || type.touched)">
+              <div *ngIf="type.invalid && (type.dirty || type.touched)" class="invalid-feedback">
+                Transport type is required
+              </div>
+            </div>
+
+            <!-- Capacity Field -->
+            <div class="col-lg-6 mb-3">
+              <label for="capacity" class="form-label">Capacity <span class="text-danger">*</span></label>
+              <input type="number" class="form-control" id="capacity" required min="1"
+                     [(ngModel)]="transport.capacity" name="capacity" #capacity="ngModel"
+                     [class.is-invalid]="capacity.invalid && (capacity.dirty || capacity.touched)">
+              <div *ngIf="capacity.invalid && (capacity.dirty || capacity.touched)" class="invalid-feedback">
+                <div *ngIf="capacity.errors?.['required']">Capacity is required</div>
+                <div *ngIf="capacity.errors?.['min']">Minimum capacity is 1</div>
+              </div>
+            </div>
+
+            <!-- Price Field -->
+            <div class="col-lg-6 mb-3">
+              <label for="pricePerKm" class="form-label">Price per km <span class="text-danger">*</span></label>
+              <div class="input-group">
+                <span class="input-group-text">TND</span>
+                <input type="number" class="form-control" id="pricePerKm" required min="0" step="0.01"
+                       [(ngModel)]="transport.pricePerKm" name="pricePerKm" #pricePerKm="ngModel"
+                       [class.is-invalid]="pricePerKm.invalid && (pricePerKm.dirty || pricePerKm.touched)">
+              </div>
+              <div *ngIf="pricePerKm.invalid && (pricePerKm.dirty || pricePerKm.touched)" class="invalid-feedback">
+                <div *ngIf="pricePerKm.errors?.['required']">Price is required</div>
+                <div *ngIf="pricePerKm.errors?.['min']">Price cannot be negative</div>
+              </div>
+            </div>
+
+            <!-- Availability Field -->
+            <div class="col-lg-6 mb-3">
+              <label class="form-label">Available</label>
+              <select class="form-select" [(ngModel)]="transport.available" name="available">
+                <option [ngValue]="true">Available</option>
+                <option [ngValue]="false">Unavailable</option>
+              </select>
+            </div>
+
+            <!-- Description Field -->
+            <div class="col-lg-12 mb-3">
+              <label for="description" class="form-label">Description <span class="text-danger">*</span></label>
+              <textarea class="form-control" id="description" name="description" rows="4" required
+                        [(ngModel)]="transport.description" #description="ngModel"
+                        [class.is-invalid]="description.invalid && (description.dirty || description.touched)"></textarea>
+              <div *ngIf="description.invalid && (description.dirty || description.touched)" class="invalid-feedback">
+                Description is required
+              </div>
+            </div>
+
+            <!-- Image Upload -->
+            <div class="col-lg-6 mb-3">
+              <label class="form-label">Change Image</label>
+              <input type="file" class="form-control" (change)="onImageSelected($event)" accept="image/*">
+              <div *ngIf="selectedImageFile" class="mt-2">
+                <img [src]="imagePreview" alt="New Image Preview" class="img-thumbnail" style="max-height: 100px;">
+              </div>
+            </div>
+
+            <!-- Current Image Preview -->
+            <div class="col-lg-6 mb-3" *ngIf="transport.imgUrl">
+              <label class="form-label">Current Image</label>
+              <div class="img-thumbnail">
+                <img [src]="transport.imgUrl" alt="Current Transport Image" class="img-fluid" style="max-height: 200px;">
+              </div>
+            </div>
+          </div>
+
+          <!-- Buttons -->
+          <div class="text-end mt-4">
+            <button type="button" class="btn btn-secondary me-2" (click)="cancel()">
+              <i class="bi bi-x-circle me-1"></i> Cancel
+            </button>
+            <button type="submit" class="btn btn-primary" [disabled]="transportForm.invalid || isSubmitting">
+              <span *ngIf="!isSubmitting">
+                <i class="bi bi-save me-1"></i> Update
+              </span>
+              <span *ngIf="isSubmitting">
+                <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                Updating...
+              </span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

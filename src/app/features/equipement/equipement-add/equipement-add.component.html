@@ -1,0 +1,22 @@
+<div class="equipement-form-container">
+    <h2>{{ isEdit ? 'Edit' : 'Add' }} Equipement</h2>
+    
+    <form (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="nom">Name</label>
+        <input
+          type="text"
+          class="form-control"
+          id="nom"
+          [(ngModel)]="equipement.name "
+          name="nom"
+          required
+        />
+      </div>
+  
+      <button type="submit" class="btn btn-success mt-3">
+        {{ isEdit ? 'Update' : 'Create' }}
+      </button>
+    </form>
+  </div>
+  

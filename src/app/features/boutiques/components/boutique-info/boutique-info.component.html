@@ -1,0 +1,49 @@
+<div class="container">
+  <div class="boutique-info">
+    <div class="top-left-button" *ngIf="isAdminView">
+      <button class="book-now" [routerLink]="['/admin/boutiques/product-add', boutiqueDetails.id]">
+        ➕ Add Product
+      </button>
+    </div>
+
+    <!-- Map and Directions Section -->
+    <div class="map-container">
+      <h3>Direction to Shop {{boutiqueDetails.nom}}</h3>
+      <p class="boutique-address" *ngIf="boutiqueDetails.adresse">
+        📍 {{ boutiqueDetails?.adresse }}
+      </p>
+      <div id="map" style="height: 500px;"></div>
+       
+    </div>
+
+    <h4 class="subtitle" *ngIf="boutiqueDetails"> {{boutiqueDetails.nom}}</h4>
+    <h2 class="title"><span>Latest</span>Products</h2>
+    <!--this one-->
+    <div *ngIf="products.length === 0" class="empty-state">
+      <img src="assets/img/error.png" alt="No Shops" class="empty-image">
+      <p style="font-size: 18px; color: #666;">
+        No Products available at the moment.<br>
+        Want to explore Products later? <a [routerLink]="['/']">Return to home</a>
+     
+    </div>
+    <!-- Product Grid -->
+    <div class="product-grid">
+      <div class="product-card" *ngFor="let item of products">
+        <div class="discount-badge">-{{ item.offre }}%</div>
+        <img [src]="item.image" alt="Product Image" class="product-image" />
+        <div class="cart-item">
+          <ul>
+            <li>{{item.nom}}</li>
+          </ul>
+        </div>
+        <p class="price">
+          <span >Cost of the product</span>
+          <span class="current"> {{ item.cost }} DT</span>
+        </p>
+        <div class="offre" *ngIf="isAdminView">
+          <i class="fas fa-times" (click)="item.id ? deleteProduit(item.id) : null"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

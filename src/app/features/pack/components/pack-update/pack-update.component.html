@@ -1,0 +1,159 @@
+<div class="container">
+  <!-- Header Section -->
+  <div class="header">
+    <h2>Modify Your Pack</h2>
+    <button class="back-button" (click)="goBack()">
+      ← Back to List
+    </button>
+  </div>
+
+  <!-- Loading Indicator -->
+  <div *ngIf="loading" class="loading-indicator">
+    <div class="spinner"></div>
+    <p>Loading pack details...</p>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="errorMessage" class="error-message">
+    {{ errorMessage }}
+  </div>
+
+  <!-- Main Form -->
+  <form *ngIf="pack && !loading && !errorMessage" (ngSubmit)="submitForm()" #packForm="ngForm" class="form-container">
+    <!-- Editable Fields Section -->
+    <section class="form-section">
+      <h3 class="section-title">Pack Information</h3>
+      
+      <div class="form-grid">
+        <!-- Name Field -->
+        <div class="form-group">
+          <label>Name</label>
+          <input 
+            type="text"
+            name="nom"
+            [(ngModel)]="pack.nom"
+            required
+            placeholder="Enter pack name"
+            class="form-input"
+          >
+        </div>
+
+        <!-- Price Field -->
+        <div class="form-group">
+          <label>Price (TND)</label>
+          <input 
+            type="number"
+            name="prix"
+            [(ngModel)]="pack.prix"
+            required
+            min="0"
+            step="0.01"
+            placeholder="Enter price"
+            class="form-input"
+          >
+        </div>
+      </div>
+
+      <!-- Description Field -->
+      <div class="form-group">
+        <label>Description</label>
+        <textarea 
+          name="description"
+          [(ngModel)]="pack.description"
+          placeholder="Describe your pack..."
+          class="form-textarea"
+        ></textarea>
+      </div>
+    </section>
+
+    <!-- Related Entities Section -->
+    <section class="form-section">
+      <h3 class="section-title">Related Entities</h3>
+      
+      <div class="form-grid">
+        <!-- Logement IDs -->
+        <div class="form-group">
+          <label>Logement IDs (comma-separated)</label>
+          <input 
+            type="text"
+            name="logementIds"
+            [(ngModel)]="logementIds"
+            placeholder="e.g., 1, 2, 3"
+            class="form-input"
+          >
+        </div>
+
+        <!-- Restaurant IDs -->
+        <div class="form-group">
+          <label>Restaurant IDs (comma-separated)</label>
+          <input 
+            type="text"
+            name="restaurantIds"
+            [(ngModel)]="restaurantIds"
+            placeholder="e.g., 3, 4"
+            class="form-input"
+          >
+        </div>
+
+        <!-- Activity IDs -->
+        <div class="form-group">
+          <label>Activity IDs (comma-separated)</label>
+          <input 
+            type="text"
+            name="activityIds"
+            [(ngModel)]="activityIds"
+            placeholder="e.g., 5, 6"
+            class="form-input"
+          >
+        </div>
+
+        <!-- Transport IDs -->
+        <div class="form-group">
+          <label>Transport IDs (comma-separated)</label>
+          <input 
+            type="text"
+            name="transportIds"
+            [(ngModel)]="transportIds"
+            placeholder="e.g., 2"
+            class="form-input"
+          >
+        </div>
+
+        <!-- Evenement IDs -->
+        <div class="form-group">
+          <label>Evenement IDs (comma-separated)</label>
+          <input 
+            type="text"
+            name="evenementIds"
+            [(ngModel)]="evenementIds"
+            placeholder="e.g., 9, 10"
+            class="form-input"
+          >
+        </div>
+
+        <!-- User ID -->
+        <div class="form-group">
+          <label>User ID</label>
+          <input 
+            type="number"
+            name="userId"
+            [(ngModel)]="pack.user.id"
+            placeholder="Enter user ID"
+            class="form-input"
+          >
+        </div>
+      </div>
+    </section>
+
+    <!-- Form Actions -->
+    <div class="form-actions">
+      <button 
+        type="submit" 
+        [disabled]="submitting || packForm.invalid"
+        class="submit-button"
+      >
+        {{ submitting ? 'Updating...' : 'Update Pack' }}
+      </button>
+    </div>
+  </form>
+</div>

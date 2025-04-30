@@ -1,0 +1,43 @@
+<!-- guide-list.component.html -->
+<div class="container mt-4">
+  <div class="d-flex justify-content-between mb-3">
+    <h2>Liste des Guides</h2>
+    <button routerLink="add" class="btn btn-primary">Ajouter un Guide</button>
+  </div>
+
+  <div *ngIf="isLoading" class="text-center">
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+  </div>
+
+  <table class="table table-striped" *ngIf="!isLoading">
+    <thead>
+      <tr>
+        
+        <th>Prénom</th>
+        <th>Nom</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let guide of guides">
+
+        <td>{{ guide.firstName }}</td>
+        <td>{{ guide.lastName }}</td>
+        <td>
+          <button [routerLink]="['edit', guide.id]" class="btn btn-sm btn-warning me-2">
+            Modifier
+          </button>
+          <button (click)="deleteGuide(guide.id!)" class="btn btn-sm btn-danger">
+            Supprimer
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

@@ -1,0 +1,267 @@
+/* Enhanced Table with Smooth UI */
+.logement-list-container {
+  max-width: 200%;
+  margin: 100px auto;
+  padding: 100;
+  background-color: transparent;
+  border-radius: 12px;
+  box-shadow: none;
+}
+
+.logement-list-container h2 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #2c3e50;
+  text-align: left;
+  margin-bottom: 20px;
+  padding: 0 25px;
+}
+
+.table-wrapper {
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  padding: 0;
+  position: left;
+}
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: auto;
+  max-height: 70vh;
+  scrollbar-width: thin;
+  scrollbar-color: #3498db #f1f1f1;
+  position: relative;
+}
+
+.table-responsive::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+  background-color: #3498db;
+  border-radius: 10px;
+  transition: background-color 0.3s ease;
+}
+
+.table-responsive::-webkit-scrollbar-thumb:hover {
+  background-color: #2980b9;
+}
+
+.logement-list-container table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin: 0;
+  background-color: transparent;
+  table-layout: auto;
+}
+
+.logement-list-container th {
+  background-color: #34495e;
+  color: white;
+  font-weight: 500;
+  padding: 16px 20px;
+  text-align: left;
+  font-size: 14px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  border-bottom: none;
+}
+
+.logement-list-container th:first-child {
+  padding-left: 25px;
+}
+
+.logement-list-container th:last-child {
+  padding-right: 25px;
+}
+
+.logement-list-container td {
+  padding: 16px 20px;
+  text-align: left;
+  border-bottom: 1px solid #ecf0f1;
+  font-size: 14px;
+  color: #34495e;
+  vertical-align: middle;
+  transition: background-color 0.2s ease;
+  white-space: nowrap;
+}
+
+.logement-list-container td:first-child {
+  padding-left: 25px;
+  font-weight: 600;
+  color: #7f8c8d;
+}
+
+.logement-list-container td:last-child {
+  padding-right: 25px;
+}
+
+/* Description column special treatment */
+.logement-list-container td:nth-child(3) {
+  max-width: 300px;
+  white-space: normal;
+  word-wrap: break-word;
+}
+
+.logement-list-container tbody tr {
+  transition: all 0.2s ease;
+}
+
+.logement-list-container tbody tr:nth-child(even) {
+  background-color: #f9fafb;
+}
+
+.logement-list-container tbody tr:hover {
+  background-color: #edf2f7;
+}
+
+.logement-list-container img {
+  max-width: 120px;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Button styling */
+.logement-list-container .btn {
+  font-size: 13px;
+  padding: 8px 14px;
+  margin: 4px;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  text-transform: none;
+  border: none;
+  outline: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+}
+
+.logement-list-container .btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.logement-list-container .btn-warning {
+  background-color: #f39c12;
+  color: white;
+}
+
+.logement-list-container .btn-warning:hover {
+  background-color: #e67e22;
+}
+
+.logement-list-container .btn-danger {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.logement-list-container .btn-danger:hover {
+  background-color: #c0392b;
+}
+.logement-list-container .btn-detail:hover {
+  background-color: #1ea5e3;
+}
+
+.logement-list-container .btn-detail {
+  background-color: #54d9e5;
+  color: white;
+}
+.logement-list-container .btn-sm {
+  font-size: 12px;
+  padding: 6px 12px;
+}
+
+/* List styling for equipements */
+.logement-list-container ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 100px;
+  overflow-y: auto;
+}
+
+.logement-list-container ul::-webkit-scrollbar {
+  width: 4px;
+}
+
+.logement-list-container ul::-webkit-scrollbar-thumb {
+  background-color: #bdc3c7;
+  border-radius: 4px;
+}
+
+.logement-list-container li {
+  padding: 3px 0 3px 15px;
+  position: relative;
+  font-size: 13px;
+}
+
+.logement-list-container li:before {
+  content: "•";
+  color: #3498db;
+  position: absolute;
+  left: 0;
+}
+
+/* Empty state styling */
+.no-data-message {
+  text-align: center;
+  padding: 40px;
+  color: #7f8c8d;
+  font-size: 16px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+  margin: 25px auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 500px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+  .logement-list-container td, 
+  .logement-list-container th {
+    padding: 14px 16px;
+  }
+  
+  .logement-list-container td:first-child,
+  .logement-list-container th:first-child {
+    padding-left: 20px;
+  }
+  
+  .logement-list-container td:last-child,
+  .logement-list-container th:last-child {
+    padding-right: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .logement-list-container {
+    margin: 15px auto;
+  }
+  
+  .table-wrapper {
+    border-radius: 10px;
+  }
+  
+  .table-responsive {
+    max-height: 65vh;
+  }
+}

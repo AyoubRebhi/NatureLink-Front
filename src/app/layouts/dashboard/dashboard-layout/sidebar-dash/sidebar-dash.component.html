@@ -1,0 +1,182 @@
+<aside class="dashboard-sidebar">
+  <!-- Brand Logo -->
+  <div class="sidebar-brand">
+    <a routerLink="/dashboard" class="brand-link">
+      <div class="brand-logo">
+        <span>NL</span>
+      </div>
+      <span class="brand-text">NatureLink</span>
+    </a>
+  </div>
+
+  <!-- User Panel -->
+  <div class="user-panel">
+    <div class="user-avatar">
+      <img src="assets/dist/img/user2-160x160.jpg" alt="User Image">
+    </div>
+    <div class="user-info">
+      <div class="user-name">Admin User</div>
+      <div class="user-status">
+        <i class="fas fa-circle online"></i> Online
+      </div>
+    </div>
+  </div>
+
+  <!-- Sidebar Menu -->
+  <nav class="sidebar-menu">
+    <ul class="menu-list">
+      <!-- Dashboard -->
+      <li class="menu-item">
+        <a routerLink="/dashboard" class="menu-link" routerLinkActive="active">
+          <i class="menu-icon fas fa-tachometer-alt"></i>
+          <span class="menu-text">Dashboard</span>
+        </a>
+      </li>
+
+      <!-- Logement Stats -->
+      <li class="menu-item">
+        <a routerLink="/admin/logement/stats" class="menu-link" routerLinkActive="active">
+          <i class="menu-icon fas fa-chart-bar"></i>
+          <span class="menu-text">Logement Stats</span>
+        </a>
+      </li>
+
+      <!-- Logement -->
+      <li class="menu-item has-submenu">
+        <div class="submenu-toggle" (click)="toggleSubmenu('logement')">
+          <i class="menu-icon fas fa-home"></i>
+          <span class="menu-text">Logement</span>
+          <i class="submenu-indicator fas fa-angle-down" [class.rotate]="submenus['logement']"></i>
+        </div>
+        <ul class="submenu-list" [class.open]="submenus['logement']">
+          <li class="submenu-item">
+            <a routerLink="/admin/logement/list" class="submenu-link" routerLinkActive="active">
+              <i class="submenu-icon far fa-circle"></i> List
+            </a>
+          </li>
+          <li class="submenu-item">
+            <a routerLink="/admin/logement/add" class="submenu-link" routerLinkActive="active">
+              <i class="submenu-icon far fa-circle"></i> Add
+            </a>
+          </li>
+        </ul>
+      </li>
+
+      <!-- My Logements -->
+      <li class="menu-item has-submenu">
+        <div class="submenu-toggle" (click)="toggleSubmenu('myLogement')">
+          <i class="menu-icon fas fa-user-home"></i>
+          <span class="menu-text">My Logements</span>
+          <i class="submenu-indicator fas fa-angle-down" [class.rotate]="submenus['myLogement']"></i>
+        </div>
+        <ul class="submenu-list" [class.open]="submenus['myLogement']">
+          <li class="submenu-item">
+            <a routerLink="/dashboardUser/list" class="submenu-link" routerLinkActive="active">
+              <i class="submenu-icon far fa-circle"></i> My Logements
+            </a>
+          </li>
+          <li class="submenu-item">
+            <a routerLink="/dashboardUser/create" class="submenu-link" routerLinkActive="active">
+              <i class="submenu-icon far fa-circle"></i> Create Logement
+            </a>
+          </li>
+        </ul>
+      </li>
+
+      <!-- Equipement -->
+      <li class="menu-item has-submenu">
+        <div class="submenu-toggle" (click)="toggleSubmenu('equipement')">
+          <i class="menu-icon fas fa-cogs"></i>
+          <span class="menu-text">Equipement</span>
+          <i class="submenu-indicator fas fa-angle-down" [class.rotate]="submenus['equipement']"></i>
+        </div>
+        <ul class="submenu-list" [class.open]="submenus['equipement']">
+          <li class="submenu-item">
+            <a routerLink="/admin/equipement/list" class="submenu-link">
+              <i class="submenu-icon far fa-circle"></i> List
+            </a>
+          </li>
+          <li class="submenu-item">
+            <a routerLink="/admin/equipement/add" class="submenu-link">
+              <i class="submenu-icon far fa-circle"></i> Add
+            </a>
+          </li>
+        </ul>
+      </li>
+
+      <!-- Activities -->
+      <li class="menu-item has-submenu">
+        <div class="submenu-toggle" (click)="toggleSubmenu('activities')">
+          <i class="menu-icon fas fa-hiking"></i>
+          <span class="menu-text">Activities</span>
+          <i class="submenu-indicator fas fa-angle-down" [class.rotate]="submenus['activities']"></i>
+        </div>
+        <ul class="submenu-list" [class.open]="submenus['activities']">
+          <li class="submenu-item">
+            <a routerLink="/dashboard/activities" class="submenu-link" routerLinkActive="active">
+              <i class="submenu-icon far fa-circle"></i> All Activities
+            </a>
+          </li>
+          <li class="submenu-item">
+            <a routerLink="/dashboard/activities/new" class="submenu-link" routerLinkActive="active">
+              <i class="submenu-icon far fa-circle"></i> Add New
+            </a>
+          </li>
+        </ul>
+      </li>
+
+      <!-- Transport -->
+      <li class="menu-item">
+        <a routerLink="/dashboard/transport" class="menu-link" routerLinkActive="active">
+          <i class="menu-icon fas fa-bus"></i>
+          <span class="menu-text">Transport</span>
+        </a>
+      </li>
+
+      <!-- Food -->
+      <li class="menu-item">
+        <a routerLink="/admin/FoodList" class="menu-link" routerLinkActive="active">
+          <i class="menu-icon fas fa-utensils"></i>
+          <span class="menu-text">Food</span>
+        </a>
+      </li>
+
+      <!-- Clothing -->
+      <li class="menu-item">
+        <a routerLink="/admin/ClothingList" class="menu-link" routerLinkActive="active">
+          <i class="menu-icon fas fa-tshirt"></i>
+          <span class="menu-text">Clothing</span>
+        </a>
+      </li>
+
+      <!-- Bookings -->
+      <li class="menu-item">
+        <a routerLink="/dashboard/bookings" class="menu-link" routerLinkActive="active">
+          <i class="menu-icon fas fa-calendar-check"></i>
+          <span class="menu-text">Bookings</span>
+        </a>
+      </li>
+
+      <!-- Reservations (Admin Only) -->
+      <li class="menu-item">
+        <a routerLink="/admin/reservations-all" class="menu-link" routerLinkActive="active">
+          <i class="menu-icon fas fa-calendar-alt"></i>
+          <span class="menu-text">Reservations</span>
+        </a>
+      </li>
+
+      <!-- System Section -->
+      <li class="menu-section">
+        <span>SYSTEM</span>
+      </li>
+
+      <!-- Settings -->
+      <li class="menu-item">
+        <a routerLink="/dashboard/settings" class="menu-link" routerLinkActive="active">
+          <i class="menu-icon fas fa-cog"></i>
+          <span class="menu-text">Settings</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+</aside>

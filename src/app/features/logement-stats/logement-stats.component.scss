@@ -1,0 +1,44 @@
+.stats-container {
+    padding: 20px;
+    background: #fdfdfd;
+  }
+  
+  .stats-cards {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 30px;
+  
+    .card {
+      background: #f3f4f6;
+      border-radius: 12px;
+      padding: 16px;
+      min-width: 200px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      text-align: center;
+  
+      h4 {
+        margin-bottom: 8px;
+      }
+  
+      p {
+        font-size: 1.5rem;
+        font-weight: bold;
+      }
+    }
+  }
+  
+  .chart-section {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 32px;
+  
+    .chart-card {
+      flex: 1;
+      min-width: 300px;
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.1);
+    }
+  }
+  

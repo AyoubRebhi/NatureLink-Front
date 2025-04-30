@@ -1,0 +1,291 @@
+.main-content {
+  padding: 24px;
+  background-color: #f9f9f9;
+  min-height: 100vh;
+}
+
+/* 🔍 Search Filters */
+.search-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 24px;
+  background-color: #fff;
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.search-filters input,
+.search-filters select {
+  flex: 1 1 250px;
+  padding: 10px 14px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+.search-filters input:focus,
+.search-filters select:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
+}
+
+/* 🏘 Logement Grid */
+.logement-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+}
+
+.logement-card {
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  transition: transform 0.3s ease-in-out;
+  display: flex;
+  flex-direction: column;
+}
+
+.logement-card:hover {
+  transform: translateY(-6px);
+}
+
+/* 🖼 Image Slider */
+.logement-images {
+  width: 100%;
+  height: 220px;
+  overflow: hidden;
+  position: relative;
+}
+
+.logement-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.image-slider {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.slider-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  background-color: rgba(0, 0, 0, 0.4);
+  color: white;
+  border: none;
+  font-size: 22px;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: background-color 0.3s ease;
+}
+
+.slider-btn:hover {
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+.slider-btn.left {
+  left: 10px;
+}
+
+.slider-btn.right {
+  right: 10px;
+}
+
+/* 📝 Logement Info */
+.logement-info {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.logement-info h3 {
+  font-size: 1.3rem;
+  color: #222;
+  margin-bottom: 6px;
+}
+
+.logement-info p {
+  margin: 0;
+  color: #444;
+  font-size: 0.95rem;
+}
+
+ul {
+  padding-left: 20px;
+  margin: 0;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 14px;
+  margin-top: 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  width: fit-content;
+  transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+}
+
+.no-logements {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #888;
+  margin-top: 40px;
+}
+
+/* 🗺 Location Map Popup */
+.map-popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.map-popup-card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  max-width: 600px;
+  width: 90%;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+.notification-popup {
+  background: #fff8dc;
+  border: 1px solid #ffc107;
+  padding: 10px;
+  max-width: 300px;
+  margin-bottom: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+.notif-card {
+  margin-bottom: 10px;
+  padding: 5px;
+  border-bottom: 1px solid #ddd;
+}
+.notification {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  background-color: #4caf50;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 16px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  z-index: 9999;
+  animation: slideIn 0.5s ease-in-out;
+}
+
+@keyframes slideIn {
+  from {
+    bottom: -50px;
+  }
+  to {
+    bottom: 20px;
+  }
+}
+.image-search-upload {
+  background-color: #ffffff;
+  padding: 16px;
+  margin-bottom: 24px;
+  border-radius: 12px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.upload-label {
+  display: inline-block;
+  background-color: #007bff;
+  color: white;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.upload-label:hover {
+  background-color: #0056b3;
+}
+
+.preview-container {
+  margin-top: 16px;
+  text-align: center;
+}
+
+.preview-image {
+  width: auto;
+  max-width: 100%;
+  max-height: 240px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  margin-top: 10px;
+}
+/* Style for image preview - smaller size */
+.image-preview {
+  max-width: 100px; /* Control the max size */
+  max-height: 100px; /* Control the max size */
+  object-fit: cover; /* Ensure the image does not stretch */
+  border-radius: 8px; /* Optional: Add rounded corners */
+  margin: 5px; /* Add some spacing */
+}
+
+/* Style for the file input button */
+input[type="file"] {
+  display: none; /* Hide the default file input */
+}
+
+.custom-file-upload {
+  display: inline-block;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  background-color: #007bff; /* Blue background */
+  color: white;
+  border-radius: 5px;
+  border: none;
+  transition: background-color 0.3s ease;
+}
+
+.custom-file-upload:hover {
+  background-color: #0056b3; /* Darker blue on hover */
+}
+
+/* Style the search button */
+.btn-info {
+  font-size: 14px;
+  padding: 8px 15px;
+  background-color: #17a2b8;
+  border: none;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn-info:hover {
+  background-color: #138496;
+}

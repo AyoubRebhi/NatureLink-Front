@@ -1,0 +1,139 @@
+<div class="row g-4">
+  <div class="col-xxl-4">
+    <div class="card shadow-sm " style="height: calc(100vh - 40px); overflow-y: auto;">
+      <div class="card-body p-4">
+        <div *ngIf="activity" class="product-img-slider">
+          <h5 class="mb-3 fw-semibold text-primary">Activity Images</h5>
+          
+          <div *ngIf="activity.imageUrls && activity.imageUrls.length > 0" class="d-flex flex-column gap-3">
+            <div *ngFor="let image of activity.imageUrls" class="border rounded overflow-hidden" style="max-height: 220px;">
+              <img 
+                [src]="image" 
+                alt="Activity Image" 
+                class="img-fluid w-100 h-100 object-fit-cover"
+                style="min-height: 200px;"
+              />
+            </div>
+          </div>
+          
+          <div *ngIf="!activity.imageUrls || activity.imageUrls.length === 0" class="text-center py-4">
+            <div class="bg-light rounded p-5">
+              <i class="bi bi-image text-muted" style="font-size: 3rem;"></i>
+              <p class="text-muted mt-2 mb-0">No images available</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Activity details column - Fixed height -->
+  <div class="col-xxl-8">
+    <div class="card shadow-sm">
+      <div class="card-body p-4">
+        <div class="d-flex justify-content-between align-items-start mb-4">
+          <div>
+            <h2 class="mb-2 fw-bold text-primary">{{ activity.name }}</h2>
+            <div class="d-flex align-items-center gap-2 mb-3">
+              <span class="badge bg-primary rounded-pill">{{ activity.type }}</span>
+              <span class="badge"
+                [ngClass]="{
+                  'bg-danger': activity.difficultyLevel === 'Hard',
+                  'bg-warning text-dark': activity.difficultyLevel === 'Moderate',
+                  'bg-success': activity.difficultyLevel === 'Easy'
+                }">
+                {{ activity.difficultyLevel }}
+              </span>
+            </div>
+          </div>
+          <div class="text-end">
+            <h3 class="text-success fw-bold">{{ activity.price }} TND</h3>
+            <p class="text-muted small mb-0">per participant</p>
+          </div>
+        </div>
+
+        <!-- Rest of your content remains the same -->
+        <div class="row g-4">
+          <!-- Left column - Details -->
+          <div class="col-lg-8">
+            <div class="mb-4">
+              <h5 class="fw-semibold mb-3">Description</h5>
+              <p class="text-muted" [class.fst-italic]="!activity.description">
+                {{ activity.description || 'No description provided.' }}
+              </p>
+            </div>
+
+            <div class="mb-4">
+              <h5 class="fw-semibold mb-3">Details</h5>
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <div class="d-flex align-items-center gap-2 mb-2">
+                    <i class="bi bi-geo-alt text-primary"></i>
+                    <span><strong>Location:</strong> {{ activity.location }}</span>
+                  </div>
+                  <div class="d-flex align-items-center gap-2 mb-2">
+                    <i class="bi bi-clock text-primary"></i>
+                    <span><strong>Duration:</strong> {{ activity.duration }} minutes</span>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="d-flex align-items-center gap-2 mb-2">
+                    <i class="bi bi-people text-primary"></i>
+                    <span><strong>Max Participants:</strong> {{ activity.maxParticipants }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <h5 class="fw-semibold mb-3">Tags & Mood</h5>
+              <div class="d-flex flex-wrap gap-2 mb-3">
+                <span *ngFor="let tag of activity.tags" class="badge bg-light text-dark border">
+                  #{{ tag }}
+                </span>
+                <span *ngIf="!activity.tags || activity.tags.length === 0" class="text-muted small">
+                  No tags specified
+                </span>
+              </div>
+              <div class="d-flex flex-wrap gap-2">
+                <span *ngFor="let mood of activity.mood" class="badge bg-info text-dark">
+                  {{ mood }}
+                </span>
+                <span *ngIf="!activity.mood || activity.mood.length === 0" class="text-muted small">
+                  No mood specified
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right column - Actions -->
+          <div class="col-lg-4">
+            <div class="card border-0 bg-light">
+              <div class="card-body p-4">
+                <h5 class="fw-semibold mb-4">Manage Activity</h5>
+                
+                <div class="d-grid gap-3">
+                  <button 
+                    type="button" 
+                    class="btn btn-primary"
+                    [routerLink]="['/admin/activity/edit', activity.id]">
+                    <i class="bi bi-pencil-square me-2"></i> Edit Activity
+                  </button>
+                  
+                  <button 
+                    type="button" 
+                    class="btn btn-outline-danger"
+                    (click)="deleteActivity()">
+                    <i class="bi bi-trash3 me-2"></i> Delete Activity
+                  </button>
+                </div>
+
+                <hr class="my-4">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

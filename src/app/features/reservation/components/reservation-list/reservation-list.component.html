@@ -1,0 +1,422 @@
+<div class="travel-agency-container">
+  <!-- Header Section -->
+  <div class="agency-header">
+    <div class="agency-logo">
+      <i class="fas fa-plane-departure"></i>
+      <h1>{{ showUpcoming ? 'Upcoming Journeys' : 'Travel History' }}</h1>
+    </div>
+    <div class="agency-controls">
+      <button class="agency-toggle-btn" (click)="toggleView()">
+        {{ showUpcoming ? 'View Past Trips' : 'View Upcoming Trips' }}
+        <i class="fas" [class.fa-history]="showUpcoming" [class.fa-calendar-alt]="!showUpcoming"></i>
+      </button>
+      <button *ngIf="showUpcoming" class="agency-add-btn" (click)="goToAdd()">
+        <i class="fas fa-plus"></i> New Reservation
+      </button>
+    </div>
+  </div>
+
+  <!-- Filter Section -->
+  <div class="agency-filters">
+    <div class="search-box">
+      <i class="fas fa-search"></i>
+      <input
+        type="text"
+        [(ngModel)]="searchQuery"
+        placeholder="Search traveler names..."
+        (input)="filterReservations()"
+      />
+    </div>
+    <div class="filter-dropdown">
+      <i class="fas fa-filter"></i>
+      <select
+        [(ngModel)]="selectedType"
+        (change)="filterReservations()"
+      >
+        <option value="">All Trip Types</option>
+        <option [value]="type" *ngFor="let type of typeReservations">{{ type | titlecase }}</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Reservation Cards -->
+  <div *ngIf="filteredReservations.length > 0; else noReservations" class="reservation-cards">
+    <div 
+      *ngFor="let reservation of filteredReservations; let i = index"
+      class="reservation-card"
+      [class.selected]="reservation === selectedReservation"
+      (click)="selectReservation(reservation)"
+      [ngClass]="{
+        'activity': reservation.activityId,
+        'transport': reservation.transportId,
+        'logement': reservation.logementId,
+        'restaurant': reservation.restaurantId,
+        'event': reservation.eventId,
+        'pack': reservation.packId
+      }"
+    >
+    <div class="card-header">
+      <span class="card-badge" [ngClass]="reservation.typeres?.toLowerCase()">
+        <ng-container [ngSwitch]="reservation.typeres">
+          <span *ngSwitchCase="TypeReservation.ACTIVITE"><i class="fas fa-hiking"></i> Activity</span>
+          <span *ngSwitchCase="TypeReservation.TRANSPORT"><i class="fas fa-bus"></i> Transport</span>
+          <span *ngSwitchCase="TypeReservation.LOGEMENT"><i class="fas fa-hotel"></i> Accommodation</span>
+          <span *ngSwitchCase="TypeReservation.RESTAURANT"><i class="fas fa-utensils"></i> Dining</span>
+          <span *ngSwitchCase="TypeReservation.EVENT"><i class="fas fa-calendar-check"></i> Event</span>
+          <span *ngSwitchCase="TypeReservation.PACK"><i class="fas fa-box-open"></i> Pack</span>
+          <span *ngSwitchDefault><i class="fas fa-question"></i> Unknown</span>
+        </ng-container>
+      </span>
+      <span class="card-status" [ngClass]="reservation.statut.toLowerCase()">
+        {{ reservation.statut }}
+      </span>
+    </div>
+      
+      <div class="card-body">
+        <h3>{{ reservation.clientNames?.[0] ?? 'New Reservation' }}</h3>
+        <div class="card-dates">
+          <div class="date-item">
+            <i class="fas fa-plane-departure"></i>
+            <span>{{ reservation.dateDebut | date: 'MMM d, yyyy' }}</span>
+          </div>
+          <div class="date-item">
+            <i class="fas fa-plane-arrival"></i>
+            <span>{{ reservation.dateFin | date: 'MMM d, yyyy' }}</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card-actions">
+        <button class="action-btn info" (click)="goToUpdate(reservation.id); $event.stopPropagation()" *ngIf="showUpcoming">
+          <i class="fas fa-edit"></i>
+        </button>
+        <button class="action-btn danger" (click)="deleteReservation(reservation.id!); $event.stopPropagation()" *ngIf="showUpcoming">
+          <i class="fas fa-trash"></i>
+        </button>
+        <button class="action-btn success" (click)="reservation.id ? downloadPDF(reservation.id) : null; $event.stopPropagation()">
+          <i class="fas fa-file-export"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #noReservations>
+    <div class="no-reservations">
+      <img src="assets/images/no-reservations.svg" alt="No reservations">
+      <h3>No {{ showUpcoming ? 'upcoming' : 'past' }} journeys found</h3>
+      <p>Start planning your next adventure!</p>
+      <button *ngIf="showUpcoming" class="agency-add-btn" (click)="goToAdd()">
+        <i class="fas fa-plus"></i> Create Your First Reservation
+      </button>
+    </div>
+  </ng-template>
+
+  <!-- Reservation Type Popup -->
+  <div class="travel-modal" [class.active]="showReservationTypePopup" (click)="closeReservationTypePopup()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <button class="modal-close" (click)="closeReservationTypePopup()">
+        <i class="fas fa-times"></i>
+      </button>
+      <div class="modal-header">
+        <h2>Select Reservation Type</h2>
+      </div>
+      <div class="modal-body">
+        <div class="reservation-type-options">
+          <button class="reservation-type-btn" (click)="selectReservationType(TypeReservation.LOGEMENT)">
+            <i class="fas fa-hotel"></i> Accommodation
+          </button>
+          <button class="reservation-type-btn" (click)="selectReservationType(TypeReservation.EVENT)">
+            <i class="fas fa-calendar-check"></i> Event
+          </button>
+          <button class="reservation-type-btn" (click)="selectReservationType(TypeReservation.ACTIVITE)">
+            <i class="fas fa-hiking"></i> Activity
+          </button>
+          <button class="reservation-type-btn" (click)="selectReservationType(TypeReservation.TRANSPORT)">
+            <i class="fas fa-bus"></i> Transport
+          </button>
+          <button class="reservation-type-btn" (click)="selectReservationType(TypeReservation.RESTAURANT)">
+            <i class="fas fa-utensils"></i> Dining
+          </button>
+          <button class="reservation-type-btn" (click)="selectReservationType(TypeReservation.PACK)">
+            <i class="fas fa-box-open"></i> Pack
+          </button>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="modal-btn secondary" (click)="closeReservationTypePopup()">
+          <i class="fas fa-times"></i> Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reservation Detail Modal -->
+  <div class="travel-modal" [class.active]="showModal" (click)="closeModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <button class="modal-close" (click)="closeModal()">
+        <i class="fas fa-times"></i>
+      </button>
+      
+      <div class="modal-header">
+        <h2>Trip Details</h2>
+        <span class="modal-badge" [ngClass]="{
+          'activity': selectedReservation?.activityId,
+          'transport': selectedReservation?.transportId,
+          'logement': selectedReservation?.logementId,
+          'restaurant': selectedReservation?.restaurantId,
+          'event': selectedReservation?.eventId,
+          'pack': selectedReservation?.packId
+        }">
+          <span *ngIf="selectedReservation?.activityId"><i class="fas fa-hiking"></i> Activity</span>
+          <span *ngIf="selectedReservation?.transportId"><i class="fas fa-bus"></i> Transport</span>
+          <span *ngIf="selectedReservation?.logementId"><i class="fas fa-hotel"></i> Accommodation</span>
+          <span *ngIf="selectedReservation?.restaurantId"><i class="fas fa-utensils"></i> Dining</span>
+          <span *ngIf="selectedReservation?.eventId"><i class="fas fa-calendar-check"></i> Event</span>
+          <span *ngIf="selectedReservation?.packId"><i class="fas fa-box-open"></i> Pack</span>
+        </span>
+      </div>
+      
+      <div class="modal-body">
+        <div class="detail-section">
+          <h3><i class="fas fa-users"></i> Travelers</h3>
+          <div class="travelers-list">
+            <div *ngFor="let clientName of selectedReservation?.clientNames" class="traveler-item">
+              <i class="fas fa-user"></i>
+              <span>{{ clientName }}</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="detail-section">
+          <h3><i class="fas fa-calendar-alt"></i> Trip Dates</h3>
+          <div class="date-range">
+            <div class="date-item">
+              <i class="fas fa-plane-departure"></i>
+              <div>
+                <span class="date-label">Departure</span>
+                <span class="date-value">{{ selectedReservation?.dateDebut | date: 'fullDate' }}</span>
+              </div>
+            </div>
+            <div class="date-item">
+              <i class="fas fa-plane-arrival"></i>
+              <div>
+                <span class="date-label">Return</span>
+                <span class="date-value">{{ selectedReservation?.dateFin | date: 'fullDate' }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="detail-section">
+          <h3><i class="fas fa-info-circle"></i> Status</h3>
+          <div class="status-badge" [ngClass]="selectedReservation?.statut?.toLowerCase()">
+            {{ selectedReservation?.statut }}
+          </div>
+        </div>
+      </div>
+      
+      <div class="modal-footer">
+        <button class="modal-btn secondary" (click)="closeModal()">
+          <i class="fas fa-times"></i> Close
+        </button>
+        <button *ngIf="showUpcoming" class="modal-btn primary" (click)="goToUpdate(selectedReservation?.id); $event.stopPropagation()">
+          <i class="fas fa-edit"></i> Modify
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<style>
+/* Modal Backdrop */
+  .travel-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black backdrop */
+    display: none;
+    z-index: 1000;
+    overflow: auto;
+  
+    &.active {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+  
+  /* Modal Content */
+  .modal-content {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    max-width: 600px;
+    width: 90%;
+    padding: 20px;
+    position: relative;
+    animation: slideIn 0.3s ease-out;
+  
+    @media (max-width: 576px) {
+      width: 95%;
+      padding: 15px;
+    }
+  }
+  
+  /* Modal Animation */
+  @keyframes slideIn {
+    from {
+      transform: translateY(-50px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  
+  /* Modal Close Button */
+  .modal-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: #333;
+    cursor: pointer;
+    transition: color 0.3s;
+  
+    &:hover {
+      color: #007bff;
+    }
+  
+    i {
+      font-size: 18px;
+    }
+  }
+  
+  /* Modal Header */
+  .modal-header {
+    text-align: center;
+    margin-bottom: 20px;
+  
+    h2 {
+      font-size: 24px;
+      color: #333;
+      margin: 0;
+  
+      @media (max-width: 576px) {
+        font-size: 20px;
+      }
+    }
+  }
+  
+  /* Modal Body */
+  .modal-body {
+    padding: 10px 0;
+  }
+  
+  /* Reservation Type Options */
+  .reservation-type-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+  }
+  
+  /* Reservation Type Buttons */
+  .reservation-type-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 24px;
+    background-color: #007bff; /* Matches btn-primary */
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    min-width: 200px; /* Ensures consistent button width */
+    text-align: left;
+  
+    &:hover {
+      background-color: #0056b3; /* Darker blue on hover */
+      transform: translateY(-2px);
+    }
+  
+    &:active {
+      transform: translateY(0);
+    }
+  
+    i {
+      font-size: 20px;
+    }
+  
+    @media (max-width: 576px) {
+      min-width: 150px;
+      padding: 10px 16px;
+      font-size: 14px;
+  
+      i {
+        font-size: 18px;
+      }
+    }
+  }
+  
+  /* Modal Footer */
+  .modal-footer {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  
+  /* Modal Buttons (Cancel) */
+  .modal-btn.secondary {
+    padding: 10px 20px;
+    background-color: #6c757d; /* Matches btn-secondary */
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  
+    &:hover {
+      background-color: #5a6268; /* Darker gray on hover */
+    }
+  
+    i {
+      margin-right: 8px;
+    }
+  
+    @media (max-width: 576px) {
+      padding: 8px 16px;
+      font-size: 14px;
+    }
+  }
+  /* Add to your existing CSS */
+.reservation-card.pack {
+  border-left: 4px solid #9c27b0; /* Purple accent for packs */
+}
+
+.reservation-card.pack .card-badge {
+  background-color: #9c27b0;
+}
+
+/* Add pack icon styling */
+.fa-box-open {
+  margin-right: 5px;
+}
+.modal-badge.pack {
+  background: rgba(156, 39, 176, 0.1);
+  color: #9c27b0;
+  border: 1px solid rgba(156, 39, 176, 0.3);
+  
+  i {
+    color: #9c27b0;
+  }
+} 
+  </style>

@@ -1,0 +1,129 @@
+<div class="admin-container">
+  <!-- Admin Header -->
+  <app-header-dash></app-header-dash>
+
+  <div class="admin-content-container">
+    <!-- Admin Sidebar -->
+    <app-sidebar-dash></app-sidebar-dash>
+
+    <!-- Main Content -->
+    <main class="reservation-management">
+      <header class="management-header">
+        <h1 class="page-title">Reservation Management</h1>
+        <div class="controls-container">
+          <div class="search-filter-container">
+            <div class="search-box">
+              <i class="fas fa-search search-icon"></i>
+              <input
+                type="text"
+                class="search-input"
+                placeholder="Search by username..."
+                [(ngModel)]="searchQuery"
+                (input)="filterReservations()"
+              />
+            </div>
+            <select
+              class="type-filter"
+              [(ngModel)]="selectedType"
+              (change)="filterReservations()"
+            >
+              <option value="">All Types</option>
+              <option *ngFor="let type of typeReservations" [value]="type">{{ type }}</option>
+            </select>
+          </div>
+          
+        </div>
+      </header>
+
+      <div class="reservation-table-container">
+        <table class="reservation-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Username</th>
+              <th>Start Date</th>
+              <th>End Date</th>
+              <th>Status</th>
+              <th>Type</th>
+              <th>Rooms</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let reservation of pagedReservations">
+              <td>{{ reservation.num }}</td>
+              <td>{{ reservation.username }}</td>
+              <td>{{ reservation.dateDebut | date: 'mediumDate' }}</td>
+              <td>{{ reservation.dateFin | date: 'mediumDate' }}</td>
+              <td>
+                <span class="status-badge" [ngClass]="getStatusClass(reservation.statut)">
+                  {{ reservation.statut }}
+                </span>
+              </td>
+              <td>
+                <span class="type-badge">{{ getReservationType(reservation) }}</span>
+              </td>
+              <td>{{ reservation.logementId ? (reservation.numRooms ?? 'N/A') : 'N/A' }}</td>
+              <td>
+                <button class="action-btn delete-btn" (click)="deleteReservation(reservation.id)">
+                  <i class="fas fa-trash-alt"></i> Delete
+                </button>
+              </td>
+            </tr>
+            <tr *ngIf="filteredReservations.length === 0">
+              <td colspan="8" class="no-results">No reservations found</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="pagination-container" *ngIf="filteredReservations.length > 0">
+        <div class="pagination-info">
+          Showing {{ getFirstItemNumber() }} to {{ getLastItemNumber() }} of {{ filteredReservations.length }} entries
+        </div>
+        <div class="pagination-controls">
+          <button 
+            class="pagination-btn" 
+            [disabled]="currentPage === 1"
+            (click)="goToPage(1)"
+          >
+            <i class="fas fa-angle-double-left"></i>
+          </button>
+          <button 
+            class="pagination-btn" 
+            [disabled]="currentPage === 1"
+            (click)="previousPage()"
+          >
+            <i class="fas fa-angle-left"></i>
+          </button>
+          
+          <div class="page-numbers">
+            <button 
+              *ngFor="let page of getDisplayedPages()" 
+              class="pagination-btn" 
+              [class.active]="page === currentPage"
+              (click)="goToPage(page)"
+            >
+              {{ page }}
+            </button>
+          </div>
+          
+          <button 
+            class="pagination-btn" 
+            [disabled]="currentPage === totalPages"
+            (click)="nextPage()"
+          >
+            <i class="fas fa-angle-right"></i>
+          </button>
+          <button 
+            class="pagination-btn" 
+            [disabled]="currentPage === totalPages"
+            (click)="goToPage(totalPages)"
+          >
+            <i class="fas fa-angle-double-right"></i>
+          </button>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>

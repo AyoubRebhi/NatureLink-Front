@@ -1,0 +1,309 @@
+
+<div class="container">
+  <!-- Header -->
+  <h2>Create New Pack</h2>
+
+  <!-- Error Message -->
+  <div *ngIf="errorMessage" class="error-message">
+    {{ errorMessage }}
+  </div>
+
+  <!-- Success Message -->
+  <div *ngIf="successMessage" class="success-message">
+    {{ successMessage }}
+  </div>
+
+  <!-- Form Container -->
+  <form (ngSubmit)="submitForm()" #packForm="ngForm" class="form-container">
+    <!-- Nom -->
+    <div class="form-group">
+      <label class="form-label">Pack Name</label>
+      <input 
+        type="text" 
+        class="form-input"
+        [(ngModel)]="pack.nom" 
+        name="nom" 
+        required 
+        placeholder="Enter pack name"
+      />
+    </div>
+
+    <!-- Prix -->
+    <div class="form-group">
+      <label class="form-label">Price (TND)</label>
+      <input 
+        type="number" 
+        class="form-input"
+        [(ngModel)]="pack.prix" 
+        name="prix" 
+        required 
+        placeholder="Enter price"
+      />
+    </div>
+
+    <!-- Description -->
+    <div class="form-group">
+      <label class="form-label">Description</label>
+      <textarea 
+        class="form-textarea"
+        [(ngModel)]="pack.description" 
+        name="description" 
+        required
+        placeholder="Enter pack description"
+      ></textarea>
+    </div>
+
+    <!-- Dropdown Lists -->
+    <div class="id-list-container">
+      <div class="form-group">
+        <label class="form-label">Logements (Select multiple)</label>
+        <select 
+          multiple
+          class="form-select"
+          [(ngModel)]="pack.logements"
+          name="logements"
+          aria-label="Select logements"
+        >
+          <option *ngIf="!logements.length" disabled>No logements available</option>
+          <option *ngFor="let logement of logements" [value]="logement.id">
+            {{ logement.titre }}
+          </option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Restaurants (Select multiple)</label>
+        <select 
+          multiple
+          class="form-select"
+          [(ngModel)]="pack.restaurants"
+          name="restaurants"
+          aria-label="Select restaurants"
+        >
+          <option *ngIf="!restaurants.length" disabled>No restaurants available</option>
+          <option *ngFor="let restaurant of restaurants" [value]="restaurant.id">
+            {{ restaurant.nom }}
+          </option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Activities (Select multiple)</label>
+        <select 
+          multiple
+          class="form-select"
+          [(ngModel)]="pack.activities"
+          name="activities"
+          aria-label="Select activities"
+        >
+          <option *ngIf="!activities.length" disabled>No activities available</option>
+          <option *ngFor="let activity of activities" [value]="activity.id">
+            {{ activity.name }}
+          </option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Transports (Select multiple)</label>
+        <select 
+          multiple
+          class="form-select"
+          [(ngModel)]="pack.transports"
+          name="transports"
+          aria-label="Select transports"
+        >
+          <option *ngIf="!transports.length" disabled>No transports available</option>
+          <option *ngFor="let transport of transports" [value]="transport.id">
+            {{ transport.id }} - {{ transport.type }}
+          </option>
+        </select>
+      </div>
+      <!-- New Events Dropdown -->
+  <div class="form-group">
+    <label class="form-label">Events (Select multiple)</label>
+    <select 
+      multiple
+      class="form-select"
+      [(ngModel)]="pack.evenements"
+      name="evenements"
+      aria-label="Select events"
+    >
+      <option *ngIf="!evenements.length" disabled>No events available</option>
+      <option *ngFor="let evenement of evenements" [value]="evenement.id">
+        {{ evenement.title }}
+      </option>
+    </select>
+  </div>
+
+    </div>
+
+    <!-- Submit Button -->
+    <button 
+      type="submit" 
+      class="submit-button"
+      [disabled]="!packForm.valid"
+    >
+      Create Pack
+    </button>
+  </form>
+</div>
+<style> 
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Form container */
+.form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Form group (label + input/select/textarea) */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Labels */
+.form-label {
+  font-weight: bold;
+  color: #333;
+  font-size: 16px;
+}
+
+/* Text inputs and textarea */
+.form-input,
+.form-textarea {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.form-input:focus,
+.form-textarea:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+}
+
+.form-textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+/* Dropdown container */
+.id-list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Select dropdowns */
+.form-select {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  height: 150px; /* Fixed height for multiple select */
+  width: 100%;
+  background-color: #fff;
+  box-sizing: border-box;
+}
+
+.form-select:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+}
+
+.form-select option {
+  padding: 8px;
+  font-size: 16px;
+}
+
+/* Submit button */
+.submit-button {
+  padding: 12px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.2s;
+}
+
+.submit-button:hover {
+  background-color: #0056b3;
+}
+
+.submit-button:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+/* Error and success messages */
+.error-message {
+  color: #dc3545;
+  padding: 10px;
+  border: 1px solid #dc3545;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+
+.success-message {
+  color: #28a745;
+  padding: 10px;
+  border: 1px solid #28a745;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+
+/* Header */
+h2 {
+  color: #333;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Responsive design */
+@media (max-width: 600px) {
+  .container {
+    padding: 15px;
+  }
+
+  .form-input,
+  .form-textarea,
+  .form-select {
+    font-size: 14px;
+  }
+
+  .form-select {
+    height: 120px; /* Smaller height on mobile */
+  }
+
+  .submit-button {
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  .form-label {
+    font-size: 14px;
+  }
+
+  h2 {
+    font-size: 20px;
+  }
+}
+
+</style>

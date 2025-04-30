@@ -1,0 +1,386 @@
+/* Enhanced logement-detail.component.scss */
+
+// Variables
+$primary-color: #3498db;
+$secondary-color: #2ecc71;
+$text-color: #333;
+$light-gray: #f5f7fa;
+$border-radius: 10px;
+$box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+$transition: all 0.3s ease;
+
+.logement-detail-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: $border-radius;
+  box-shadow: $box-shadow;
+  max-width: 1200px;
+  margin: 30px auto;
+  
+  @media (max-width: 992px) {
+    flex-direction: column;
+  }
+}
+
+// Left side - Images section
+.image-slider-container {
+  flex: 1;
+  min-width: 300px;
+  max-width: 500px;
+  margin: 0 auto;
+  
+  @media (max-width: 992px) {
+    max-width: 100%;
+  }
+  
+  .slider {
+    position: relative;
+    height: 350px;
+    border-radius: $border-radius;
+    overflow: hidden;
+    box-shadow: $box-shadow;
+    margin-bottom: 15px;
+    
+    .slider-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: $transition;
+    }
+    
+    .nav-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 40px;
+      height: 40px;
+      background-color: rgba(255, 255, 255, 0.7);
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: $transition;
+      z-index: 10;
+      
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.9);
+      }
+      
+      &.left {
+        left: 10px;
+      }
+      
+      &.right {
+        right: 10px;
+      }
+    }
+  }
+  
+  .thumbnails {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    
+    .thumbnail-img {
+      width: 70px;
+      height: 70px;
+      object-fit: cover;
+      border-radius: 5px;
+      cursor: pointer;
+      opacity: 0.7;
+      transition: $transition;
+      border: 2px solid transparent;
+      
+      &:hover {
+        opacity: 1;
+      }
+      
+      &.active {
+        opacity: 1;
+        border-color: $primary-color;
+      }
+    }
+  }
+}
+
+// Right side - Details section
+.logement-info {
+  flex: 1;
+  min-width: 300px;
+  
+  h2 {
+    color: $text-color;
+    font-size: 28px;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid $light-gray;
+  }
+  
+  p {
+    margin-bottom: 12px;
+    line-height: 1.6;
+    color: $text-color;
+    display: flex;
+    flex-wrap: wrap;
+    
+    strong {
+      min-width: 120px;
+      display: inline-block;
+      color: #555;
+    }
+  }
+  
+  a {
+    color: $primary-color;
+    text-decoration: none;
+    transition: $transition;
+    
+    &:hover {
+      color: darken($primary-color, 15%);
+      text-decoration: underline;
+    }
+  }
+  
+  // Equipments list
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 10px;
+    
+    li {
+      padding: 8px 12px;
+      background-color: $light-gray;
+      border-radius: 20px;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      
+      &:before {
+        content: '✓';
+        margin-right: 8px;
+        color: $secondary-color;
+        font-weight: bold;
+      }
+    }
+  }
+  
+  // Map container
+  .map-container {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    width: 100%;
+    border-radius: $border-radius;
+    overflow: hidden;
+    box-shadow: $box-shadow;
+    
+    h4 {
+      margin-bottom: 10px;
+      color: #555;
+      font-size: 18px;
+    }
+    
+    iframe {
+      border-radius: $border-radius;
+      height: 200px; // Smaller map as requested
+    }
+  }
+}
+
+// Fallback image styling
+.slider-image {
+  width: 100%;
+  height: 350px;
+  object-fit: cover;
+  border-radius: $border-radius;
+  box-shadow: $box-shadow;
+}
+
+// No details message
+.no-details-message {
+  text-align: center;
+  padding: 50px;
+  background-color: $light-gray;
+  border-radius: $border-radius;
+  margin: 30px auto;
+  max-width: 600px;
+  
+  p {
+    font-size: 18px;
+    color: #666;
+  }
+}
+
+// Added animations
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.logement-detail-wrapper {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+// Responsive action buttons
+.action-buttons {
+  display: flex;
+  gap: 15px;
+  margin: 20px 0;
+  flex-wrap: wrap;
+  
+  .action-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 30px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: $transition;
+    
+    &.phone {
+      background-color: $secondary-color;
+      color: white;
+      
+      &:hover {
+        background-color: darken($secondary-color, 10%);
+      }
+    }
+    
+    &.email {
+      background-color: $primary-color;
+      color: white;
+      
+      &:hover {
+        background-color: darken($primary-color, 10%);
+      }
+    }
+    
+    &.social {
+      background-color: #3b5998;
+      color: white;
+      
+      &:hover {
+        background-color: darken(#3b5998, 10%);
+      }
+    }
+    
+    i {
+      font-size: 16px;
+    }
+  }
+}
+
+// Image highlight effect
+.image-highlight {
+  position: relative;
+  overflow: hidden;
+  
+  &:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.2) 50%,
+      rgba(255, 255, 255, 0) 100%
+    );
+    animation: shimmer 2s infinite;
+  }
+}
+
+@keyframes shimmer {
+  100% {
+    left: 100%;
+  }
+}/* View Directions Button */
+.view-directions-btn {
+  background-color: #007bff;
+  color: #fff;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  margin-top: 1rem;
+}
+
+.view-directions-btn:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+}
+
+/* Directions Card */
+.directions-card {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  padding: 1.5rem;
+  margin-top: 1.5rem;
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+/* Header inside directions card */
+.directions-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.directions-header h4 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+/* Close Button */
+.close-btn {
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  color: #666;
+  transition: color 0.2s;
+}
+
+.close-btn:hover {
+  color: #ff4d4f;
+}
+
+/* Responsive iframe */
+.directions-card iframe {
+  width: 100%;
+  height: 300px;
+  border: none;
+  border-radius: 8px;
+}
+
+/* Equipments styling (optional enhancement) */
+.logement-body ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+}
+
+.logement-body ul li {
+  font-size: 0.9rem;
+  margin-bottom: 0.4rem;
+}

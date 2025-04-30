@@ -1,0 +1,24 @@
+<div class="reservation-form">
+    <form (ngSubmit)="onSubmit()" #reservationForm="ngForm">
+      <label for="dateDebut">Start Date</label>
+      <input type="date" id="dateDebut" [(ngModel)]="reservation.dateDebut" name="dateDebut" required>
+  
+      <label for="dateFin">End Date</label>
+      <input type="date" id="dateFin" [(ngModel)]="reservation.dateFin" name="dateFin" required>
+  
+      <label for="client">Client</label>
+      <input type="text" id="client" [(ngModel)]="reservation.client" name="client" required>
+  
+      <label for="statut">Status</label>
+      <select id="statut" [(ngModel)]="reservation.statut" name="statut">
+        <option value="CONFIRMEE">Confirmed</option>
+        <option value="ANNULEE">Cancelled</option>
+        <option value="EN_ATTENTE">Pending</option>
+      </select>
+  
+      <!-- Add other fields as necessary -->
+  
+      <button type="submit" [disabled]="!reservationForm.form.valid">Submit</button>
+    </form>
+  </div>
+  

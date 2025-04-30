@@ -1,0 +1,18 @@
+// src/app/features/dashboard/visit/components/visit-update/visit-update.component.scss
+.container {
+  max-width: 800px;
+}
+
+.form-control, .form-select {
+  &.is-invalid {
+    border-color: #dc3545;
+  }
+}
+
+.alert {
+  margin-bottom: 1.5rem;
+}
+
+.d-flex {
+  gap: 1rem;
+}

@@ -1,0 +1,45 @@
+<div class="container my-5">
+  <h2 class="mb-4 text-center">Nos Monuments</h2>
+
+  <!-- Message d'erreur -->
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+  </div>
+
+  <!-- Chargement -->
+  <div *ngIf="isLoading" class="text-center">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Chargement...</span>
+    </div>
+    <p>Chargement des monuments...</p>
+  </div>
+
+  <!-- Liste des monuments -->
+  <div class="row" *ngIf="!isLoading && monuments.length > 0">
+    <div class="col-md-4 mb-4" *ngFor="let monument of monuments">
+      <div class="card h-100 shadow-sm border-0">
+        <img
+          [src]="'http://localhost:9000/uploads/menus/' + monument.image"
+          [alt]="'Image de ' + monument.name"
+          class="card-img-top"
+          (error)="onImageError($event)"
+          style="height: 200px; object-fit: cover;"
+        />
+        <div class="card-body">
+          <h5 class="card-title">{{ monument.name }}</h5>
+          <p class="card-text">{{ monument.description | slice:0:100 }}{{ monument.description!.length > 100 ? '...' : '' }}</p>
+        </div>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item"><strong>Localisation:</strong> {{ monument.location }}</li>
+          <li class="list-group-item"><strong>Horaires:</strong> {{ monument.openingHours }}</li>
+          <li class="list-group-item"><strong>Prix d'entrée:</strong> {{ monument.entranceFee ? (monument.entranceFee | number:'1.2-2') + ' €' : 'Gratuit' }}</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Aucun monument -->
+  <div *ngIf="!isLoading && monuments.length === 0" class="alert alert-info text-center">
+    Aucun monument disponible pour le moment.
+  </div>
+</div>
