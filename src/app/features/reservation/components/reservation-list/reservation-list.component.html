@@ -96,6 +96,12 @@
         <button class="action-btn success" (click)="reservation.id ? downloadPDF(reservation.id) : null; $event.stopPropagation()">
           <i class="fas fa-file-export"></i>
         </button>
+        <button 
+    class="action-btn pay" 
+    (click)="goToPayment(reservation.id); $event.stopPropagation()" 
+    >
+    <i class="fas fa-credit-card"></i>
+  </button>
       </div>
     </div>
   </div>
@@ -578,6 +584,37 @@
 
 .detail-value {
   color: #555;
+}
+/* Add to existing CSS */
+.action-btn.pay {
+  background-color: #28a745; /* Green to match success button, or choose another color like #007bff for blue */
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.action-btn.pay:hover {
+  background-color: #218838; /* Darker green on hover */
+  transform: translateY(-3px) scale(1.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.action-btn.pay:disabled {
+  background-color: #6c757d; /* Gray for disabled state */
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.action-btn.pay i {
+  font-size: 16px;
 }
 
   </style>

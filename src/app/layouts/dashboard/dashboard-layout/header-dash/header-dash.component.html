@@ -1,101 +1,101 @@
 <header class="dashboard-header">
-    <div class="header-container">
-      <!-- Logo -->
-      <div class="logo-container">
-        <a routerLink="/dashboard" class="logo">
-          <span class="logo-icon">NL</span>
-          <span class="logo-text">NatureLink</span>
-        </a>
-      </div>
-  
-      <!-- Mobile menu toggle -->
-      <button class="menu-toggle" (click)="toggleMenu()">
-        <i class="fas fa-bars"></i>
-      </button>
-  
-      <!-- Navigation -->
-      <nav class="header-nav">
-        <ul class="nav-list">
-          <!-- Messages Dropdown -->
-          <li class="nav-item dropdown">
-            <a class="nav-link" (click)="toggleDropdown('messages')">
-              <i class="far fa-envelope"></i>
-              <span class="notification-badge">4</span>
-            </a>
-            <div class="dropdown-menu" [class.show]="showMessagesDropdown">
-              <div class="dropdown-header">
-                <h4>Messages</h4>
-                <span class="badge">4 New</span>
-              </div>
-              <div class="dropdown-content">
-                <a href="#" class="message-item">
-                  <div class="message-avatar">
-                    <img src="assets/dist/img/user2-160x160.jpg" alt="User">
-                  </div>
-                  <div class="message-details">
-                    <h5>Support Team</h5>
-                    <p>Why not try our new features?</p>
-                    <small>5 mins ago</small>
-                  </div>
-                </a>
-              </div>
-              <div class="dropdown-footer">
-                <a href="#">View All Messages</a>
-              </div>
-            </div>
-          </li>
-  
-          <!-- Notifications Dropdown -->
-          <li class="nav-item dropdown">
-            <a class="nav-link" (click)="toggleDropdown('notifications')">
-              <i class="far fa-bell"></i>
-              <span class="notification-badge">10</span>
-            </a>
-            <div class="dropdown-menu" [class.show]="showNotificationsDropdown">
-              <div class="dropdown-header">
-                <h4>Notifications</h4>
-                <span class="badge">10 New</span>
-              </div>
-              <div class="dropdown-content">
-                <a href="#" class="notification-item">
-                  <i class="fas fa-users text-primary"></i>
-                  <span>5 new members joined</span>
-                </a>
-              </div>
-              <div class="dropdown-footer">
-                <a href="#">View All Notifications</a>
-              </div>
-            </div>
-          </li>
-  
-          <!-- User Profile -->
-          <li class="nav-item dropdown">
-            <a class="user-profile" (click)="toggleDropdown('profile')">
-              <img src="assets/dist/img/user2-160x160.jpg" alt="User" class="profile-image">
-              <span class="profile-name">Admin User</span>
-            </a>
-            <div class="dropdown-menu profile-menu" [class.show]="showProfileDropdown">
-              <div class="profile-header">
-                <img src="assets/dist/img/user2-160x160.jpg" alt="User" class="profile-avatar">
-                <div class="profile-info">
-                  <h4>Admin User</h4>
-                  <small>Administrator</small>
-                </div>
-              </div>
-              <div class="profile-links">
-                <a href="#" class="profile-link">
-                  <i class="fas fa-user"></i> My Profile
-                </a>
-                <a href="#" class="profile-link">
-                  <i class="fas fa-cog"></i> Settings
-                </a>
-                <a href="#" class="profile-link">
-                  <i class="fas fa-sign-out-alt"></i> Sign Out
-                </a>
-              </div>
-            </div>
-          </li>
-        </ul>
-      </nav>
+  <div class="header-container">
+    <!-- Logo -->
+    <div class="logo-container">
+      <a routerLink="/dashboard" class="logo">
+        <span class="logo-icon">NL</span>
+        <span class="logo-text">NatureLink</span>
+      </a>
     </div>
-  </header>
+
+    <!-- Mobile menu toggle -->
+    <button class="menu-toggle" (click)="toggleMenu()">
+      <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Navigation -->
+    <nav class="header-nav">
+      <ul class="nav-list">
+        <!-- Messages Dropdown -->
+        <li class="nav-item dropdown">
+          <a class="nav-link" (click)="toggleDropdown('messages')">
+            <i class="far fa-envelope"></i>
+            <span class="notification-badge">4</span>
+          </a>
+          <div class="dropdown-menu" [class.show]="showMessagesDropdown">
+            <div class="dropdown-header">
+              <h4>Messages</h4>
+              <span class="badge">4 New</span>
+            </div>
+            <div class="dropdown-content">
+              <a href="#" class="message-item">
+                <div class="message-avatar">
+                  <img src="assets/dist/img/user2-160x160.jpg" alt="User">
+                </div>
+                <div class="message-details">
+                  <h5>Support Team</h5>
+                  <p>Why not try our new features?</p>
+                  <small>5 mins ago</small>
+                </div>
+              </a>
+            </div>
+            <div class="dropdown-footer">
+              <a href="#">View All Messages</a>
+            </div>
+          </div>
+        </li>
+
+        <!-- Notifications Dropdown -->
+        <li class="nav-item dropdown">
+          <a class="nav-link" (click)="toggleDropdown('notifications')">
+            <i class="far fa-bell"></i>
+            <span class="notification-badge">10</span>
+          </a>
+          <div class="dropdown-menu" [class.show]="showNotificationsDropdown">
+            <div class="dropdown-header">
+              <h4>Notifications</h4>
+              <span class="badge">10 New</span>
+            </div>
+            <div class="dropdown-content">
+              <a href="#" class="notification-item">
+                <i class="fas fa-users text-primary"></i>
+                <span>5 new members joined</span>
+              </a>
+            </div>
+            <div class="dropdown-footer">
+              <a href="#">View All Notifications</a>
+            </div>
+          </div>
+        </li>
+
+        <!-- User Profile -->
+        <li class="nav-item dropdown">
+          <a class="user-profile" (click)="toggleDropdown('profile')">
+            <img src="assets/dist/img/user2-160x160.jpg" alt="User" class="profile-image">
+            <span class="profile-name">Admin User</span>
+          </a>
+          <div class="dropdown-menu profile-menu" [class.show]="showProfileDropdown">
+            <div class="profile-header">
+              <img src="assets/dist/img/user2-160x160.jpg" alt="User" class="profile-avatar">
+              <div class="profile-info">
+                <h4>Admin User</h4>
+                <small>Administrator</small>
+              </div>
+            </div>
+            <div class="profile-links">
+              <a href="#" class="profile-link">
+                <i class="fas fa-user"></i> My Profile
+              </a>
+              <a href="#" class="profile-link">
+                <i class="fas fa-cog"></i> Settings
+              </a>
+              <a href="#" class="profile-link">
+                <i class="fas fa-sign-out-alt"></i> Sign Out
+              </a>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>

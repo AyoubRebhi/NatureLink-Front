@@ -1,106 +1,150 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Router, NavigationEnd, Event } from '@angular/router';
+import { Component, OnInit, HostListener, ChangeDetectorRef } from '@angular/core';
+import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { Subscription } from 'rxjs';
-import { FaqChatbotService } from 'src/app/core/services/faq-chatbot.service';
 import { AuthService } from '../../../core/services/auth.service';
-import { User } from '../../../core/models/user.model';
 import { PaymentService } from '../../../core/services/payment.service';
+import { FaqChatbotService } from 'src/app/core/services/faq-chatbot.service';
 
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss']
 })
-export class HeaderComponent implements OnInit, OnDestroy {
-  // Chatbot properties
-  userMessage: string = '';
-  botReply: string = '';
-
-  // Navigation and authentication properties
+export class HeaderComponent implements OnInit {
   currentRoute = '';
   pageTitle = '';
   isAuthenticated = false;
-  currentUser: User | null = null;
-  private authSubscription!: Subscription;
-
-  // Navigation links
-  navLinks = [
-    { path: '/', label: 'Home' },
-    { path: '/about', label: 'About' },
-    { path: '/services', label: 'Services' },
-    { path: '/packages', label: 'Packages' },
-    { path: '/contact', label: 'Contact' },
-    { path: '/reservation/create', label: 'Create Reservation' }
-  ];
+  activeDropdown: string | null = null;
+  chatOpen = false;
+  userMessage = '';
+  botReply = '';
+  private routerSub!: Subscription;
+  private authSub!: Subscription;
 
   constructor(
     private router: Router,
-    private faqChatbotService: FaqChatbotService,
     private authService: AuthService,
-    public paymentService: PaymentService
+    public paymentService: PaymentService,
+    private chatbotService: FaqChatbotService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
-    this.setupRouteTracking();
-    this.setupAuthSubscription();
-  }
-
-  private setupRouteTracking(): void {
-    this.router.events
-      .pipe(filter((event: Event): event is NavigationEnd => event instanceof NavigationEnd))
+    this.routerSub = this.router.events
+      .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
       .subscribe((event: NavigationEnd) => {
-        this.currentRoute = event.url;
-        this.updatePageTitle(event.url);
+        this.currentRoute = event.urlAfterRedirects;
+        this.updatePageTitle(event.urlAfterRedirects);
+        this.closeDropdown();
+        this.cdr.detectChanges();
       });
-  }
 
-  private setupAuthSubscription(): void {
-    this.authSubscription = this.authService.currentUser$.subscribe(user => {
+    this.authSub = this.authService.currentUser$.subscribe(user => {
       this.isAuthenticated = !!user;
-      this.currentUser = user;
+      this.cdr.detectChanges();
     });
   }
 
-  // Chatbot functionality
-  sendMessage(): void {
-    if (!this.userMessage.trim()) {
-      return;
-    }
+  updatePageTitle(url: string): void {
+    const routeMap: { [key: string]: string } = {
+      '/': 'Home',
+      '/services': 'Services',
+      '/logementsFront': 'Accommodations',
+      '/activities': 'Activities',
+      '/listD': 'Destinations',
+      '/transports': 'Transports',
+      '/packs/list-frontend': 'Packages',
+      '/reservation/reservation-list': 'Reservations',
+      '/postlist': 'Community',
+      '/contact': 'Contact',
+      '/profile': 'Profile'
+    };
+    
+    this.pageTitle = routeMap[url.split('?')[0]] || 'Page';
+  }
 
-    this.faqChatbotService.sendMessage(this.userMessage).subscribe({
+  toggleDropdown(dropdown: string): void {
+    this.activeDropdown = this.activeDropdown === dropdown ? null : dropdown;
+    this.cdr.detectChanges();
+  }
+
+  closeDropdown(): void {
+    this.activeDropdown = null;
+    this.cdr.detectChanges();
+  }
+
+  scrollToFooter(): void {
+    // If not on home page, navigate to home
+    if (this.currentRoute !== '/') {
+      this.router.navigate(['/']).then(() => {
+        // Wait for navigation and DOM rendering
+        setTimeout(() => {
+          const footer = document.getElementById('main-footer');
+          if (footer) {
+            footer.scrollIntoView({ behavior: 'smooth' });
+          } else {
+            console.error('Footer element with ID "main-footer" not found.');
+          }
+        }, 300); // Increased delay for rendering
+      });
+    } else {
+      // Already on home page, scroll directly
+      const footer = document.getElementById('main-footer');
+      if (footer) {
+        footer.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        console.error('Footer element with ID "main-footer" not found.');
+      }
+    }
+    this.closeDropdown();
+  }
+
+  isHomePage(): boolean {
+    return this.router.url === '/';
+  }
+
+  toggleChat(): void {
+    this.chatOpen = !this.chatOpen;
+  }
+
+  sendMessage(): void {
+    if (!this.userMessage.trim()) return;
+    
+    this.chatbotService.sendMessage(this.userMessage).subscribe({
       next: (response) => {
-        this.botReply = response.response; // Flask returns {"response": "..."}
-        this.userMessage = ''; // Clear input after sending
+        this.botReply = response.response;
+        this.userMessage = '';
+        this.cdr.detectChanges();
       },
       error: (err) => {
-        console.error('Error talking to chatbot', err);
-        this.botReply = 'Sorry, there was a problem contacting the assistant.';
+        this.botReply = "Sorry, I couldn't process your request. Please try again.";
+        this.cdr.detectChanges();
       }
     });
   }
 
-  // Navigation and title handling
-  private updatePageTitle(route: string): void {
-    const routeTitles: { [key: string]: string } = {
-      '/': 'Home',
-      '/about': 'About',
-      '/services': 'Services',
-      '/packages': 'Packages',
-      '/contact': 'Contact',
-      '/reservation/create': 'Create Reservation',
-    };
-
-    const routeObj = this.navLinks.find(link => route.includes(link.path));
-    this.pageTitle = routeTitles[route] || (routeObj ? routeObj.label : 'Page');
-  }
-
-  // Authentication
   logout(): void {
     this.authService.logout();
+    this.router.navigate(['/']);
+    this.closeDropdown();
+    this.cdr.detectChanges();
+  }
+
+  @HostListener('document:click', ['$event'])
+  onClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.dropdown') && !target.closest('.dropdown-toggle')) {
+      this.closeDropdown();
+    }
   }
 
   ngOnDestroy(): void {
-    this.authSubscription.unsubscribe();
+    if (this.routerSub) {
+      this.routerSub.unsubscribe();
+    }
+    if (this.authSub) {
+      this.authSub.unsubscribe();
+    }
   }
 }

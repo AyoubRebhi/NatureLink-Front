@@ -2,7 +2,7 @@ export interface Activity {
     id?: number;
     name: string;
     description: string;
-    providerId: number;
+    providerId?: number;
     location: string;
     duration: number; // in minutes or hours
     price: number;

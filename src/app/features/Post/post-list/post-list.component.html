@@ -106,7 +106,7 @@
     <i [class.fas]="post.isLiked" 
        [class.far]="!post.isLiked" 
        class="fa-thumbs-up"></i> 
-    {{ post.isLiked ? 'Aimé' : 'J\'aime' }}
+    {{ post.isLiked ? 'Dislike' : 'Like' }}
     <span *ngIf="post.likesCount > 0" class="like-count">
       ({{ post.likesCount }})
     </span>

@@ -1,117 +1,178 @@
-<div class="container-fluid position-relative p-0">
-  <nav class="navbar navbar-expand-lg navbar-light px-4 px-lg-5 py-3 py-lg-0">
-    <a routerLink="/" class="navbar-brand p-0">
-      <h1 class="text-primary m-0">NatureLink</h1>
-    </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
-      <span class="fa fa-bars"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarCollapse">
-      <div class="navbar-nav ms-auto py-0">
-        <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-item nav-link">
-          Home
-        </a>
-
-        <div class="nav-item dropdown">
-          <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Services</a>
-          <div class="dropdown-menu m-0">
-            <a routerLink="/services" class="dropdown-item">All Services</a>
-            <a routerLink="/logementsFront" class="dropdown-item">Accommodations</a>
-            <a routerLink="/activities" class="dropdown-item">Activities</a>
-            <a routerLink="/listD" class="dropdown-item">Destinations</a>
-            <a routerLink="/transports" class="dropdown-item">Transports</a>
+<div class="header-container">
+  <!-- Main Navigation Bar -->
+  <nav class="main-nav navbar navbar-expand-lg navbar-dark fixed-top">
+    <div class="container-fluid px-4">
+      <a routerLink="/" class="navbar-brand">
+        <div class="brand-logo">
+          <i class="fas fa-mountain"></i>
+        </div>
+        <h1 class="brand-title">Nature<span>Link</span></h1>
+      </a>
+      
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item">
+            <a routerLink="/" class="nav-link" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+              <i class="fas fa-home"></i>
+              <span>Home</span>
+            </a>
+          </li>
+          
+          <!-- Services Dropdown -->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" (click)="toggleDropdown('services')" 
+               (mouseenter)="toggleDropdown('services')" role="button">
+              <i class="fas fa-leaf"></i>
+              <span>Services</span>
+              <i class="fas fa-chevron-down ms-1 dropdown-arrow"></i>
+            </a>
+            <div class="dropdown-menu" [class.show]="activeDropdown === 'services'">
+              <a routerLink="/services" class="dropdown-item" (click)="closeDropdown()">
+                <i class="fas fa-list-ul me-2"></i>All Services
+              </a>
+              <div class="dropdown-divider"></div>
+              <a routerLink="/logementsFront" class="dropdown-item" (click)="closeDropdown()">
+                <i class="fas fa-bed me-2"></i>Accommodations
+              </a>
+              <a routerLink="/activities" class="dropdown-item" (click)="closeDropdown()">
+                <i class="fas fa-hiking me-2"></i>Activities
+              </a>
+              <a routerLink="/listD" class="dropdown-item" (click)="closeDropdown()">
+                <i class="fas fa-map-marked-alt me-2"></i>Destinations
+              </a>
+              <a routerLink="/transports" class="dropdown-item" (click)="closeDropdown()">
+                <i class="fas fa-bus me-2"></i>Transports
+              </a>
+              <a routerLink="/recommandation" class="dropdown-item">
+                <i class="fas fa-map-marked-alt"></i> Planning your trip
+              </a>
+              
+              <a routerLink="/restaurants" class="dropdown-item">
+                <i class="fas fa-utensils"></i> Restaurant
+              </a>
+              <a routerLink="/carbonPrint" class="dropdown-item">
+                <i class="fas fa-leaf"></i> FootPrint
+              </a>
+              
+              <a routerLink="/monuments" class="dropdown-item">
+                <i class="fas fa-landmark"></i> Monuments
+              </a>
+              
+            </div>
+          </li>
+          
+          <li class="nav-item">
+            <a routerLink="/packs/list-frontend" class="nav-link">
+              <i class="fas fa-suitcase-rolling"></i>
+              <span>Packages</span>
+            </a>
+          </li>
+          
+          <li class="nav-item">
+            <a routerLink="/reservation/reservation-list" class="nav-link">
+              <i class="fas fa-calendar-check"></i>
+              <span>Reservations</span>
+            </a>
+          </li>
+          
+          <li class="nav-item">
+            <a routerLink="/postlist" class="nav-link">
+              <i class="fas fa-users"></i>
+              <span>Community</span>
+            </a>
+          </li>
+          
+          <li class="nav-item">
+            <a class="nav-link clickable" (click)="scrollToFooter()">
+              <i class="fas fa-envelope"></i>
+              <span>Contact</span>
+            </a>
+          </li>
+        </ul>
+        
+        <div class="nav-actions">
+          <a *ngIf="isAuthenticated" routerLink="/profile" class="profile-link">
+            <i class="fas fa-user-circle"></i>
+          </a>
+          
+          <a *ngIf="isAuthenticated" routerLink="/payments" class="cart-link">
+            <i class="fas fa-shopping-cart"></i>
+            <span *ngIf="paymentService.hasPendingPayments$ | async" class="cart-badge">!</span>
+          </a>
+          
+          <div *ngIf="!isAuthenticated" class="auth-buttons">
+            <a routerLink="/auth/login" class="btn btn-login">
+              <i class="fas fa-sign-in-alt"></i>
+              <span>Login</span>
+            </a>
+            <a routerLink="/auth/register" class="btn btn-register">
+              <i class="fas fa-user-plus"></i>
+              <span>Register</span>
+            </a>
           </div>
-        </div>
-
-        <div class="nav-item dropdown">
-          <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Packages</a>
-          <div class="dropdown-menu m-0">
-            <a routerLink="/packs/list-frontend" class="dropdown-item">Package List</a>
-          </div>
-        </div>
-
-        <div class="nav-item dropdown">
-          <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Reservations</a>
-          <div class="dropdown-menu m-0">
-            <a routerLink="/reservation/reservation-list" class="dropdown-item">My Reservations</a>
-          </div>
-        </div>
-
-        <a routerLink="/postlist" routerLinkActive="active" class="nav-item nav-link">Social Media</a>
-        <a routerLink="/contact" routerLinkActive="active" class="nav-item nav-link">Contact</a>
-
-        <!-- Profile Link (only shown when authenticated) -->
-        <a *ngIf="isAuthenticated" routerLink="/profile" routerLinkActive="active" class="nav-item nav-link">
-          Profile
-        </a>
-
-        <!-- Payments Icon (only shown when authenticated) -->
-        <a *ngIf="isAuthenticated" routerLink="/payments" class="btn btn-icon" title="View Payments">
-          <i class="fas fa-shopping-cart"></i>
-          <span *ngIf="paymentService.hasPendingPayments$ | async" class="badge bg-danger">!</span>
-        </a>
-      </div>
-
-      <!-- Authentication Buttons -->
-      <div class="d-flex align-items-center ms-lg-4">
-        <div *ngIf="!isAuthenticated" class="auth-buttons">
-          <a routerLink="/auth/login" class="btn btn-outline-primary me-2">Login</a>
-          <a routerLink="/auth/register" class="btn btn-primary">Register</a>
-        </div>
-        <div *ngIf="isAuthenticated" class="logged-in-section">
-          <button (click)="logout()" class="btn btn-danger">Logout</button>
+          
+          <button *ngIf="isAuthenticated" (click)="logout()" class="btn btn-logout">
+            <i class="fas fa-sign-out-alt"></i>
+          </button>
         </div>
       </div>
     </div>
   </nav>
 
-  <!-- Hero Section for Home -->
-  <div *ngIf="currentRoute === '/'" class="container-fluid hero-header">
-    <div class="container">
-      <div class="hero-content">
-        <h1 class="display-3 text-white mb-3 animated slideInDown">
-          Discover Tunisia's Natural Beauty
-        </h1>
-        <p class="fs-4 text-white mb-4 animated slideInDown">
-          Experience unforgettable adventures with NatureLink - Your gateway to authentic Tunisian experiences
-        </p>
-
-        <div class="search-container position-relative w-75 mx-auto animated slideInDown">
-          <input 
-            [(ngModel)]="userMessage" 
-            class="form-control border-0 rounded-pill w-100 py-3 ps-4 pe-5" 
-            type="text" 
-            placeholder="Ask your travel assistant...">
-
-          <button 
-            (click)="sendMessage()" 
-            type="button" 
-            class="btn btn-primary rounded-pill py-2 px-4 position-absolute top-0 end-0 me-2" 
-            style="height: 100%">
-            Ask
-          </button>
-
-          <!-- Display chatbot reply -->
-          <div *ngIf="botReply" class="mt-3 text-white p-3 rounded" style="background: rgba(0,0,0,0.5)">
-            <strong>Bot:</strong> {{ botReply }}
+  <!-- Home Page Hero -->
+  <div *ngIf="currentRoute === '/'" class="home-hero">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <h1 class="hero-title">Discover Tunisia's Natural Wonders</h1>
+      <p class="hero-subtitle">Your Gateway to Authentic Eco-Tourism Experiences</p>
+      
+      <div class="premium-chatbot" [class.open]="chatOpen">
+        <div class="chatbot-header" (click)="toggleChat()">
+          <div class="chatbot-avatar">
+            <img src="assets/img/chatbot-avatar.png" alt="Travel Assistant">
+          </div>
+          <div class="chatbot-info">
+            <h5>Travel Assistant</h5>
+            <div class="chatbot-status">
+              <span class="status-dot"></span>
+              <span>Online</span>
+            </div>
+          </div>
+          <div class="chatbot-toggle">
+            <i class="fas fa-chevron-down"></i>
+          </div>
+        </div>
+        
+        <div class="chatbot-body">
+          <div class="chat-messages">
+            <div *ngIf="botReply" class="message bot-message">
+              <div class="message-content">
+                <p>{{botReply}}</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="chat-input-container">
+            <input [(ngModel)]="userMessage" 
+                   placeholder="Ask about destinations, packages, or activities..." 
+                   (keyup.enter)="sendMessage()">
+            <button (click)="sendMessage()" class="send-button">
+              <i class="fas fa-paper-plane"></i>
+            </button>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Hero Section for Other Pages -->
-  <div *ngIf="currentRoute !== '/'" class="container-fluid hero-header">
+  <!-- Other Pages Header -->
+  <div *ngIf="currentRoute !== '/'" class="page-header">
     <div class="container">
-      <div class="hero-content">
-        <h1 class="display-3 text-white animated slideInDown">{{ pageTitle }}</h1>
-        <nav aria-label="breadcrumb">
-          <ol class="breadcrumb justify-content-center">
-            <li class="breadcrumb-item"><a routerLink="/">Home</a></li>
-            <li class="breadcrumb-item text-white active" aria-current="page">{{ pageTitle }}</li>
-          </ol>
-        </nav>
-      </div>
+      <h2 class="page-title">{{pageTitle}}</h2>
     </div>
   </div>
 </div>

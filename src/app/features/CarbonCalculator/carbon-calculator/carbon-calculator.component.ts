@@ -231,6 +231,7 @@ export class CarbonCalculatorComponent implements AfterViewInit, OnDestroy {
 
   saveFootprint(): void {
     if (!this.loggedInUserId) {
+      console.log(this.loggedInUserId);
       this.handleError('Veuillez vous connecter pour enregistrer une empreinte carbone.');
       this.router.navigate(['/login'], { queryParams: { returnUrl: this.router.url } });
       return;
@@ -245,6 +246,7 @@ export class CarbonCalculatorComponent implements AfterViewInit, OnDestroy {
       this.handleError('Veuillez spécifier les points de départ et d\'arrivée');
       return;
     }
+    console.log(this.loggedInUserId);
 
     const data = {
       distance: this.distance / 1000,
@@ -252,7 +254,7 @@ export class CarbonCalculatorComponent implements AfterViewInit, OnDestroy {
       carbonFootprint: this.carbonFootprint,
       departurePoint: this.depart,
       arrivalPoint: this.arrivee,
-      user: { id: this.loggedInUserId },
+      user: { id: this.loggedInUserId }, // Envoyer un objet user avec l'id
       date: new Date()
     };
 

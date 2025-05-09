@@ -1,9 +1,9 @@
 <div class="carbon-calculator-container">
   <div class="header-section">
     <h2 class="calculator-title">Carbon Footprint Calculator</h2>
-    <button (click)="openHistoryModal()" class="history-button">
+    <!-- <button (click)="openHistoryModal()" class="history-button">
       <i class="fas fa-history"></i> My History
-    </button>
+    </button> -->
   </div>
 
   <div class="input-section">
@@ -33,10 +33,10 @@
     <button (click)="clearMarkers()" class="clear-button">
       <i class="fas fa-trash-alt"></i> Clear Map
     </button>
-    <button (click)="openHistoryModal()" class="history-button">
+    <!-- <button (click)="openHistoryModal()" class="history-button">
       <i class="fas fa-history"></i> View My History
     </button>
-  </div>
+  </div> -->
 
   <div class="transport-section">
     <label class="transport-label">🚗 Mode of Transport</label>
@@ -75,11 +75,11 @@
     <i class="fas fa-check-circle"></i> {{ successMessage }}
   </div>
 
-  <div class="save-section">
+  <!-- <div class="save-section">
     <button (click)="saveFootprint()" class="save-button" [disabled]="!distance">
       <i class="fas fa-save"></i> Save This Trip
     </button>
-  </div>
+  </div> -->
 
   <!-- History Modal -->
   <div *ngIf="showHistoryModal" class="modal-overlay" (click)="closeHistoryModal()">

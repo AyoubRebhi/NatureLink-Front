@@ -361,7 +361,7 @@ export class ReservationListComponent implements OnInit {
       [TypeReservation.LOGEMENT]: '/logementsFront',
       [TypeReservation.EVENT]: '/events/management',
       [TypeReservation.ACTIVITE]: '/activities',
-      [TypeReservation.TRANSPORT]: '/',
+      [TypeReservation.TRANSPORT]: '/transports',
       [TypeReservation.RESTAURANT]: '/restaurants',
       [TypeReservation.PACK]: '/packs/list-frontend'
     };
@@ -435,5 +435,19 @@ export class ReservationListComponent implements OnInit {
   toggleView(): void {
     this.showUpcoming = !this.showUpcoming;
     this.loadReservations();
+  }
+  goToPayment(id?: number): void {
+    if (id === undefined || id === null) {
+      alert('Cannot process payment: Reservation ID is missing');
+      return;
+    }
+
+    if (!this.authService.isAuthenticated()) {
+      this.router.navigate(['/login'], { queryParams: { returnUrl: `/payment/${id}` } });
+      return;
+    }
+
+    // Navigate to a payment processing route
+    this.router.navigate(['/payments']);
   }
 }

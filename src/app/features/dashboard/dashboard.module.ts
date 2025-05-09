@@ -22,7 +22,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
-
+import { MatFormFieldModule } from '@angular/material/form-field'; // Add this
+import { MatInputModule } from '@angular/material/input';
 
 @NgModule({
   declarations: [
@@ -45,6 +46,8 @@ import { MatSortModule } from '@angular/material/sort';
     MatTooltipModule,
     MatPaginatorModule,
     MatSortModule,
+    MatFormFieldModule, // Add this
+    MatInputModule,
     //NgChartsModule,
   ],
   exports: [

@@ -6,4 +6,5 @@ export interface PendingUser {
     proofDocument: string;
     approvalToken?: string;
     expiryDate?: string;
+    [key: string]: any; 
   }
