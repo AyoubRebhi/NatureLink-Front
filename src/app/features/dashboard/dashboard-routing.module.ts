@@ -138,13 +138,13 @@ const routes: Routes = [
       {
         path: 'transport',
         canActivate: [AuthGuard],
-        data: { roles: [Role.AGENCE] },
+        data: { roles: [Role.AGENCE, Role.ADMIN]},
         loadChildren: () => import('../transport/transport.module').then(m => m.TransportModule)
       },
       {
         path: 'activity',
         canActivate: [AuthGuard],
-        data: { roles: [Role.PROVIDER] },
+        data: { roles: [Role.PROVIDER, Role.ADMIN] },
         loadChildren: () => import('../activity/activity.module').then(m => m.ActivityModule)
       }
     ]

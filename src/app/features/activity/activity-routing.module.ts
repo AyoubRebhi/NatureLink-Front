@@ -25,12 +25,12 @@ const routes: Routes = [
   {
     path: 'edit/:id', component: EditActivityComponent,
     canActivate: [AuthGuard],
-    data: { roles: [Role.PROVIDER] }
+    data: { roles: [Role.PROVIDER, Role.ADMIN] }
   },
   {
     path: 'details/:id', component: DetailsActivityComponent,
     canActivate: [AuthGuard],
-    data: { roles: [Role.PROVIDER] }
+    data: { roles: [Role.PROVIDER, Role.ADMIN] }
   }
 
 ];

@@ -3,6 +3,7 @@ import { ActivityService } from '../../../../core/services/activity.service';
 import { Activity } from '../../../../core/models/activity.model';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/core/services/auth.service';
+import { Role } from 'src/app/core/models/user.model';
 
 @Component({
   selector: 'app-list-activity',
@@ -14,6 +15,7 @@ export class ListActivityComponent implements OnInit {
   filteredActivities: Activity[] = [];
   searchTerm: string = '';
   currentUserId: number | null = null;
+  isAdmin: boolean = false;
 
   constructor(
     private activityService: ActivityService,
@@ -24,27 +26,38 @@ export class ListActivityComponent implements OnInit {
 
   ngOnInit(): void {
     this.currentUserId = this.authService.getCurrentUserId();
+    this.isAdmin = this.authService.hasRole(Role.ADMIN);
     this.loadActivities();
   }
 
   loadActivities(): void {
-    if (!this.currentUserId) {
+    if (this.isAdmin) {
+      // Admin can see all activities
+      this.activityService.getAllActivities().subscribe({
+        next: (data) => {
+          this.activities = data;
+          this.filteredActivities = [...this.activities];
+        },
+        error: (err) => {
+          console.error('Error fetching activities:', err);
+        }
+      });
+    } else if (this.currentUserId) {
+      // Provider can only see their own activities
+      this.activityService.getAllActivities().subscribe({
+        next: (data) => {
+          this.activities = data.filter(activity => 
+            activity.providerId === this.currentUserId
+          );
+          this.filteredActivities = [...this.activities];
+        },
+        error: (err) => {
+          console.error('Error fetching activities:', err);
+        }
+      });
+    } else {
       console.error('No current user ID available');
-      return;
     }
-
-    // Option 1: Filter on the client side (if API returns all activities)
-    this.activityService.getAllActivities().subscribe({
-      next: (data) => {
-        this.activities = data.filter(activity => 
-          activity.providerId === this.currentUserId
-        );
-        this.filteredActivities = [...this.activities];
-      },
-      error: (err) => {
-        console.error('Error fetching activities:', err);
-      }
-    });
   }
 
   filterActivities(): void {

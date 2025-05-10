@@ -1,4 +1,3 @@
-
 import { Injectable } from '@angular/core';
 import { 
   CanActivate, 
@@ -30,9 +29,15 @@ export class AuthGuard implements CanActivate {
       });
     }
 
-    // Check role authorization
-    if (requiredRoles && !requiredRoles.includes(currentUser.role)) {
-      return this.router.createUrlTree(['/']);
+    // Check role authorization - now supports multiple roles
+    if (requiredRoles && requiredRoles.length > 0) {
+      const hasRequiredRole = requiredRoles.some(role => 
+        this.authService.hasRole(role)
+      );
+      
+      if (!hasRequiredRole) {
+        return this.router.createUrlTree(['/']);
+      }
     }
 
     return true;

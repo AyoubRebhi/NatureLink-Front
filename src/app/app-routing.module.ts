@@ -136,6 +136,7 @@ const routes: Routes = [
   },
   {
     path: 'activity',
+    data: { adminView: true },
     loadChildren: () => import('./features/activity/activity.module').then(m => m.ActivityModule)
   },
   { 

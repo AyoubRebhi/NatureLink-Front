@@ -13,9 +13,14 @@ export class SidebarDashComponent {
     activities: false,
     // Add more submenu keys here as needed
   };
+  isAdmin: boolean = false;
+
   constructor(private authService: AuthService) {}
 
-
+  ngOnInit(): void {
+    this.isAdmin = this.authService.hasRole(Role.ADMIN);
+  }
+  
   toggleSubmenu(menu: string): void {
     this.submenus[menu] = !this.submenus[menu];
   }
