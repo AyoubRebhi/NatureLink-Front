@@ -12,13 +12,11 @@
   <!-- User Panel -->
   <div class="user-panel">
     <div class="user-avatar">
-      <img src="assets/dist/img/user2-160x160.jpg" alt="User Image">
+      <img src="assets/dist/img/user2-160x160.jpg" alt="User Image" />
     </div>
     <div class="user-info">
       <div class="user-name">Admin User</div>
-      <div class="user-status">
-        <i class="fas fa-circle online"></i> Online
-      </div>
+      <div class="user-status"><i class="fas fa-circle online"></i> Online</div>
     </div>
   </div>
 
@@ -27,7 +25,11 @@
     <ul class="menu-list">
       <!-- Dashboard -->
       <li class="menu-item">
-        <a routerLink="/admin/dash-admin" class="menu-link" routerLinkActive="active">
+        <a
+          routerLink="/admin/dash-admin"
+          class="menu-link"
+          routerLinkActive="active"
+        >
           <i class="menu-icon fas fa-tachometer-alt"></i>
           <span class="menu-text">Dashboard</span>
         </a>
@@ -35,7 +37,11 @@
 
       <!-- Logement Stats -->
       <li class="menu-item">
-        <a routerLink="/admin/logement/stats" class="menu-link" routerLinkActive="active">
+        <a
+          routerLink="/admin/logement/stats"
+          class="menu-link"
+          routerLinkActive="active"
+        >
           <i class="menu-icon fas fa-chart-bar"></i>
           <span class="menu-text">Logement Stats</span>
         </a>
@@ -46,16 +52,27 @@
         <div class="submenu-toggle" (click)="toggleSubmenu('logement')">
           <i class="menu-icon fas fa-home"></i>
           <span class="menu-text">Logement</span>
-          <i class="submenu-indicator fas fa-angle-down" [class.rotate]="submenus['logement']"></i>
+          <i
+            class="submenu-indicator fas fa-angle-down"
+            [class.rotate]="submenus['logement']"
+          ></i>
         </div>
         <ul class="submenu-list" [class.open]="submenus['logement']">
           <li class="submenu-item">
-            <a routerLink="/admin/logement/list" class="submenu-link" routerLinkActive="active">
+            <a
+              routerLink="/admin/logement/list"
+              class="submenu-link"
+              routerLinkActive="active"
+            >
               <i class="submenu-icon far fa-circle"></i> List
             </a>
           </li>
           <li class="submenu-item">
-            <a routerLink="/admin/logement/add" class="submenu-link" routerLinkActive="active">
+            <a
+              routerLink="/admin/logement/add"
+              class="submenu-link"
+              routerLinkActive="active"
+            >
               <i class="submenu-icon far fa-circle"></i> Add
             </a>
           </li>
@@ -67,16 +84,27 @@
         <div class="submenu-toggle" (click)="toggleSubmenu('myLogement')">
           <i class="menu-icon fas fa-user-home"></i>
           <span class="menu-text">My Logements</span>
-          <i class="submenu-indicator fas fa-angle-down" [class.rotate]="submenus['myLogement']"></i>
+          <i
+            class="submenu-indicator fas fa-angle-down"
+            [class.rotate]="submenus['myLogement']"
+          ></i>
         </div>
         <ul class="submenu-list" [class.open]="submenus['myLogement']">
           <li class="submenu-item">
-            <a routerLink="/dashboardUser/list" class="submenu-link" routerLinkActive="active">
+            <a
+              routerLink="/dashboardUser/list"
+              class="submenu-link"
+              routerLinkActive="active"
+            >
               <i class="submenu-icon far fa-circle"></i> My Logements
             </a>
           </li>
           <li class="submenu-item">
-            <a routerLink="/dashboardUser/create" class="submenu-link" routerLinkActive="active">
+            <a
+              routerLink="/dashboardUser/create"
+              class="submenu-link"
+              routerLinkActive="active"
+            >
               <i class="submenu-icon far fa-circle"></i> Create Logement
             </a>
           </li>
@@ -88,7 +116,10 @@
         <div class="submenu-toggle" (click)="toggleSubmenu('equipement')">
           <i class="menu-icon fas fa-cogs"></i>
           <span class="menu-text">Equipement</span>
-          <i class="submenu-indicator fas fa-angle-down" [class.rotate]="submenus['equipement']"></i>
+          <i
+            class="submenu-indicator fas fa-angle-down"
+            [class.rotate]="submenus['equipement']"
+          ></i>
         </div>
         <ul class="submenu-list" [class.open]="submenus['equipement']">
           <li class="submenu-item">
@@ -106,7 +137,11 @@
 
       <!-- Activities -->
       <li class="menu-item">
-        <a routerLink="/admin/activity" class="menu-link" routerLinkActive="active">
+        <a
+          routerLink="/admin/activity"
+          class="menu-link"
+          routerLinkActive="active"
+        >
           <i class="menu-icon fas fa-hiking"></i>
           <span class="menu-text">Activities</span>
         </a>
@@ -114,7 +149,11 @@
 
       <!-- Transport -->
       <li *ngIf="!isAdmin" class="menu-item">
-        <a routerLink="/admin/transport" class="menu-link" routerLinkActive="active">
+        <a
+          routerLink="/admin/transport"
+          class="menu-link"
+          routerLinkActive="active"
+        >
           <i class="menu-icon fas fa-bus"></i>
           <span class="menu-text">Transport</span>
         </a>
@@ -122,7 +161,11 @@
 
       <!-- Food -->
       <li class="menu-item">
-        <a routerLink="/admin/FoodList" class="menu-link" routerLinkActive="active">
+        <a
+          routerLink="/admin/FoodList"
+          class="menu-link"
+          routerLinkActive="active"
+        >
           <i class="menu-icon fas fa-utensils"></i>
           <span class="menu-text">Food</span>
         </a>
@@ -130,7 +173,11 @@
 
       <!-- Clothing -->
       <li class="menu-item">
-        <a routerLink="/admin/ClothingList" class="menu-link" routerLinkActive="active">
+        <a
+          routerLink="/admin/ClothingList"
+          class="menu-link"
+          routerLinkActive="active"
+        >
           <i class="menu-icon fas fa-tshirt"></i>
           <span class="menu-text">Clothing</span>
         </a>
@@ -138,7 +185,11 @@
 
       <!-- Bookings -->
       <li class="menu-item">
-        <a routerLink="/admin/list-admin" class="menu-link" routerLinkActive="active">
+        <a
+          routerLink="/admin/list-admin"
+          class="menu-link"
+          routerLinkActive="active"
+        >
           <i class="menu-icon fas fa-calendar-check"></i>
           <span class="menu-text">Packs</span>
         </a>
@@ -146,69 +197,83 @@
 
       <!-- Reservations (Admin Only) -->
       <li class="menu-item">
-        <a routerLink="/admin/reservations-all" class="menu-link" routerLinkActive="active">
+        <a
+          routerLink="/admin/reservations-all"
+          class="menu-link"
+          routerLinkActive="active"
+        >
           <i class="menu-icon fas fa-calendar-alt"></i>
           <span class="menu-text">Reservations</span>
         </a>
       </li>
       <!-- Menu Monument -->
-<li class="menu-item has-submenu">
-  <div class="submenu-toggle" (click)="toggleSubmenu('monument')">
-    <i class="menu-icon fas fa-monument"></i>
-    <span class="menu-text">Monuments</span>
-    <i class="submenu-indicator fas fa-angle-down" [class.rotate]="submenus['monument']"></i>
-  </div>
-  <ul class="submenu-list" [class.open]="submenus['monument']">
-    <li class="submenu-item">
-      <a routerLink="/admin/monument" class="submenu-link" routerLinkActive="active">
-        <i class="submenu-icon far fa-circle"></i>
-        <span>All Monuments</span>
-      </a>
-    </li>
-    <li class="submenu-item">
-      <a routerLink="/admin/monument/add" class="submenu-link" routerLinkActive="active">
-        <i class="submenu-icon far fa-circle"></i>
-        <span>Add New</span>
-      </a>
-    </li>
-  </ul>
-</li>
-       <!-- Restaurants -->
-<li class="menu-item has-submenu">
-  <div class="submenu-toggle" (click)="toggleSubmenu('restaurant')">
-    <i class="menu-icon fas fa-utensils"></i>
-    <span class="menu-text">Restaurants</span>
-    <i class="submenu-indicator fas fa-angle-down" [class.rotate]="submenus['restaurant']"></i>
-  </div>
-  <ul class="submenu-list" [class.open]="submenus['restaurant']">
-    <li class="submenu-item">
-      <a routerLink="/admin/restaurants" class="submenu-link" routerLinkActive="active">
-        <i class="submenu-icon far fa-circle"></i>
-        <span>All Restaurants</span>
-      </a>
-    </li>
-    <li class="submenu-item">
-      <a routerLink="/admin/restaurants/add" class="submenu-link" routerLinkActive="active">
-        <i class="submenu-icon far fa-circle"></i>
-        <span>Add New</span>
-      </a>
-    </li>
-  </ul>
-</li>
-
-
-      <!-- System Section -->
-      <li class="menu-section">
-        <span>SYSTEM</span>
+      <li class="menu-item has-submenu">
+        <div class="submenu-toggle" (click)="toggleSubmenu('monument')">
+          <i class="menu-icon fas fa-monument"></i>
+          <span class="menu-text">Monuments</span>
+          <i
+            class="submenu-indicator fas fa-angle-down"
+            [class.rotate]="submenus['monument']"
+          ></i>
+        </div>
+        <ul class="submenu-list" [class.open]="submenus['monument']">
+          <li class="submenu-item">
+            <a
+              routerLink="/admin/monument"
+              class="submenu-link"
+              routerLinkActive="active"
+            >
+              <i class="submenu-icon far fa-circle"></i>
+              <span>All Monuments</span>
+            </a>
+          </li>
+          <li class="submenu-item">
+            <a
+              routerLink="/admin/monument/add"
+              class="submenu-link"
+              routerLinkActive="active"
+            >
+              <i class="submenu-icon far fa-circle"></i>
+              <span>Add New</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <!-- Restaurants -->
+      <li class="menu-item has-submenu">
+        <div class="submenu-toggle" (click)="toggleSubmenu('restaurant')">
+          <i class="menu-icon fas fa-utensils"></i>
+          <span class="menu-text">Restaurants</span>
+          <i
+            class="submenu-indicator fas fa-angle-down"
+            [class.rotate]="submenus['restaurant']"
+          ></i>
+        </div>
+        <ul class="submenu-list" [class.open]="submenus['restaurant']">
+          <li class="submenu-item">
+            <a
+              routerLink="/admin/restaurants"
+              class="submenu-link"
+              routerLinkActive="active"
+            >
+              <i class="submenu-icon far fa-circle"></i>
+              <span>All Restaurants</span>
+            </a>
+          </li>
+          <li class="submenu-item">
+            <a
+              routerLink="/admin/restaurants/add"
+              class="submenu-link"
+              routerLinkActive="active"
+            >
+              <i class="submenu-icon far fa-circle"></i>
+              <span>Add New</span>
+            </a>
+          </li>
+        </ul>
       </li>
 
-      <!-- Settings -->
-      <li class="menu-item">
-        <a routerLink="/dashboard/settings" class="menu-link" routerLinkActive="active">
-          <i class="menu-icon fas fa-cog"></i>
-          <span class="menu-text">Settings</span>
-        </a>
-      </li>
+      
     </ul>
   </nav>
 </aside>
