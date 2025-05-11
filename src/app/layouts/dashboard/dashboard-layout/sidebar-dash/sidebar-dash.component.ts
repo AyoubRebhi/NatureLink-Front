@@ -28,4 +28,8 @@ export class SidebarDashComponent {
   isAgence(): boolean {
     return this.authService.hasRole(Role.AGENCE);
   }
+
+  isAdmin(): boolean {
+    return this.authService.hasRole(Role.ADMIN);
+  }
 }

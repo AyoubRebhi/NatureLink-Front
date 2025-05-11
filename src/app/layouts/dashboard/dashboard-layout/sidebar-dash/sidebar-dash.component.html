@@ -54,7 +54,7 @@
       </li>
 
       <!-- My Logements -->
-      <li class="menu-item has-submenu">
+      <li class="menu-item has-submenu" *ngIf="isProvider()">
         <div class="submenu-toggle" (click)="toggleSubmenu('myLogement')">
           <i class="menu-icon fas fa-user-home"></i>
           <span class="menu-text">My Logements</span>
@@ -129,9 +129,9 @@
 
       <!-- Bookings -->
       <li class="menu-item">
-        <a routerLink="/dashboard/bookings" class="menu-link" routerLinkActive="active">
+        <a routerLink="/admin/list-admin" class="menu-link" routerLinkActive="active">
           <i class="menu-icon fas fa-calendar-check"></i>
-          <span class="menu-text">Bookings</span>
+          <span class="menu-text">Packs</span>
         </a>
       </li>
 
