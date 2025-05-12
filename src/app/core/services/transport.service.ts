@@ -7,7 +7,7 @@ import { Transport } from '../../core/models/transport.model';
   providedIn: 'root'
 })
 export class TransportService {
-  private baseUrl = 'http://localhost:9000/transport';
+  private baseUrl = 'http://localhost:9000/api/transport';
 
   constructor(private http: HttpClient) {}
 

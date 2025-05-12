@@ -9,7 +9,7 @@ import { Restaurant } from '../models/restaurant';
   providedIn: 'root'
 })
 export class RestaurantService {
-  private apiUrl = 'http://localhost:9000/restaurants'; // Matches server.port=9000
+  private apiUrl = 'http://localhost:9000/api/restaurants'; // Matches server.port=9000
 
 
   constructor(private http: HttpClient) {}

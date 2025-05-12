@@ -10,7 +10,7 @@ import { environment } from 'src/environments/environment';
 })
 export class FavoriteService {
 
-  private apiUrl = 'http://localhost:9000/favorites';
+  private apiUrl = 'http://localhost:9000/api/favorites';
 
   constructor(private http: HttpClient) { }
 

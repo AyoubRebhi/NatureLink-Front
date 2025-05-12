@@ -8,7 +8,7 @@ import { RatingDTO } from 'src/app/core/models/rating.model';
   providedIn: 'root',
 })
 export class PackService {
-  private baseUrl = 'http://localhost:9000/packs';
+  private baseUrl = 'http://localhost:9000/api/packs';
   private chatbotUrl = 'http://localhost:5002/chat'; // Flask chatbot
 
   constructor(private http: HttpClient) {}

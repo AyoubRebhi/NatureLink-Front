@@ -8,7 +8,7 @@ import { TypeReservation } from '../../core/models/type-reservation.model';  // 
   providedIn: 'root'
 })
 export class ReservationService {
-  private baseUrl = 'http://localhost:9000/reservations';  // Base URL for the API
+  private baseUrl = 'http://localhost:9000/api/reservations';  // Base URL for the API
 
   constructor(private http: HttpClient) {}
 

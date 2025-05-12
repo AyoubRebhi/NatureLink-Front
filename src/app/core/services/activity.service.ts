@@ -19,7 +19,7 @@
     providedIn: 'root'
   })
   export class ActivityService {
-    private baseUrl = 'http://localhost:9000/activities';
+    private baseUrl = 'http://localhost:9000/api/activities';
 
     constructor(private http: HttpClient) {}
 

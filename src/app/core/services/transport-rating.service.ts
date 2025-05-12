@@ -8,7 +8,7 @@ import { TransportRating } from '../models/transport-rating.model';
 })
 export class TransportRatingService {
 
-  private baseUrl = 'http://localhost:9000/ratings';
+  private baseUrl = 'http://localhost:9000/api/ratings';
 
   constructor(private http: HttpClient) {}
 
