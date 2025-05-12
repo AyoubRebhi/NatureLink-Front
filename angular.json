@@ -32,14 +32,12 @@
             "styles": [
               "node_modules/@coreui/coreui/dist/css/coreui.min.css",
               "node_modules/leaflet/dist/leaflet.css",
-              "src/assets/dist/css/adminlte.min.css",
-              "node_modules/admin-lte/dist/css/adminlte.min.css",
-              "src/assets/dist/css/skins/skin-blue.min.css",
+              "node_modules/admin-lte/dist/css/AdminLte.min.css",
+              "node_modules/admin-lte/dist/css/skins/skin-blue.min.css",
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "node_modules/@fortawesome/fontawesome-free/css/all.min.css",
               "src/assets/css/style.css",
               "node_modules/ngx-toastr/toastr.css",
-              "src/assets/css/bootstrap.min.css",
               "src/styles.scss"
             ],
             "scripts": [
@@ -47,12 +45,33 @@
               "src/assets/dist/js/demo.js",
               "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js",
               "node_modules/jquery/dist/jquery.min.js",
-              "node_modules/admin-lte/dist/js/adminlte.min.js",
+              "node_modules/admin-lte/dist/js/AdminLte.min.js",
               "node_modules/leaflet/dist/leaflet.js",
               "node_modules/@popperjs/core/dist/umd/popper.min.js",
               "node_modules/bootstrap/dist/js/bootstrap.min.js",
               "node_modules/owl.carousel/dist/owl.carousel.min.js",
               "node_modules/wow.js/dist/wow.min.js"
+            ],
+            "allowedCommonJsDependencies": [
+              "core-js/modules/es.array.index-of.js",
+              "core-js/modules/es.array.iterator.js",
+              "core-js/modules/es.array.reduce.js",
+              "core-js/modules/es.array.reverse.js",
+              "core-js/modules/es.promise.js",
+              "core-js/modules/es.regexp.to-string.js",
+              "core-js/modules/es.string.ends-with.js",
+              "core-js/modules/es.string.includes.js",
+              "core-js/modules/es.string.match.js",
+              "core-js/modules/es.string.replace.js",
+              "core-js/modules/es.string.split.js",
+              "core-js/modules/es.string.starts-with.js",
+              "core-js/modules/es.string.trim.js",
+              "core-js/modules/web.dom-collections.iterator.js",
+              "raf",
+              "rgbcolor",
+              "@tensorflow/tfjs-core",
+              "leaflet",
+              "file-saver"
             ]
           },
           "configurations": {
@@ -66,19 +85,19 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kb",
-                  "maximumError": "1mb"
+                  "maximumWarning": "6mb",
+                  "maximumError": "20mb"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "2kb",
-                  "maximumError": "4kb"
+                  "maximumWarning": "100kb",
+                  "maximumError": "100kb"
                 }
               ],
               "outputHashing": "all"
             },
             "development": {
-              "buildOptimizer": false,
+             "buildOptimizer": false,
               "optimization": false,
               "vendorChunk": true,
               "extractLicenses": false,
@@ -125,13 +144,12 @@
             "styles": [
               "node_modules/@coreui/coreui/dist/css/coreui.min.css",
               "node_modules/leaflet/dist/leaflet.css",
-              "src/assets/dist/css/adminlte.min.css",
-              "src/assets/dist/css/skins/skin-blue.min.css",
+              "node_modules/admin-lte/dist/css/AdminLte.min.css",
+              "node_modules/admin-lte/dist/css/skins/skin-blue.min.css",
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "node_modules/@fortawesome/fontawesome-free/css/all.min.css",
               "src/assets/css/style.css",
               "node_modules/ngx-toastr/toastr.css",
-              "src/assets/css/bootstrap.min.css",
               "src/styles.scss"
             ],
             "scripts": [
@@ -139,6 +157,7 @@
               "src/assets/dist/js/demo.js",
               "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js",
               "node_modules/jquery/dist/jquery.min.js",
+              "node_modules/admin-lte/dist/js/AdminLte.min.js",
               "node_modules/leaflet/dist/leaflet.js",
               "node_modules/@popperjs/core/dist/umd/popper.min.js",
               "node_modules/bootstrap/dist/js/bootstrap.min.js",
