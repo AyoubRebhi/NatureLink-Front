@@ -1,0 +1,6 @@
+flask
+pymysql
+pandas
+sentence-transformers
+flask-cors
+
