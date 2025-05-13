@@ -2,6 +2,7 @@
   import { HttpClient } from '@angular/common/http';
   import { Observable } from 'rxjs';
   import { Activity } from '../models/activity.model';
+  import { environment } from 'src/environments/environment.prod';
 
   interface RecommendationRequest {
     mood_input: string;

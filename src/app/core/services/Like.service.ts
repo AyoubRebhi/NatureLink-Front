@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { catchError, tap, shareReplay } from 'rxjs/operators';
+import { environment } from 'src/environments/environment.prod';
 
 @Injectable({
   providedIn: 'root'
