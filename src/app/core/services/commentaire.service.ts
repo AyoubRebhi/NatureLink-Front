@@ -16,7 +16,7 @@ dateCreated: Date;
   providedIn: 'root'
 })
 export class CommentaireService {
-  private apiUrl = 'http://localhost:9000/api/comments';
+  private apiUrl = '${environment.apiBaseUrl}/api/comments';
 
   constructor(private http: HttpClient) {}
 

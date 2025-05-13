@@ -10,13 +10,13 @@ import { environment } from 'src/environments/environment';
 })
 export class FavoriteService {
 
-  private apiUrl = 'http://localhost:9000/favorites';
+  private apiUrl = '${environment.apiBaseUrl}/favorites';
 
   constructor(private http: HttpClient) { }
 
   // Add a favorite
   addFavorite(userId: number, logementId: number) {
-    const url = `http://localhost:9000/favorites/add/${logementId}`;
+    const url = `${environment.apiBaseUrl}/favorites/add/${logementId}`;
     const params = new HttpParams().set('userId', userId.toString());
   
     return this.http.post(url, null, { params });

@@ -7,7 +7,7 @@ import { Destination } from '../models/Destination.model';
   providedIn: 'root'
 })
 export class DestinationService {
-  private apiUrl = 'http://localhost:9000/api/destinations';
+  private apiUrl = '${environment.apiBaseUrl}/api/destinations';
 
   constructor(private http: HttpClient) { }
 

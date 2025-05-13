@@ -7,7 +7,7 @@ import { Clothing } from '../models/Clothing.model';
   providedIn: 'root'
 })
 export class ClothingService {
-  private apiUrl = 'http://localhost:9000/api/clothing';
+  private apiUrl = '${environment.apiBaseUrl}/api/clothing';
 
   constructor(private http: HttpClient) { }
 

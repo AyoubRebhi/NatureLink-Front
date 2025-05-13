@@ -18,7 +18,7 @@ export interface Footprint {
   providedIn: 'root'
 })
 export class CarbonFootprintService {
-  private apiUrl = 'http://localhost:9000/api/footprints';
+  private apiUrl = `${environment.apiBaseUrl}/api/footprints`;
 
   constructor(private http: HttpClient) {}
 

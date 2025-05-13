@@ -8,7 +8,7 @@ import { AuthService } from './auth.service';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
-  private apiUrl = 'http://localhost:9000/api';
+  private apiUrl = `${environment.apiBaseUrl}/api`
 
   constructor(
     private http: HttpClient,

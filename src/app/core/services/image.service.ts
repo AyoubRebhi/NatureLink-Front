@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class ImageService {
-  private apiUrl = 'http://localhost:9000/api/images'; // à adapter si besoin
+  private apiUrl = `${environment.apiBaseUrl}/api/images`; // à adapter si besoin
 
   constructor(private http: HttpClient) {}
 

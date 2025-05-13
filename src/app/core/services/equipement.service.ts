@@ -7,7 +7,7 @@ import { Equipement } from '../models/equipement.model';
   providedIn: 'root',
 })
 export class EquipementService {
-  private apiUrl = 'http://localhost:9000/equipements';  // Assuming your backend is running locally
+  private apiUrl = '${environment.apiBaseUrl}/equipements';  // Assuming your backend is running locally
 
   constructor(private http: HttpClient) {}
 

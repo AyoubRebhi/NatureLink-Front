@@ -7,7 +7,7 @@ import { Food } from '../models/Food.model';
   providedIn: 'root'
 })
 export class FoodService {
-  private apiUrl = 'http://localhost:9000/api/foods';
+  private apiUrl = '${environment.apiBaseUrl}/api/foods';
 
   constructor(private http: HttpClient) { }
 

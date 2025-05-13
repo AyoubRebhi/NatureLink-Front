@@ -8,7 +8,7 @@ import { Monument } from '../models/monument';
   providedIn: 'root'
 })
 export class MonumentService {
-  private apiUrl = 'http://localhost:9000/api/monuments'; // Backend API URL
+  private apiUrl = `${environment.apiBaseUrl}/api/monuments`; // Backend API URL
 
 
   constructor(private http: HttpClient) {}
@@ -51,7 +51,7 @@ export class MonumentService {
 
 
   getImage(filename: string): string {
-    return `http://localhost:9000/uploads/${filename}`;
+    return `${environment.apiBaseUrl}/uploads/${filename}`;
   }
 
 

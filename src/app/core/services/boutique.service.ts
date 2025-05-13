@@ -10,7 +10,7 @@ import { Produit } from 'src/app/core/models/produit.module';
   providedIn: 'root'
 })
 export class BoutiqueService {
-  private apiUrl = 'http://localhost:9000/api/boutiques';
+  private apiUrl = '${environment.apiBaseUrl}/api/boutiques';
 
   constructor(private http:HttpClient) { }
   getAllBoutiques(): Observable<any[]> {

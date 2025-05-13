@@ -9,7 +9,7 @@ import { catchError, map } from 'rxjs/operators'; // Added 'map' importimport { 
   providedIn: 'root'
 })
 export class MenuService {
-  private apiUrl = 'http://localhost:9000/api/menus';
+  private apiUrl = `${environment.apiBaseUrl}/api/menus`;
   private recommendationApiUrl = 'http://localhost:5007/api/recommendations'; // Flask recommendation API
 
 

@@ -7,7 +7,7 @@ import { catchError, tap, shareReplay } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class LikeService {
-  private readonly BASE_URL = 'http://localhost:9000/api/likes'
+  private readonly BASE_URL = `${environment.apiBaseUrl}/api/likes`
 
   // Système de cache pour optimiser les requêtes
   private likeCountCache = new Map<number, Observable<number>>();

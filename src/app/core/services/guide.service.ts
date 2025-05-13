@@ -8,7 +8,7 @@ import { Guide } from '../models/guide';
   providedIn: 'root'
 })
 export class GuideService {
-  private readonly baseUrl = 'http://localhost:9000/api/tourguides'; // Correction de l'URL
+  private readonly baseUrl = `${environment.apiBaseUrl}/api/tourguides`; // Correction de l'URL
 
   constructor(private http: HttpClient) {}
 
