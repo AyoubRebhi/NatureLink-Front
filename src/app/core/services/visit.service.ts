@@ -3,13 +3,14 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Visit } from '../models/visit';
+import { environment } from 'src/environments/environment.prod';
 
 @Injectable({
   providedIn: 'root'
 })
 export class VisitService {
-  private readonly baseUrl = 'http://localhost:9000/api/visits';
-
+  //private readonly baseUrl = 'http://localhost:9000/api/visits';
+  private baseUrl = `${environment.apiBaseUrl}/api/visits`;  // Base URL for the API
   constructor(private http: HttpClient) {}
 
   getAllVisits(): Observable<Visit[]> {

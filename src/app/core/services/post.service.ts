@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { environment } from 'src/environments/environment.prod';
 
 export interface Post {
   id: number;
@@ -22,7 +23,8 @@ export interface Post {
   providedIn: 'root'
 })
 export class PostService {
-  private apiUrl = 'http://localhost:9000/api/posts';
+   private apiUrl = `${environment.apiBaseUrl}/posts`;
+  //private apiUrl = 'http://localhost:9000/api/posts';
   private imageBaseUrl = 'http://localhost:9000';
 
   constructor(private http: HttpClient) { }

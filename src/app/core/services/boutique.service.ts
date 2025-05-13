@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Boutique} from 'src/app/core/models/boutique.module';
 import { Produit } from 'src/app/core/models/produit.module';
+import { environment } from 'src/environments/environment.prod';
 
 
 
@@ -10,7 +11,7 @@ import { Produit } from 'src/app/core/models/produit.module';
   providedIn: 'root'
 })
 export class BoutiqueService {
-  private apiUrl = '${environment.apiBaseUrl}/api/boutiques';
+  private apiUrl = `${environment.apiBaseUrl}/api/boutiques`;
 
   constructor(private http:HttpClient) { }
   getAllBoutiques(): Observable<any[]> {

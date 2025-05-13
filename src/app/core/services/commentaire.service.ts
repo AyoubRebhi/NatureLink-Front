@@ -2,6 +2,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from 'src/environments/environment.prod';
 
 export interface Comment {
 dateCreated: Date;
@@ -16,7 +17,8 @@ dateCreated: Date;
   providedIn: 'root'
 })
 export class CommentaireService {
-  private apiUrl = '${environment.apiBaseUrl}/api/comments';
+  
+  private apiUrl = 'http://backend/picloud/api/comments';
 
   constructor(private http: HttpClient) {}
 

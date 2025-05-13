@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import * as L from 'leaflet';
 import 'leaflet-routing-machine';
+import { environment } from 'src/environments/environment.prod';
 
 @Injectable({
   providedIn: 'root'

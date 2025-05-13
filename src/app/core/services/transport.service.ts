@@ -2,13 +2,14 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Transport } from '../../core/models/transport.model';
+import { environment } from 'src/environments/environment.prod';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TransportService {
-  private baseUrl = 'http://localhost:9000/transport';
-
+  //private baseUrl = 'http://localhost:9000/transport';
+  private baseUrl = `${environment.apiBaseUrl}/transport`;  // Base URL for the API
   constructor(private http: HttpClient) {}
 
   getAllTransports(): Observable<Transport[]> {

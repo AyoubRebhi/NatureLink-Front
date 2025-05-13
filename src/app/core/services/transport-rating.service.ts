@@ -2,14 +2,15 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { TransportRating } from '../models/transport-rating.model';
+import { environment } from 'src/environments/environment.prod';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TransportRatingService {
 
-  private baseUrl = 'http://localhost:9000/ratings';
-
+  //private baseUrl = 'http://localhost:9000/ratings';
+   private baseUrl = `${environment.apiBaseUrl}/ratings`;  // Base URL for the API
   constructor(private http: HttpClient) {}
 
   // ➕ Add new rating

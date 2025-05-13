@@ -5,12 +5,14 @@ import { Observable, BehaviorSubject, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { Payment } from '../models/payment.model';
 import { AuthService } from './auth.service';
+import { environment } from 'src/environments/environment.prod';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PaymentService {
-  private apiUrl = 'http://localhost:9000/api/payments'; // Update with your API URL
+  private apiUrl = `${environment.apiBaseUrl}/api/payments`; // Update with your API URL
+
   private paymentsSubject = new BehaviorSubject<Payment[]>([]);
   public hasPendingPayments$ = new BehaviorSubject<boolean>(false);
   constructor(

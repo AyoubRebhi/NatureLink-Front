@@ -3,14 +3,15 @@ import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http'
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Restaurant } from '../models/restaurant';
+import { environment } from 'src/environments/environment.prod';
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class RestaurantService {
-  private apiUrl = 'http://localhost:9000/restaurants'; // Matches server.port=9000
-
+  //private apiUrl = 'http://localhost:9000/restaurants'; // Matches server.port=9000
+  private apiUrl = `${environment.apiBaseUrl}/restaurants`;
 
   constructor(private http: HttpClient) {}
 

@@ -1,12 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from 'src/environments/environment.prod';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProfileService {
-  private readonly API_BASE_URL = 'http://localhost:9000/api'; // Port 9000
+  
+  private readonly API_BASE_URL = `${environment.apiBaseUrl}/api`; // Port 9000
   private profileUrl = `${this.API_BASE_URL}/profile`;
 
   constructor(private http: HttpClient) {}

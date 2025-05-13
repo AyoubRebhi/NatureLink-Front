@@ -2,9 +2,9 @@
 import { Injectable } from '@angular/core';
 import * as SockJS from 'sockjs-client';
 import { Client, Message } from '@stomp/stompjs';
-import { environment } from 'src/environments/environment';
 import { Logement } from '../models/logement.model';
 import { Observable, Subject } from 'rxjs';
+import { environment } from 'src/environments/environment.prod';
 
 @Injectable({
   providedIn: 'root'

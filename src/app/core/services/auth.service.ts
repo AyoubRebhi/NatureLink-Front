@@ -12,7 +12,7 @@ import { environment } from 'src/environments/environment.prod';
   providedIn: 'root'
 })
 export class AuthService {
-  public apiUrl = `${environment.apiBaseUrl}/`;
+  public apiUrl = `${environment.apiBaseUrl}`;
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
   private hasPendingPayments = new BehaviorSubject<boolean>(false);

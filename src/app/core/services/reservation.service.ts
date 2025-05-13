@@ -3,12 +3,14 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Reservation } from '../../core/models/reservation.model';  // Assuming you have this model
 import { TypeReservation } from '../../core/models/type-reservation.model';  // Assuming you have this model
+import { environment } from 'src/environments/environment.prod';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ReservationService {
-  private baseUrl = 'http://localhost:9000/reservations';  // Base URL for the API
+   private baseUrl = `${environment.apiBaseUrl}/reservations`;  // Base URL for the API 
+  //private baseUrl = 'http://localhost:9000/reservations';  // Base URL for the API
 
   constructor(private http: HttpClient) {}
 

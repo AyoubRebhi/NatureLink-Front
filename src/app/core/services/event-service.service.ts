@@ -3,12 +3,14 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpHeaders } from '@angular/common/http';
 import { Event } from '../models/event.module'; // Adjust the import path as necessary
+import { environment } from 'src/environments/environment.prod';
 const BASIC_URl=["http://localhost:9000"]
-
 @Injectable({
   providedIn: 'root'
 })
 export class EventServiceService {
+  private apiUrl = `${environment.apiBaseUrl}`;  // Assuming your backend is running locally
+
 
   constructor(private http:HttpClient) {}
 
