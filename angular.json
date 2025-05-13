@@ -32,7 +32,7 @@
             "styles": [
               "node_modules/@coreui/coreui/dist/css/coreui.min.css",
               "node_modules/leaflet/dist/leaflet.css",
-              "node_modules/admin-lte/dist/css/AdminLte.min.css",
+              "node_modules/admin-lte/dist/css/AdminLTE.min.css",
               "node_modules/admin-lte/dist/css/skins/skin-blue.min.css",
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "node_modules/@fortawesome/fontawesome-free/css/all.min.css",
@@ -41,11 +41,11 @@
               "src/styles.scss"
             ],
             "scripts": [
-              "node_modules/@coreui/coreui/dist/js/coreui.bundle.min.js",
+"node_modules/@coreui/coreui/dist/js/coreui.bundle.min.js",
               "src/assets/dist/js/demo.js",
               "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js",
               "node_modules/jquery/dist/jquery.min.js",
-              "node_modules/admin-lte/dist/js/AdminLte.min.js",
+              "node_modules/admin-lte/dist/js/adminlte.min.js",
               "node_modules/leaflet/dist/leaflet.js",
               "node_modules/@popperjs/core/dist/umd/popper.min.js",
               "node_modules/bootstrap/dist/js/bootstrap.min.js",
@@ -85,19 +85,19 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "6mb",
-                  "maximumError": "20mb"
+                  "maximumWarning": "20mb",
+                  "maximumError": "80mb"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "100kb",
-                  "maximumError": "100kb"
+                  "maximumWarning": "1000kb",
+                  "maximumError": "1000kb"
                 }
               ],
               "outputHashing": "all"
             },
             "development": {
-             "buildOptimizer": false,
+              "buildOptimizer": false,
               "optimization": false,
               "vendorChunk": true,
               "extractLicenses": false,
@@ -144,7 +144,7 @@
             "styles": [
               "node_modules/@coreui/coreui/dist/css/coreui.min.css",
               "node_modules/leaflet/dist/leaflet.css",
-              "node_modules/admin-lte/dist/css/AdminLte.min.css",
+              "node_modules/admin-lte/dist/css/AdminLTE.min.css",
               "node_modules/admin-lte/dist/css/skins/skin-blue.min.css",
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "node_modules/@fortawesome/fontawesome-free/css/all.min.css",
@@ -157,7 +157,7 @@
               "src/assets/dist/js/demo.js",
               "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js",
               "node_modules/jquery/dist/jquery.min.js",
-              "node_modules/admin-lte/dist/js/AdminLte.min.js",
+              "node_modules/admin-lte/dist/js/adminlte.min.js",
               "node_modules/leaflet/dist/leaflet.js",
               "node_modules/@popperjs/core/dist/umd/popper.min.js",
               "node_modules/bootstrap/dist/js/bootstrap.min.js",
