@@ -49,7 +49,7 @@
       <div *ngFor="let post of posts" class="fb-post">
         <!-- Post Header -->
         <div class="fb-post-header">
-          <img [src]="post.user?.avatarUrl || 'http://localhost:9000/uploads/img.PNG'" class="fb-avatar" alt="Avatar">
+          <img [src]="post.user?.avatarUrl || 'http://backend/picloud/uploads/img.PNG'" class="fb-avatar" alt="Avatar">
           <div class="fb-post-user">
             <h4>{{ post.user?.username }}</h4>
             <small class="fb-post-time">{{ post.dateCreated ? formatDate(post.dateCreated) : '' }} · <i class="fas fa-globe-europe"></i></small>
@@ -127,7 +127,7 @@
 
           <!-- Comments List -->
           <div *ngFor="let comment of comments[post.id]" class="fb-comment">
-            <img [src]="comment.user?.avatarUrl || 'http://localhost:9000/uploads/img.PNG'" class="fb-comment-avatar" alt="Avatar">
+            <img [src]="comment.user?.avatarUrl || 'http://backend/picloud/uploads/img.PNG'" class="fb-comment-avatar" alt="Avatar">
             
             <div class="fb-comment-content">
               <div class="fb-comment-header">
@@ -165,7 +165,7 @@
 
           <!-- Add Comment -->
           <div class="fb-add-comment">
-            <img [src]="'http://localhost:9000/uploads/img.PNG'" class="fb-comment-avatar" alt="Avatar">
+            <img [src]="'http://backend/picloud/uploads/img.PNG'" class="fb-comment-avatar" alt="Avatar">
             <div class="fb-comment-input-container">
               <input [(ngModel)]="commentInputs[post.id]" 
                      placeholder="Écrivez un commentaire..." 
@@ -200,11 +200,11 @@
     <div class="fb-contacts">
       <h4>Contacts</h4>
       <div class="fb-contact-item">
-        <img src="http://localhost:9000/uploads/img.PNG" alt="Contact">
+        <img src="http://backend/picloud/uploads/img.PNG" alt="Contact">
         <span>Marie Dupont</span>
       </div>
       <div class="fb-contact-item">
-        <img src="http://localhost:9000/uploads/img.PNG" alt="Contact">
+        <img src="http://backend/picloud/uploads/img.PNG" alt="Contact">
         <span>Jean Martin</span>
       </div>
     </div>

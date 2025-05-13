@@ -59,7 +59,7 @@
                 <tr *ngFor="let menu of filteredMenus">
                   <td>
                     <img
-                      [src]="'http://localhost:9000/uploads/images/' + menu.image"
+                      [src]="'http://backend/picloud/uploads/images/' + menu.image"
                       (error)="onImageError($event)"
                       [alt]="'Image of ' + menu.plats"
                       style="width: 60px; height: 60px; object-fit: cover;"

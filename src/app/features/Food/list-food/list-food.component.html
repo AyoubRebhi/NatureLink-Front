@@ -18,7 +18,7 @@
     <div class="food-grid">
       <div *ngFor="let food of filteredFoods" class="food-card">
         <div class="food-image">
-          <img *ngIf="food.imageUrl" [src]="'http://localhost:9000'+food.imageUrl" alt="{{ food.nom }}">
+          <img *ngIf="food.imageUrl" [src]="'http://backend/picloud'+food.imageUrl" alt="{{ food.nom }}">
           <div *ngIf="!food.imageUrl" class="no-image">No image</div>
         </div>
         <div class="food-details">

@@ -21,7 +21,7 @@ export class LogementListComponent implements OnInit {
 
   loadLogementsAndUsers() {
     forkJoin({
-      logements: this.http.get<any[]>('http://localhost:9000/logements').pipe(catchError(err => {
+      logements: this.http.get<any[]>('http://backend/picloud/logements').pipe(catchError(err => {
         console.error('Error fetching logements:', err);
         return of([]);
       })),
@@ -42,7 +42,7 @@ export class LogementListComponent implements OnInit {
 
   deleteLogement(id: number) {
     if (confirm('Are you sure you want to delete this logement?')) {
-      this.http.delete(`http://localhost:9000/logements/${id}`).subscribe(() => {
+      this.http.delete(`http://backend/picloud/logements/${id}`).subscribe(() => {
         this.logements = this.logements.filter(l => l.id !== id);
       }, error => {
         console.error('Error deleting logement:', error);

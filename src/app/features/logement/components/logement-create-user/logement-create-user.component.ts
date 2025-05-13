@@ -148,7 +148,7 @@ export class LogementCreateUserComponent implements OnInit {
     });
   
     // Submit form
-    this.http.post('http://localhost:9000/logements/upload', formData).subscribe(
+    this.http.post('http://backend/picloud/logements/upload', formData).subscribe(
       response => {
         console.log('Logement created!', response);
         this.router.navigate(['/dashboardUser/list']); // Redirect to list or success page

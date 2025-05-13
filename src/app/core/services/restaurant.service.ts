@@ -10,7 +10,6 @@ import { environment } from 'src/environments/environment.prod';
   providedIn: 'root'
 })
 export class RestaurantService {
-  //private apiUrl = 'http://localhost:9000/restaurants'; // Matches server.port=9000
   private apiUrl = `${environment.apiBaseUrl}/restaurants`;
 
   constructor(private http: HttpClient) {}

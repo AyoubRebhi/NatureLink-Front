@@ -97,7 +97,7 @@
           <div class="image-slider position-relative mb-3">
             <img
               *ngIf="logement.images && logement.images.length > 0; else defaultImage"
-              [src]="'http://localhost:9000/uploads/' + logement.images[currentImageIndex[logement.id!]]"
+              [src]="'http://backend/picloud/uploads/' + logement.images[currentImageIndex[logement.id!]]"
               alt="Logement Image"
               class="logement-image w-100 rounded"
             />
@@ -137,7 +137,7 @@
         <div class="image-slider">
           <img
             *ngIf="logement.images && logement.images.length > 0; else defaultImage"
-            [src]="'http://localhost:9000/uploads/' + logement.images[currentImageIndex[logement.id!]]"
+            [src]="'http://backend/picloud/uploads/' + logement.images[currentImageIndex[logement.id!]]"
             alt="Logement Image"
             class="logement-image"
           />

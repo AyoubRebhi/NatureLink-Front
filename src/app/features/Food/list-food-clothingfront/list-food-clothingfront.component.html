@@ -47,7 +47,7 @@
           <div class="row items-grid">
             <div *ngFor="let item of clothingItems" class="col-md-4 mb-4">
               <div class="card item-card h-100">
-                <img *ngIf="item.imageUrl" [src]="'http://localhost:9000'+item.imageUrl" alt="{{ item.name }}" class="card-img-top item-image">
+                <img *ngIf="item.imageUrl" [src]="'http://backend/picloud'+item.imageUrl" alt="{{ item.name }}" class="card-img-top item-image">
                 <div class="card-body item-details">
                   <h3 class="card-title">{{ item.name }}</h3>
                   <p class="card-text">{{ item.description }}</p>
@@ -67,7 +67,7 @@
           <div class="row items-grid">
             <div *ngFor="let item of foodItems" class="col-md-4 mb-4">
               <div class="card item-card h-100">
-                <img [src]="'http://localhost:9000'+item.imageUrl" alt="{{ item.nom }}" class="card-img-top item-image">
+                <img [src]="'http://backend/picloud'+item.imageUrl" alt="{{ item.nom }}" class="card-img-top item-image">
                 <div class="card-body item-details">
                   <h3 class="card-title">{{ item.nom }}</h3>
                   <p>{{ item.description }}</p>

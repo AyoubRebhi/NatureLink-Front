@@ -37,7 +37,7 @@
 
       <div class="card-image-container">
         <img 
-          [src]="'http://localhost:9000' + item.imageUrl || 'assets/images/default-clothing.jpg'" 
+          [src]="'http://backend/picloud' + item.imageUrl || 'assets/images/default-clothing.jpg'" 
           alt="{{ item.name }}"
           class="card-image"
           onerror="this.src='assets/images/default-clothing.jpg'"

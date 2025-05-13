@@ -85,7 +85,7 @@ export class PackUpdateComponent implements OnInit {
           if (error.status === 404) {
             errorMsg = `Pack with ID ${this.id} not found.`;
           } else if (error.status === 0) {
-            errorMsg = 'Cannot connect to the server. Check if the backend is running at http://localhost:9000.';
+            errorMsg = 'Cannot connect to the server. Check if the backend is running at http://backend/picloud.';
           } else if (error.status >= 500) {
             errorMsg = 'Server error occurred. Please check backend logs for details.';
           } else if (error.status === 400) {

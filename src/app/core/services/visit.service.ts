@@ -9,7 +9,6 @@ import { environment } from 'src/environments/environment.prod';
   providedIn: 'root'
 })
 export class VisitService {
-  //private readonly baseUrl = 'http://localhost:9000/api/visits';
   private baseUrl = `${environment.apiBaseUrl}/api/visits`;  // Base URL for the API
   constructor(private http: HttpClient) {}
 

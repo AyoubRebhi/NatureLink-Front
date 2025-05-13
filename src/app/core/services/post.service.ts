@@ -24,8 +24,7 @@ export interface Post {
 })
 export class PostService {
    private apiUrl = `${environment.apiBaseUrl}/posts`;
-  //private apiUrl = 'http://localhost:9000/api/posts';
-  private imageBaseUrl = 'http://localhost:9000';
+  private imageBaseUrl = `${environment.apiBaseUrl}`;
 
   constructor(private http: HttpClient) { }
 

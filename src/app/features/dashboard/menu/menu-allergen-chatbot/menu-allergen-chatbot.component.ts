@@ -42,7 +42,7 @@ export class MenuAllergenChatbotComponent {
       question: this.question
     };
 
-    this.http.post<{ response: string }>('http://localhost:9000/api/menus/chatbot', payload)
+    this.http.post<{ response: string }>('http://backend/picloud/api/menus/chatbot', payload)
       .subscribe({
         next: (res) => {
           this.response = res.response;

@@ -103,7 +103,7 @@
       <div class="d-flex flex-wrap">
         <div *ngFor="let img of logement.images; let i = index" class="position-relative m-2">
           <img 
-            [src]="'http://localhost:9000/uploads/' + img"
+            [src]="'http://backend/picloud/uploads/' + img"
             alt="Image"
             onerror="this.src='assets/img-placeholder.jpg'" 
             style="width: 150px; height: 100px; object-fit: cover; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.2);" />

@@ -9,7 +9,6 @@ import { environment } from 'src/environments/environment.prod';
 })
 export class TransportRatingService {
 
-  //private baseUrl = 'http://localhost:9000/ratings';
    private baseUrl = `${environment.apiBaseUrl}/ratings`;  // Base URL for the API
   constructor(private http: HttpClient) {}
 

@@ -281,7 +281,7 @@ private matchesPriceRange(price: number | undefined): boolean {
             params = params.append('imageNames', name);
           });
           this.http.get<Logement[]>(
-            'http://localhost:9000/logements/searchByImages',
+            'http://backend/picloud/logements/searchByImages',
             { params }
           ).subscribe({
             next: (logements) => {

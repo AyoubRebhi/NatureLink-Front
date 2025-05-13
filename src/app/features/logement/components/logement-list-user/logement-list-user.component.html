@@ -15,7 +15,7 @@
         <!-- Image Carousel -->
         <div class="carousel-container">
           <div class="image-slider">
-            <img [src]="'http://localhost:9000/uploads/' + logement.images[currentImageIndex[logement.id || 0]]" 
+            <img [src]="'http://backend/picloud/uploads/' + logement.images[currentImageIndex[logement.id || 0]]" 
                  alt="Image" 
                  class="logement-image"/>
           </div>
@@ -30,7 +30,7 @@
           <div *ngFor="let img of logement.images; let i = index" 
                class="image-item" 
                [class.active]="currentImageIndex[logement.id || 0] === i">
-            <img [src]="'http://localhost:9000/uploads/' + img" alt="Image" class="logement-image"/>
+            <img [src]="'http://backend/picloud/uploads/' + img" alt="Image" class="logement-image"/>
           </div>
         </div>
       </div>

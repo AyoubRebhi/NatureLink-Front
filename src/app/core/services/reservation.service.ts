@@ -10,7 +10,6 @@ import { environment } from 'src/environments/environment.prod';
 })
 export class ReservationService {
    private baseUrl = `${environment.apiBaseUrl}/reservations`;  // Base URL for the API 
-  //private baseUrl = 'http://localhost:9000/reservations';  // Base URL for the API
 
   constructor(private http: HttpClient) {}
 

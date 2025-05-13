@@ -8,7 +8,6 @@ import { environment } from 'src/environments/environment.prod';
   providedIn: 'root'
 })
 export class TransportService {
-  //private baseUrl = 'http://localhost:9000/transport';
   private baseUrl = `${environment.apiBaseUrl}/transport`;  // Base URL for the API
   constructor(private http: HttpClient) {}
 

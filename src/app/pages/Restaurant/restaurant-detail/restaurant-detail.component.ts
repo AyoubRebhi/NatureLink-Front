@@ -99,7 +99,7 @@ export class RestaurantDetailComponent implements OnInit {
 
 
     // Retournez l'URL complète avec le chemin de base
-    return `http://localhost:9000/uploads/images/${filename}`;
+    return `http://backend/picloud/uploads/images/${filename}`;
   }
 
 

@@ -5,7 +5,7 @@
       <div class="slider">
         <button class="nav-btn left" (click)="prevSlide()">&#10094;</button>
   
-        <img [src]="'http://localhost:9000/uploads/' + logement.images?.[currentImageIndex]" alt="Logement image" class="slider-image" />
+        <img [src]="'http://backend/picloud/uploads/' + logement.images?.[currentImageIndex]" alt="Logement image" class="slider-image" />
   
         <button class="nav-btn right" (click)="nextSlide()">&#10095;</button>
       </div>
@@ -13,7 +13,7 @@
       <!-- Thumbnails -->
       <div class="thumbnails">
         <img *ngFor="let img of logement.images; let i = index"
-             [src]="'http://localhost:9000/uploads/' + img"
+             [src]="'http://backend/picloud/uploads/' + img"
              (click)="selectImage(i)"
              [class.active]="i === currentImageIndex"
              class="thumbnail-img" />
