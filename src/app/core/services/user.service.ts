@@ -5,6 +5,7 @@ import { catchError, map } from 'rxjs/operators';
 import { User } from '../models/user.model';
 import { PendingUser } from '../models/pending-user.model';
 import { AuthService } from './auth.service';
+import { environment } from 'src/environments/environment.prod';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {

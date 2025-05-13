@@ -7,11 +7,12 @@ import { Router } from '@angular/router';
 import { User, Role } from '../models/user.model';
 import { PaymentService } from './payment.service';
 import { AuthResponse } from '../models/auth-response'
+import { environment } from 'src/environments/environment.prod';
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  public apiUrl = 'http://localhost:9000';
+  public apiUrl = `${environment.apiBaseUrl}/`;
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
   private hasPendingPayments = new BehaviorSubject<boolean>(false);
