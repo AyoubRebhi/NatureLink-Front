@@ -18,7 +18,7 @@ dateCreated: Date;
 })
 export class CommentaireService {
   
-  private apiUrl = 'http://backend/picloud/api/comments';
+  private apiUrl = `${environment.apiBaseUrl}/api/comments`; // à adapter si besoin
 
   constructor(private http: HttpClient) {}
 

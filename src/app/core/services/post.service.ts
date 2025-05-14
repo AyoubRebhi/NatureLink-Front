@@ -23,7 +23,7 @@ export interface Post {
   providedIn: 'root'
 })
 export class PostService {
-   private apiUrl = `${environment.apiBaseUrl}/posts`;
+   private apiUrl = `${environment.apiBaseUrl}/api/posts`;
   private imageBaseUrl = `${environment.apiBaseUrl}`;
 
   constructor(private http: HttpClient) { }

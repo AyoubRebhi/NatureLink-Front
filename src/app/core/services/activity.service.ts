@@ -20,7 +20,7 @@
     providedIn: 'root'
   })
   export class ActivityService {
-    public baseUrl = `${environment.apiBaseUrl}`;
+    public baseUrl = `${environment.apiBaseUrl}/activities`;
 
     constructor(private http: HttpClient) {}
 
